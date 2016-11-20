@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Mercurial on KenCochrane.net</title>
+    <link>http://www.kencochrane.net/tags/mercurial/</link>
+    <description>Recent content in Mercurial on KenCochrane.net</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Thu, 13 May 2010 00:00:00 +0000</lastBuildDate>
+    <atom:link href="http://www.kencochrane.net/tags/mercurial/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Installing Mercurial 1.5.1 on Red Hat Enterprise Linux 5 (RHEL5) using Python 2.5</title>
+      <link>http://www.kencochrane.net/blog/2010/05/mercurial-1_5_1-on-rhel5-using-python2_5/</link>
+      <pubDate>Thu, 13 May 2010 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.kencochrane.net/blog/2010/05/mercurial-1_5_1-on-rhel5-using-python2_5/</guid>
+      <description>
+
+&lt;h1 id=&#34;installing-mercurial-1-5-1-on-red-hat-enterprise-linux-5-rhel5-using-python-2-5:85607c8aea43dfeeae281913edf67191&#34;&gt;Installing Mercurial 1.5.1 on Red Hat Enterprise Linux 5 (RHEL5) using Python 2.5&lt;/h1&gt;
+
+&lt;p&gt;My RHEL5 setup uses python2.5 which I compiled from source, since RHEL5
+only comes with python2.4.&lt;/p&gt;
+
+&lt;p&gt;Because I didn&amp;rsquo;t use the built in python 2.4 version I couldn&amp;rsquo;t do the
+simple&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;$ yum install mercurial
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Instead I need to build mercurial from source, which isn&amp;rsquo;t too bad. Just
+do the following.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;as Root&lt;/strong&gt;&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;$ wget http://mercurial.selenic.com/release/mercurial-1.5.1.tar.gz
+$ tar -xvzf mercurial-1.5.1.tar.gz
+$ cd mercurial-1.5.1
+$ make PYTHON=python2.5 install
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;If you get the following error:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;$ python2.5 setup.py build
+$ Couldn&#39;t import standard bz2 (incomplete Python install).
+     make:  [build] Error 1
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Then when you installed python 2.5 you didn&amp;rsquo;t have the bzip2 libs
+installed so it didn&amp;rsquo;t include them in the python2.5 install. No big
+deal all you need to do is install those libs and then recomplile python
+2.5&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;install bzip2 libs&lt;/strong&gt;&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;$ yum install bzip2 bzip2-devel bzip2-libs
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;strong&gt;Download 2.5.4 from python.org&lt;/strong&gt;&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;$ wget http://python.org/ftp/python/2.5.4/Python-2.5.4.tar.bz2
+$ tar -xvjf Python-2.5.4.tar.bz2
+$ cd Python-2.5.4
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;strong&gt;switch to root:&lt;/strong&gt;&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;$ ./configure
+$ make
+$ make altinstall
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Once complete (this will take a few minutes) rerun the steps above and
+then you should be good.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;go back to where you untared the mercurial bundle&lt;/strong&gt;&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;$ cd mercurial-1.5.1
+$ make PYTHON=python2.5 install
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Check to make sure you are running 1.5.1&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;$ hg --version
+     Mercurial Distributed SCM (version 1.5.1)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;That is all, now you are running Mercurial 1.5.1 on RHEL5 with
+python2.5!&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

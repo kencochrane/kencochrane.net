@@ -1,0 +1,1278 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+    <title>Introducing Django Defender &middot; KenCochrane.net</title>
+    <meta name="generator" content="Hugo 0.15" />
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="author" content="Ken Cochrane">
+    
+      <meta name="description" content="">
+    
+    
+    <link rel="icon" href="http://www.kencochrane.net/favicon.ico">
+    <link rel="apple-touch-icon" href="http://www.kencochrane.net/apple-touch-icon.png" />
+    <link rel="stylesheet" href="http://www.kencochrane.net/css/style.css">
+    <link rel="stylesheet" href="http://www.kencochrane.net/css/font-awesome.min.css">
+    <link rel="stylesheet" href="http://www.kencochrane.net/css/monokai.css">
+    <link rel="stylesheet" href="http://www.kencochrane.net/fancybox/jquery.fancybox.css">
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400italic,400,600' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Source+Code+Pro' rel='stylesheet' type='text/css'>
+    <meta property="og:title" content="Introducing Django Defender" />
+<meta property="og:description" content="Normally websites do very few logins, someone logs in once and their session is good for a bunch of hours. Since it&rsquo;s a one time thing, it doesn&rsquo;t matter if it isn&rsquo;t very fast. At Docker our authentication system handles requests for both the Docker Hub, as well as all Docker Engine commands that interact with the Docker Hub (docker push, pull, etc). This Authentication system handles thousands of login attempts every minute, so any slow down in the login process has a large impact on our system." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="http://www.kencochrane.net/blog/2015/02/introducing-django-defender/" />
+
+
+<meta property="og:updated_time" content="2015-02-15T00:00:00&#43;00:00"/>
+
+
+
+
+
+
+
+
+
+
+    
+    
+<meta itemprop="name" content="Introducing Django Defender">
+<meta itemprop="description" content="Normally websites do very few logins, someone logs in once and their session is good for a bunch of hours. Since it&rsquo;s a one time thing, it doesn&rsquo;t matter if it isn&rsquo;t very fast. At Docker our authentication system handles requests for both the Docker Hub, as well as all Docker Engine commands that interact with the Docker Hub (docker push, pull, etc). This Authentication system handles thousands of login attempts every minute, so any slow down in the login process has a large impact on our system.">
+
+
+<meta itemprop="dateModified" content="2015-02-15T00:00:00&#43;00:00" />
+<meta itemprop="wordCount" content="827">
+
+
+
+<meta itemprop="keywords" content="blog,apache,api,apphosted,aufs,aws,blog,cashstar,centos5,clickstream,defender,deployment,developers,digital-ocean,django,django-maine,djangocms,djangomaine,djangozoom,docker,dotcloud,epio,fabric,facebook,go,gondor,guidebook,gunicorn,heroku,hosting,install,job,jobs,kernel,linux,lxc,macosx,memcached,mercurial,mysql,newrelic,nginx,openshift,paas,pci,pelican,percona,python,rackspace,raspberrypi,raspbian,redis,requests,rhel5,s3,script,sentry,stackato,supervisor,supervisord,tutorial,ubuntu,upgrade,video,work," />
+
+    
+
+  <meta name="twitter:card" content="summary"/>
+
+
+
+<meta name="twitter:title" content="Introducing Django Defender"/>
+<meta name="twitter:description" content="Normally websites do very few logins, someone logs in once and their session is good for a bunch of hours. Since it&rsquo;s a one time thing, it doesn&rsquo;t matter if it isn&rsquo;t very fast. At Docker our authentication system handles requests for both the Docker Hub, as well as all Docker Engine commands that interact with the Docker Hub (docker push, pull, etc). This Authentication system handles thousands of login attempts every minute, so any slow down in the login process has a large impact on our system."/>
+<meta name="twitter:site" content="@kencochrane"/>
+
+
+</head>
+<body>
+<div class="container">
+
+
+<div id="container">
+	<header id="header">
+  <div id="header-main" class="header-inner">
+    <div class="outer">
+      <a href="http://www.kencochrane.net/" id="logo"><i class="logo" style="background-image: url('http://www.kencochrane.net/css/images/logo.png')"></i><span class="site-title">KenCochrane.net</span></a>
+      <nav id="main-nav">
+          
+          
+          <a class="main-nav-link" href="http://www.kencochrane.net/">Home</a>
+          
+          
+          
+          
+          
+          
+
+          
+
+          
+          
+          
+          
+          <a class="main-nav-link" href="http://www.kencochrane.net/tags/">Tags</a>
+          
+          
+          
+          <a class="main-nav-link" href="http://www.kencochrane.net/categories/">Categories</a>
+          
+          
+      </nav>
+        <nav id="sub-nav">
+          <div class="profile" id="profile-nav">
+            <a id="profile-anchor" href="javascript:;"><img class="avatar" src="http://www.kencochrane.net/img/kencochrane.jpeg"><i class="fa fa-caret-down"></i></a>
+          </div>
+        </nav>
+        <div id="search-form-wrap">
+          <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form">
+              <input type="search" name="q" results="0" class="search-form-input" placeholder="Search">
+              <button type="submit" class="search-form-submit">
+              </button>
+              <input type="hidden" name="q" value="site:http://www.kencochrane.net/">
+         </form>
+        </div>
+    </div>
+  </div>
+  <div id="main-nav-mobile" class="header-sub header-inner">
+    <table class="menu outer">
+      <tbody>
+          <tr>
+          
+          
+          <td><a class="main-nav-link" href="http://www.kencochrane.net/">Home</a></td>
+          
+          
+          
+          
+          
+          
+
+          
+
+          
+          
+          
+          
+          <td><a class="main-nav-link" href="http://www.kencochrane.net/tags/">Tags</a></td>
+          
+          
+          
+          <td><a class="main-nav-link" href="http://www.kencochrane.net/categories/">Categories</a></td>
+          
+          
+          <td>
+          <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form">
+          <input type="search" name="q" results="0" class="search-form-input" placeholder="Search">
+          <input type="hidden" name="q" value="site:http://www.kencochrane.net/">
+          </form>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</header>
+
+   	
+   	<div class="outer">
+	    <aside id="profile">
+  <div class="inner profile-inner">
+    <div class="base-info profile-block">
+      <img id="avatar" src="http://www.kencochrane.net/img/kencochrane.jpeg">
+      <h2 id="name">Ken Cochrane</h2>
+      <h3 id="title">Software developer living in Southern Maine</h3>
+      <span id="location"><i class="fa fa-map-marker"></i>Maine</span>
+      
+          <a id="follow" href="https://github.com/kencochrane">
+              Follow
+          </a>
+      
+    </div>
+    <div class="article-info profile-block">
+      <div class="article-info-block">
+        40
+        <span>Posts</span>
+      </div>
+      <div class="article-info-block">
+        
+          64
+          
+        <span>
+            Tags
+        </span>
+      </div>
+    </div>
+    <div class="contact-info profile-block">
+      <table class="contact-list">
+        <tr>
+          
+<td><a href="//github.com/kencochrane" target="_blank" title="GitHub"><i class="fa fa-github"></i></a></td>
+
+
+
+<td><a href="//bitbucket.com/kencochrane" target="_blank" title="Bitbucket"><i class="fa fa-bitbucket"></i></a></td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<td><a href="//linkedin.com/in/kencochrane" target="_blank" title="LinkedIn"><i class="fa fa-linkedin"></i></a></td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<td><a href="//twitter.com/kencochrane" target="_blank" title="Twitter"><i class="fa fa-twitter"></i></a></td>
+
+
+          <td><a href="" target="_blank" title="RSS"><i class="fa fa-rss"></i></a></td>
+        </tr>
+      </table>
+    </div>
+  </div>
+</aside>
+
+	    <section id="main">
+    <article id="page-undefined" class="article article-type-page" itemscope="" itemprop="blogPost">
+        <div class="article-inner">
+            
+
+            <header class="article-header">
+    <a href="http://www.kencochrane.net/blog/2015/02/introducing-django-defender/">
+    <h1 class="article-title" itemprop="name">
+        Introducing Django Defender
+    </h1>
+    </a>
+    <div class="article-meta">
+        <div class="article-date">
+            <i class="fa fa-calendar"></i>
+            <time datetime="2015-02-15 00:00:00 &#43;0000 UTC" itemprop="datePublished">2015-02-15</time>
+            &middot;
+            827
+            words
+            &middot;
+            4
+            minute read
+        </div>
+
+        
+        
+            
+            
+            <div class="article-category">
+                <i class="fa fa-folder"></i>
+                
+                <a class="article-category-link" href="http://www.kencochrane.net/categories/blog">blog</a>
+                
+                
+            </div>
+            
+        
+
+        
+            
+            
+            <div class="article-category">
+                <i class="fa fa-tags"></i>
+                
+                <a class="article-category-link" href="http://www.kencochrane.net/tags/django">django</a>
+                &middot;
+                
+                <a class="article-category-link" href="http://www.kencochrane.net/tags/python">python</a>
+                &middot;
+                
+                <a class="article-category-link" href="http://www.kencochrane.net/tags/defender">defender</a>
+                &middot;
+                
+                <a class="article-category-link" href="http://www.kencochrane.net/tags/redis">redis</a>
+                
+                
+            </div>
+            
+        
+    </div>
+</header>
+
+            <div class="article-entry" itemprop="articleBody">
+                
+
+<p>Normally websites do very few logins, someone logs in once and their
+session is good for a bunch of hours. Since it&rsquo;s a one time thing, it
+doesn&rsquo;t matter if it isn&rsquo;t very fast. At
+<a href="https://www.docker.com">Docker</a> our authentication system handles
+requests for both the <a href="https://hub.docker.com">Docker Hub</a>, as well as
+all Docker Engine commands that interact with the Docker Hub (docker
+push, pull, etc). This Authentication system handles thousands of login
+attempts every minute, so any slow down in the login process has a large
+impact on our system.</p>
+
+<p>We are always looking at ways to improve the security of our systems,
+and one of the things we looked at implementing was a way to prevent
+brute force login attempts. The first thing we did was look to see if
+there was an open source solution available that would do what we
+needed. The Docker Hub along with the authentication system is written
+in Python using <a href="http://www.djangoproject.com">Django</a> . So we did some
+research to see what was the best solution available to us. We quickly
+came to <a href="https://github.com/django-pci/django-axes">django-axes</a>, which
+is a great library, and had everything we were looking for. Best of all,
+it wasn&rsquo;t that hard to add to our system.</p>
+
+<p>When we started using django-axes our traffic was pretty normal, but
+with the explosive growth of Docker we have seen a huge increases in
+traffic. As the traffic increased, we started noticing that login times
+were slowing down. Upon further inspection we noticed that with
+django-axes turned on it was adding a 200 to 300ms overheard compared to
+when it was turned off. We did some more digging to see what was causing
+all of the delay, and we found out the reason is because django-axes
+stores all of its information in the database and in order to determine
+if someone is blocked you need to do a bunch of queries, and the more
+login attempts, the larger the axes database tables get, and thus the
+queries get slower, and in turn slows down the login process.</p>
+
+<p>Our first attempts to speed things up was to add more database indexes,
+and to run a script that kept the axes database tables small. This
+worked for a little while, but as the traffic increased, it stopped
+working. It was quickly determined that we would need to replace
+django-axes. We looked around at other brute force libraries, and there
+was nothing that offered what we needed for features, was fast, and well
+maintained.</p>
+
+<p>Since we couldn&rsquo;t find anything, I started working on a replacement. On
+one of my many cross country flights, I started working on a
+replacement. In order to make the process quicker, it started as a fork
+of django-axes, where I removed the stuff we didn&rsquo;t need, and then
+replaced the slow parts with faster ones. The main goal was to avoid
+hitting the database in order to determine if the user was blocked.
+Since we are big fans of <a href="http://redis.io">Redis</a>, and we were using it
+in other places already, we decided to use Redis as our backend for
+storing all of our data for determining if someone is blocked. We also
+allow the logging of login attempts to the database, but to speed things
+up, we defer this to a background celery task.</p>
+
+<p>After a few cross country flights, and some help from some of my
+co-workers, we now have a library, that we are using on the Docker Hub.
+We have been using it for about a month now, and the results have been
+great. With this new library we are seeing under a 10ms impact on our
+logins, which is really great. We are able to have the features we need
+without the overhead.</p>
+
+<p>Now that we have proven the project to be successful, we have decided to
+open source the library, so that others can also use it, and contribute
+back any features or improvements they might find important.</p>
+
+<p>So without further ado, I&rsquo;m proud to introduce <a href="https://github.com/kencochrane/django-defender">Django
+Defender</a>, a brute force
+login preventions library built for speed.</p>
+
+<p>We have labeled the first version 0.1, but it is very stable and already
+production ready. We have very good code coverage (95%+) and we have
+tests and support for a number of different Python and Django versions.</p>
+
+<p>We also have django admin pages that can be used to manage the blocked
+users and IP addresses.</p>
+
+<p>Please try it out, and let us know if you have any questions.</p>
+
+<h1 id="links:2832a4aab293d94e3010f852c52d8570">Links:</h1>
+
+<ul>
+<li><strong>Source code</strong>: <a href="https://github.com/kencochrane/django-defender">https://github.com/kencochrane/django-defender</a></li>
+<li><strong>PyPi</strong>: <a href="https://pypi.python.org/pypi/django-defender">https://pypi.python.org/pypi/django-defender</a></li>
+</ul>
+
+<h1 id="version-support:2832a4aab293d94e3010f852c52d8570">Version Support:</h1>
+
+<ul>
+<li><strong>Python</strong>: 2.6.x, 2.7.x, 3.3.x, 3.4.x, PyPy</li>
+<li><strong>Django</strong>: 1.6.x, 1.7.x</li>
+</ul>
+
+<h1 id="what-s-in-0-1:2832a4aab293d94e3010f852c52d8570">What&rsquo;s in 0.1:</h1>
+
+<ul>
+<li>Configurable: When to block, What to do when blocked.</li>
+<li>Uses Redis for data store.</li>
+<li>Blocking IP and usernames when too many login attempts</li>
+<li>Logging of access attempts to database.</li>
+<li>Celery for writing access attempt logs to the database in the
+background</li>
+<li>Admin pages (integrated with Django admin), to manage the blocked
+IP&rsquo;s and usernames.</li>
+</ul>
+
+<h1 id="how-to-install:2832a4aab293d94e3010f852c52d8570">How to install:</h1>
+
+<pre><code>$ pip install django-defender
+</code></pre>
+
+<h1 id="admin-screen-shots:2832a4aab293d94e3010f852c52d8570">Admin Screen shots:</h1>
+
+<p><img src="https://cloud.githubusercontent.com/assets/261601/5950540/8895b570-a729-11e4-9dc3-6b00e46c8043.png" alt="image" /></p>
+
+<p><img src="https://cloud.githubusercontent.com/assets/261601/5950541/88a35194-a729-11e4-981b-3a55b44ef9d5.png" alt="image" /></p>
+
+            </div>
+            <footer class="article-footer">
+    <a data-url="http://www.kencochrane.net/blog/2015/02/introducing-django-defender/" data-id="2832a4aab293d94e3010f852c52d8570" class="article-share-link">
+        Share
+    </a>
+    
+    <a href="http://www.kencochrane.net/blog/2015/02/introducing-django-defender//#disqus_thread" class="article-comment-link">
+        Comments
+    </a>
+    
+</footer>
+
+        </div>
+
+        
+<nav id="article-nav">
+    
+    <a href="http://www.kencochrane.net/blog/2015/02/upload-video-to-facebook-from-s3-using-python/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">
+          Older
+      </strong>
+      <div class="article-nav-title">Uploading a Video to Facebook from AWS S3 using python</div>
+    </a>
+    
+
+    
+</nav>
+
+
+    </article>
+    <section id="comments">
+        <div id="disqus_thread">
+            <div id="disqus_thread"></div>
+<script type="text/javascript">
+    var disqus_shortname = 'kencochrane';
+    var disqus_identifier = 'http:\/\/www.kencochrane.net\/blog\/2015\/02\/introducing-django-defender\/';
+    var disqus_title = 'Introducing Django Defender';
+    var disqus_url = 'http:\/\/www.kencochrane.net\/blog\/2015\/02\/introducing-django-defender\/';
+
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+        </div>
+    </section>
+
+</section>
+
+	    <aside id="sidebar">
+    
+<div class="widget-wrap">
+    <h3 class="widget-title">
+        Recents
+    </h3>
+    <div class="widget">
+        <ul id="recent-post">
+            
+            <li>
+                <div class="item-thumbnail">
+                    <a href="http://www.kencochrane.net/blog/2015/02/introducing-django-defender/" class="thumbnail">
+                    
+                        <span class="thumbnail-image thumbnail-none"></span>
+                    
+                    </a>
+                </div>
+                <div class="item-inner">
+                    
+                    <p class="item-category">
+                        <a class="article-category-link" href="http://www.kencochrane.net/categories/blog">
+                        blog
+                        </a>
+                    </p>
+                    
+                    <p class="item-title"><a href="http://www.kencochrane.net/blog/2015/02/introducing-django-defender/" class="title">Introducing Django Defender</a></p>
+                    <p class="item-date">
+                        <time datetime="2015-02-15 00:00:00 &#43;0000 UTC" itemprop="datePublished">2015-02-15</time>
+                    </p>
+                </div>
+            </li>
+            
+            <li>
+                <div class="item-thumbnail">
+                    <a href="http://www.kencochrane.net/blog/2015/02/upload-video-to-facebook-from-s3-using-python/" class="thumbnail">
+                    
+                        <span class="thumbnail-image thumbnail-none"></span>
+                    
+                    </a>
+                </div>
+                <div class="item-inner">
+                    
+                    <p class="item-category">
+                        <a class="article-category-link" href="http://www.kencochrane.net/categories/blog">
+                        blog
+                        </a>
+                    </p>
+                    
+                    <p class="item-title"><a href="http://www.kencochrane.net/blog/2015/02/upload-video-to-facebook-from-s3-using-python/" class="title">Uploading a Video to Facebook from AWS S3 using python</a></p>
+                    <p class="item-date">
+                        <time datetime="2015-02-14 00:00:00 &#43;0000 UTC" itemprop="datePublished">2015-02-14</time>
+                    </p>
+                </div>
+            </li>
+            
+            <li>
+                <div class="item-thumbnail">
+                    <a href="http://www.kencochrane.net/blog/2013/08/the-docker-guidebook/" class="thumbnail">
+                    
+                        <span class="thumbnail-image thumbnail-none"></span>
+                    
+                    </a>
+                </div>
+                <div class="item-inner">
+                    
+                    <p class="item-category">
+                        <a class="article-category-link" href="http://www.kencochrane.net/categories/blog">
+                        blog
+                        </a>
+                    </p>
+                    
+                    <p class="item-title"><a href="http://www.kencochrane.net/blog/2013/08/the-docker-guidebook/" class="title">The Docker Guidebook</a></p>
+                    <p class="item-date">
+                        <time datetime="2013-08-23 00:00:00 &#43;0000 UTC" itemprop="datePublished">2013-08-23</time>
+                    </p>
+                </div>
+            </li>
+            
+            <li>
+                <div class="item-thumbnail">
+                    <a href="http://www.kencochrane.net/blog/2013/06/running-docker-on-digital-ocean/" class="thumbnail">
+                    
+                        <span class="thumbnail-image thumbnail-none"></span>
+                    
+                    </a>
+                </div>
+                <div class="item-inner">
+                    
+                    <p class="item-category">
+                        <a class="article-category-link" href="http://www.kencochrane.net/categories/blog">
+                        blog
+                        </a>
+                    </p>
+                    
+                    <p class="item-title"><a href="http://www.kencochrane.net/blog/2013/06/running-docker-on-digital-ocean/" class="title">Running Docker on Digital Ocean with Ubuntu</a></p>
+                    <p class="item-date">
+                        <time datetime="2013-06-07 00:00:00 &#43;0000 UTC" itemprop="datePublished">2013-06-07</time>
+                    </p>
+                </div>
+            </li>
+            
+            <li>
+                <div class="item-thumbnail">
+                    <a href="http://www.kencochrane.net/blog/2013/05/running-docker-on-a-raspberrypi/" class="thumbnail">
+                    
+                        <span class="thumbnail-image thumbnail-none"></span>
+                    
+                    </a>
+                </div>
+                <div class="item-inner">
+                    
+                    <p class="item-category">
+                        <a class="article-category-link" href="http://www.kencochrane.net/categories/blog">
+                        blog
+                        </a>
+                    </p>
+                    
+                    <p class="item-title"><a href="http://www.kencochrane.net/blog/2013/05/running-docker-on-a-raspberrypi/" class="title">Getting Docker up and running on a RaspberryPi</a></p>
+                    <p class="item-date">
+                        <time datetime="2013-05-17 00:00:00 &#43;0000 UTC" itemprop="datePublished">2013-05-17</time>
+                    </p>
+                </div>
+            </li>
+            
+        </ul>
+    </div>
+</div>
+
+
+    
+
+
+<div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+        <ul class="category-list">
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/categories/blog">
+                    blog
+                </a>
+                <span class="category-list-count">39</span>
+            </li>
+            
+        </ul>
+    </div>
+</div>
+
+
+
+    
+
+
+<div class="widget-wrap">
+    <h3 class="widget-title">
+        Tags
+    </h3>
+    <div class="widget">
+        <ul class="category-list">
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/apache">
+                    apache
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/api">
+                    api
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/apphosted">
+                    apphosted
+                </a>
+                <span class="category-list-count">2</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/aufs">
+                    aufs
+                </a>
+                <span class="category-list-count">3</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/aws">
+                    aws
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/blog">
+                    blog
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/cashstar">
+                    cashstar
+                </a>
+                <span class="category-list-count">2</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/centos5">
+                    centos5
+                </a>
+                <span class="category-list-count">3</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/clickstream">
+                    clickstream
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/defender">
+                    defender
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/deployment">
+                    deployment
+                </a>
+                <span class="category-list-count">8</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/developers">
+                    developers
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/digital-ocean">
+                    digital-ocean
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/django">
+                    django
+                </a>
+                <span class="category-list-count">23</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/django-maine">
+                    django-maine
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/djangocms">
+                    djangocms
+                </a>
+                <span class="category-list-count">4</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/djangomaine">
+                    djangomaine
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/djangozoom">
+                    djangozoom
+                </a>
+                <span class="category-list-count">2</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/docker">
+                    docker
+                </a>
+                <span class="category-list-count">4</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/dotcloud">
+                    dotcloud
+                </a>
+                <span class="category-list-count">6</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/epio">
+                    epio
+                </a>
+                <span class="category-list-count">2</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/fabric">
+                    fabric
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/facebook">
+                    facebook
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/go">
+                    go
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/gondor">
+                    gondor
+                </a>
+                <span class="category-list-count">2</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/guidebook">
+                    guidebook
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/gunicorn">
+                    gunicorn
+                </a>
+                <span class="category-list-count">2</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/heroku">
+                    heroku
+                </a>
+                <span class="category-list-count">3</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/hosting">
+                    hosting
+                </a>
+                <span class="category-list-count">14</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/install">
+                    install
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/job">
+                    job
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/jobs">
+                    jobs
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/kernel">
+                    kernel
+                </a>
+                <span class="category-list-count">4</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/linux">
+                    linux
+                </a>
+                <span class="category-list-count">6</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/lxc">
+                    lxc
+                </a>
+                <span class="category-list-count">3</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/macosx">
+                    macosx
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/memcached">
+                    memcached
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/mercurial">
+                    mercurial
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/mysql">
+                    mysql
+                </a>
+                <span class="category-list-count">2</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/newrelic">
+                    newrelic
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/nginx">
+                    nginx
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/openshift">
+                    openshift
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/paas">
+                    paas
+                </a>
+                <span class="category-list-count">13</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/pci">
+                    pci
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/pelican">
+                    pelican
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/percona">
+                    percona
+                </a>
+                <span class="category-list-count">2</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/python">
+                    python
+                </a>
+                <span class="category-list-count">26</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/rackspace">
+                    rackspace
+                </a>
+                <span class="category-list-count">2</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/raspberrypi">
+                    raspberrypi
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/raspbian">
+                    raspbian
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/redis">
+                    redis
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/requests">
+                    requests
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/rhel5">
+                    rhel5
+                </a>
+                <span class="category-list-count">4</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/s3">
+                    s3
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/script">
+                    script
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/sentry">
+                    sentry
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/stackato">
+                    stackato
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/supervisor">
+                    supervisor
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/supervisord">
+                    supervisord
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/tutorial">
+                    tutorial
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/ubuntu">
+                    ubuntu
+                </a>
+                <span class="category-list-count">3</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/upgrade">
+                    upgrade
+                </a>
+                <span class="category-list-count">2</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/video">
+                    video
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/work">
+                    work
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+        </ul>
+    </div>
+</div>
+
+
+
+    
+
+
+<div class="widget-wrap">
+    <h3 class="widget-title">
+        Tag cloud
+    </h3>
+    <div class="widget tagcloud">
+        
+        <a href="http://www.kencochrane.net/tags/apache" style="font-size: 12px;">apache</a>
+        
+        <a href="http://www.kencochrane.net/tags/api" style="font-size: 12px;">api</a>
+        
+        <a href="http://www.kencochrane.net/tags/apphosted" style="font-size: 12px;">apphosted</a>
+        
+        <a href="http://www.kencochrane.net/tags/aufs" style="font-size: 12px;">aufs</a>
+        
+        <a href="http://www.kencochrane.net/tags/aws" style="font-size: 12px;">aws</a>
+        
+        <a href="http://www.kencochrane.net/tags/blog" style="font-size: 12px;">blog</a>
+        
+        <a href="http://www.kencochrane.net/tags/cashstar" style="font-size: 12px;">cashstar</a>
+        
+        <a href="http://www.kencochrane.net/tags/centos5" style="font-size: 12px;">centos5</a>
+        
+        <a href="http://www.kencochrane.net/tags/clickstream" style="font-size: 12px;">clickstream</a>
+        
+        <a href="http://www.kencochrane.net/tags/defender" style="font-size: 12px;">defender</a>
+        
+        <a href="http://www.kencochrane.net/tags/deployment" style="font-size: 12px;">deployment</a>
+        
+        <a href="http://www.kencochrane.net/tags/developers" style="font-size: 12px;">developers</a>
+        
+        <a href="http://www.kencochrane.net/tags/digital-ocean" style="font-size: 12px;">digital-ocean</a>
+        
+        <a href="http://www.kencochrane.net/tags/django" style="font-size: 12px;">django</a>
+        
+        <a href="http://www.kencochrane.net/tags/django-maine" style="font-size: 12px;">django-maine</a>
+        
+        <a href="http://www.kencochrane.net/tags/djangocms" style="font-size: 12px;">djangocms</a>
+        
+        <a href="http://www.kencochrane.net/tags/djangomaine" style="font-size: 12px;">djangomaine</a>
+        
+        <a href="http://www.kencochrane.net/tags/djangozoom" style="font-size: 12px;">djangozoom</a>
+        
+        <a href="http://www.kencochrane.net/tags/docker" style="font-size: 12px;">docker</a>
+        
+        <a href="http://www.kencochrane.net/tags/dotcloud" style="font-size: 12px;">dotcloud</a>
+        
+        <a href="http://www.kencochrane.net/tags/epio" style="font-size: 12px;">epio</a>
+        
+        <a href="http://www.kencochrane.net/tags/fabric" style="font-size: 12px;">fabric</a>
+        
+        <a href="http://www.kencochrane.net/tags/facebook" style="font-size: 12px;">facebook</a>
+        
+        <a href="http://www.kencochrane.net/tags/go" style="font-size: 12px;">go</a>
+        
+        <a href="http://www.kencochrane.net/tags/gondor" style="font-size: 12px;">gondor</a>
+        
+        <a href="http://www.kencochrane.net/tags/guidebook" style="font-size: 12px;">guidebook</a>
+        
+        <a href="http://www.kencochrane.net/tags/gunicorn" style="font-size: 12px;">gunicorn</a>
+        
+        <a href="http://www.kencochrane.net/tags/heroku" style="font-size: 12px;">heroku</a>
+        
+        <a href="http://www.kencochrane.net/tags/hosting" style="font-size: 12px;">hosting</a>
+        
+        <a href="http://www.kencochrane.net/tags/install" style="font-size: 12px;">install</a>
+        
+        <a href="http://www.kencochrane.net/tags/job" style="font-size: 12px;">job</a>
+        
+        <a href="http://www.kencochrane.net/tags/jobs" style="font-size: 12px;">jobs</a>
+        
+        <a href="http://www.kencochrane.net/tags/kernel" style="font-size: 12px;">kernel</a>
+        
+        <a href="http://www.kencochrane.net/tags/linux" style="font-size: 12px;">linux</a>
+        
+        <a href="http://www.kencochrane.net/tags/lxc" style="font-size: 12px;">lxc</a>
+        
+        <a href="http://www.kencochrane.net/tags/macosx" style="font-size: 12px;">macosx</a>
+        
+        <a href="http://www.kencochrane.net/tags/memcached" style="font-size: 12px;">memcached</a>
+        
+        <a href="http://www.kencochrane.net/tags/mercurial" style="font-size: 12px;">mercurial</a>
+        
+        <a href="http://www.kencochrane.net/tags/mysql" style="font-size: 12px;">mysql</a>
+        
+        <a href="http://www.kencochrane.net/tags/newrelic" style="font-size: 12px;">newrelic</a>
+        
+        <a href="http://www.kencochrane.net/tags/nginx" style="font-size: 12px;">nginx</a>
+        
+        <a href="http://www.kencochrane.net/tags/openshift" style="font-size: 12px;">openshift</a>
+        
+        <a href="http://www.kencochrane.net/tags/paas" style="font-size: 12px;">paas</a>
+        
+        <a href="http://www.kencochrane.net/tags/pci" style="font-size: 12px;">pci</a>
+        
+        <a href="http://www.kencochrane.net/tags/pelican" style="font-size: 12px;">pelican</a>
+        
+        <a href="http://www.kencochrane.net/tags/percona" style="font-size: 12px;">percona</a>
+        
+        <a href="http://www.kencochrane.net/tags/python" style="font-size: 12px;">python</a>
+        
+        <a href="http://www.kencochrane.net/tags/rackspace" style="font-size: 12px;">rackspace</a>
+        
+        <a href="http://www.kencochrane.net/tags/raspberrypi" style="font-size: 12px;">raspberrypi</a>
+        
+        <a href="http://www.kencochrane.net/tags/raspbian" style="font-size: 12px;">raspbian</a>
+        
+        <a href="http://www.kencochrane.net/tags/redis" style="font-size: 12px;">redis</a>
+        
+        <a href="http://www.kencochrane.net/tags/requests" style="font-size: 12px;">requests</a>
+        
+        <a href="http://www.kencochrane.net/tags/rhel5" style="font-size: 12px;">rhel5</a>
+        
+        <a href="http://www.kencochrane.net/tags/s3" style="font-size: 12px;">s3</a>
+        
+        <a href="http://www.kencochrane.net/tags/script" style="font-size: 12px;">script</a>
+        
+        <a href="http://www.kencochrane.net/tags/sentry" style="font-size: 12px;">sentry</a>
+        
+        <a href="http://www.kencochrane.net/tags/stackato" style="font-size: 12px;">stackato</a>
+        
+        <a href="http://www.kencochrane.net/tags/supervisor" style="font-size: 12px;">supervisor</a>
+        
+        <a href="http://www.kencochrane.net/tags/supervisord" style="font-size: 12px;">supervisord</a>
+        
+        <a href="http://www.kencochrane.net/tags/tutorial" style="font-size: 12px;">tutorial</a>
+        
+        <a href="http://www.kencochrane.net/tags/ubuntu" style="font-size: 12px;">ubuntu</a>
+        
+        <a href="http://www.kencochrane.net/tags/upgrade" style="font-size: 12px;">upgrade</a>
+        
+        <a href="http://www.kencochrane.net/tags/video" style="font-size: 12px;">video</a>
+        
+        <a href="http://www.kencochrane.net/tags/work" style="font-size: 12px;">work</a>
+        
+    </div>
+</div>
+
+
+
+
+    <div id="toTop" class="fa fa-chevron-up"></div>
+</aside>
+
+	</div>
+</div>
+
+<footer id="footer">
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2016
+      Powered by <a href="//gohugo.io">Hugo</a>. Theme by <a href="http://github.com/ppoffice">PPOffice</a>.
+    </div>
+  </div>
+</footer>
+
+
+<script>
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-67696-11', 'auto');
+ga('send', 'pageview');
+</script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+<script src="http://www.kencochrane.net/fancybox/jquery.fancybox.pack.js"></script>
+<script src="http://www.kencochrane.net/js/script.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.8.0/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+<!-- MathJax -->
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  tex2jax: {
+    inlineMath: [['$','$'], ['\\(','\\)']]}
+  });
+</script>
+<script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+</body>
+</html>

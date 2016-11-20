@@ -1,0 +1,3597 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Django on KenCochrane.net</title>
+    <link>http://www.kencochrane.net/tags/django/</link>
+    <description>Recent content in Django on KenCochrane.net</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sun, 15 Feb 2015 00:00:00 +0000</lastBuildDate>
+    <atom:link href="http://www.kencochrane.net/tags/django/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Introducing Django Defender</title>
+      <link>http://www.kencochrane.net/blog/2015/02/introducing-django-defender/</link>
+      <pubDate>Sun, 15 Feb 2015 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.kencochrane.net/blog/2015/02/introducing-django-defender/</guid>
+      <description>
+
+&lt;p&gt;Normally websites do very few logins, someone logs in once and their
+session is good for a bunch of hours. Since it&amp;rsquo;s a one time thing, it
+doesn&amp;rsquo;t matter if it isn&amp;rsquo;t very fast. At
+&lt;a href=&#34;https://www.docker.com&#34;&gt;Docker&lt;/a&gt; our authentication system handles
+requests for both the &lt;a href=&#34;https://hub.docker.com&#34;&gt;Docker Hub&lt;/a&gt;, as well as
+all Docker Engine commands that interact with the Docker Hub (docker
+push, pull, etc). This Authentication system handles thousands of login
+attempts every minute, so any slow down in the login process has a large
+impact on our system.&lt;/p&gt;
+
+&lt;p&gt;We are always looking at ways to improve the security of our systems,
+and one of the things we looked at implementing was a way to prevent
+brute force login attempts. The first thing we did was look to see if
+there was an open source solution available that would do what we
+needed. The Docker Hub along with the authentication system is written
+in Python using &lt;a href=&#34;http://www.djangoproject.com&#34;&gt;Django&lt;/a&gt; . So we did some
+research to see what was the best solution available to us. We quickly
+came to &lt;a href=&#34;https://github.com/django-pci/django-axes&#34;&gt;django-axes&lt;/a&gt;, which
+is a great library, and had everything we were looking for. Best of all,
+it wasn&amp;rsquo;t that hard to add to our system.&lt;/p&gt;
+
+&lt;p&gt;When we started using django-axes our traffic was pretty normal, but
+with the explosive growth of Docker we have seen a huge increases in
+traffic. As the traffic increased, we started noticing that login times
+were slowing down. Upon further inspection we noticed that with
+django-axes turned on it was adding a 200 to 300ms overheard compared to
+when it was turned off. We did some more digging to see what was causing
+all of the delay, and we found out the reason is because django-axes
+stores all of its information in the database and in order to determine
+if someone is blocked you need to do a bunch of queries, and the more
+login attempts, the larger the axes database tables get, and thus the
+queries get slower, and in turn slows down the login process.&lt;/p&gt;
+
+&lt;p&gt;Our first attempts to speed things up was to add more database indexes,
+and to run a script that kept the axes database tables small. This
+worked for a little while, but as the traffic increased, it stopped
+working. It was quickly determined that we would need to replace
+django-axes. We looked around at other brute force libraries, and there
+was nothing that offered what we needed for features, was fast, and well
+maintained.&lt;/p&gt;
+
+&lt;p&gt;Since we couldn&amp;rsquo;t find anything, I started working on a replacement. On
+one of my many cross country flights, I started working on a
+replacement. In order to make the process quicker, it started as a fork
+of django-axes, where I removed the stuff we didn&amp;rsquo;t need, and then
+replaced the slow parts with faster ones. The main goal was to avoid
+hitting the database in order to determine if the user was blocked.
+Since we are big fans of &lt;a href=&#34;http://redis.io&#34;&gt;Redis&lt;/a&gt;, and we were using it
+in other places already, we decided to use Redis as our backend for
+storing all of our data for determining if someone is blocked. We also
+allow the logging of login attempts to the database, but to speed things
+up, we defer this to a background celery task.&lt;/p&gt;
+
+&lt;p&gt;After a few cross country flights, and some help from some of my
+co-workers, we now have a library, that we are using on the Docker Hub.
+We have been using it for about a month now, and the results have been
+great. With this new library we are seeing under a 10ms impact on our
+logins, which is really great. We are able to have the features we need
+without the overhead.&lt;/p&gt;
+
+&lt;p&gt;Now that we have proven the project to be successful, we have decided to
+open source the library, so that others can also use it, and contribute
+back any features or improvements they might find important.&lt;/p&gt;
+
+&lt;p&gt;So without further ado, I&amp;rsquo;m proud to introduce &lt;a href=&#34;https://github.com/kencochrane/django-defender&#34;&gt;Django
+Defender&lt;/a&gt;, a brute force
+login preventions library built for speed.&lt;/p&gt;
+
+&lt;p&gt;We have labeled the first version 0.1, but it is very stable and already
+production ready. We have very good code coverage (95%+) and we have
+tests and support for a number of different Python and Django versions.&lt;/p&gt;
+
+&lt;p&gt;We also have django admin pages that can be used to manage the blocked
+users and IP addresses.&lt;/p&gt;
+
+&lt;p&gt;Please try it out, and let us know if you have any questions.&lt;/p&gt;
+
+&lt;h1 id=&#34;links:2832a4aab293d94e3010f852c52d8570&#34;&gt;Links:&lt;/h1&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Source code&lt;/strong&gt;: &lt;a href=&#34;https://github.com/kencochrane/django-defender&#34;&gt;https://github.com/kencochrane/django-defender&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;PyPi&lt;/strong&gt;: &lt;a href=&#34;https://pypi.python.org/pypi/django-defender&#34;&gt;https://pypi.python.org/pypi/django-defender&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&#34;version-support:2832a4aab293d94e3010f852c52d8570&#34;&gt;Version Support:&lt;/h1&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Python&lt;/strong&gt;: 2.6.x, 2.7.x, 3.3.x, 3.4.x, PyPy&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Django&lt;/strong&gt;: 1.6.x, 1.7.x&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&#34;what-s-in-0-1:2832a4aab293d94e3010f852c52d8570&#34;&gt;What&amp;rsquo;s in 0.1:&lt;/h1&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Configurable: When to block, What to do when blocked.&lt;/li&gt;
+&lt;li&gt;Uses Redis for data store.&lt;/li&gt;
+&lt;li&gt;Blocking IP and usernames when too many login attempts&lt;/li&gt;
+&lt;li&gt;Logging of access attempts to database.&lt;/li&gt;
+&lt;li&gt;Celery for writing access attempt logs to the database in the
+background&lt;/li&gt;
+&lt;li&gt;Admin pages (integrated with Django admin), to manage the blocked
+IP&amp;rsquo;s and usernames.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&#34;how-to-install:2832a4aab293d94e3010f852c52d8570&#34;&gt;How to install:&lt;/h1&gt;
+
+&lt;pre&gt;&lt;code&gt;$ pip install django-defender
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h1 id=&#34;admin-screen-shots:2832a4aab293d94e3010f852c52d8570&#34;&gt;Admin Screen shots:&lt;/h1&gt;
+
+&lt;p&gt;&lt;img src=&#34;https://cloud.githubusercontent.com/assets/261601/5950540/8895b570-a729-11e4-9dc3-6b00e46c8043.png&#34; alt=&#34;image&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;https://cloud.githubusercontent.com/assets/261601/5950541/88a35194-a729-11e4-981b-3a55b44ef9d5.png&#34; alt=&#34;image&#34; /&gt;&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Intro to Python and Django Presentation</title>
+      <link>http://www.kencochrane.net/blog/2013/02/intro-to-python-and-django-presentation/</link>
+      <pubDate>Tue, 19 Feb 2013 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.kencochrane.net/blog/2013/02/intro-to-python-and-django-presentation/</guid>
+      <description>
+
+&lt;p&gt;I recently gave a talk at a &lt;a href=&#34;http://www.DjangoMaine.com&#34;&gt;DjangoMaine&lt;/a&gt;
+meetup introducing folks to &lt;a href=&#34;http://python.org&#34;&gt;Python&lt;/a&gt; and
+&lt;a href=&#34;http://www.djangoproject.com&#34;&gt;Django&lt;/a&gt;. There wasn&amp;rsquo;t enough time to go
+over everything, so I tried to pick and choose the parts that I felt
+where important to go over, in order to have a good overview of what
+Python and Django is all about.&lt;/p&gt;
+
+&lt;p&gt;I hope this was useful to the folks that attended. If so, it would be
+really helpful to know what parts you would like to know more about.
+Then we can have some follow up talks doing a deeper dive into those
+select topics.&lt;/p&gt;
+
+&lt;h1 id=&#34;future-tutorials:4fc2b1faefdeda1197ff24a2851972b4&#34;&gt;Future Tutorials&lt;/h1&gt;
+
+&lt;p&gt;Also, if there is a demand, I&amp;rsquo;m willing to do a half or whole day Python
+and Django tutorial, where we would be able to take the time needed to
+go into all the different topics, so that you would have a good
+understanding of each one, when you left. Ideally I would probably break
+up the sessions into beginner, intermediate, and advanced so that people
+can move to the different levels as they get more familiar and
+comfortable with Django.&lt;/p&gt;
+
+&lt;p&gt;I would also like to offer a talk to local high schools. If we have
+enough kids that are interested, I&amp;rsquo;d be willing to go to your high
+school and give a talk and introduce these topics to the kids.&lt;/p&gt;
+
+&lt;p&gt;If you are interested in learning more about Django, please let me know.
+I don&amp;rsquo;t want to waste my time doing all the work preparing for a
+tutorial, if there isn&amp;rsquo;t enough demand.&lt;/p&gt;
+
+&lt;h1 id=&#34;slides:4fc2b1faefdeda1197ff24a2851972b4&#34;&gt;Slides&lt;/h1&gt;
+
+&lt;p&gt;We didn&amp;rsquo;t record the talk, but you can find my slides below.&lt;/p&gt;
+
+&lt;h1 id=&#34;download:4fc2b1faefdeda1197ff24a2851972b4&#34;&gt;Download&lt;/h1&gt;
+
+&lt;p&gt;The slides are also available to download in pdf form: &lt;a href=&#34;https://speakerd.s3.amazonaws.com/presentations/21c679705ccf0130a3061231381a97d7/intro-to-python-django_v2.pdf&#34;&gt;Intro to Python
+and Django Presentation
+slides&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;If you have any questions, or comments, feel free to contact me via the
+comments below, or on Twitter (@KenCochrane)&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Deploying my Django application to dotCloud: Part 2</title>
+      <link>http://www.kencochrane.net/blog/2012/03/deploying-a-django-application-on-dotcloud/</link>
+      <pubDate>Fri, 23 Mar 2012 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.kencochrane.net/blog/2012/03/deploying-a-django-application-on-dotcloud/</guid>
+      <description>
+
+&lt;p&gt;As I mentioned in a &lt;a href=&#34;http://kencochrane.net/blog/2012/03/im-now-working-for-dotcloud/&#34;&gt;recent blog
+post&lt;/a&gt;,
+in the 11 months since I wrote my &lt;a href=&#34;http://kencochrane.net/blog/2011/04/deploying-my-django-application-to-dotcloud/&#34;&gt;first post on
+dotCloud&lt;/a&gt;,
+I now work there. Besides me working there, there has been a lot of
+other changes at &lt;a href=&#34;http://www.dotcloud.com&#34;&gt;dotCloud&lt;/a&gt;, and I wanted to
+take the time to update my original post so that it was up to date and
+had all the recent information. I&amp;rsquo;m going to completely rewrite the old
+blog post here, with updated information, and leave the old one around
+for posterity.&lt;/p&gt;
+
+&lt;p&gt;dotCloud&amp;rsquo;s goal is to provide a bunch of different independent services
+that you can use as building blocks to build your application. If you
+need a database, take your pick from one of the many they support. Need
+an application that uses Django or Rails on the front end, and Java in
+the backend, that is fine, you can do that too. They realize that most
+developers don&amp;rsquo;t stick to one standard technology stack for all of their
+applications, so this allows you the flexibility to use the best tool
+for the job. It also gives you a nice playground to try out new services
+and see how they run without having to install, configure and maintain
+the service just for testing.&lt;/p&gt;
+
+&lt;p&gt;I&amp;rsquo;m going to go over the steps that it took to install my blog onto
+dotCloud, and hopefully answer some common questions along the way.&lt;/p&gt;
+
+&lt;h1 id=&#34;documentation:8d0e410e0ddddb0ed1940349f9f087b6&#34;&gt;Documentation&lt;/h1&gt;
+
+&lt;p&gt;Before I get started with any new service the first thing I usually do
+is look at the documentation. DotCloud has a nice list of documents
+along with some tutorials on how to get started. These 4 documents were
+the ones that I used the most.&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://docs.dotcloud.com/firststeps/platform-overview/&#34;&gt;http://docs.dotcloud.com/firststeps/platform-overview/&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://docs.dotcloud.com/tutorials/python/django/&#34;&gt;http://docs.dotcloud.com/tutorials/python/django/&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://docs.dotcloud.com/services/mysql/&#34;&gt;http://docs.dotcloud.com/services/mysql/&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://docs.dotcloud.com/services/mysql-masterslave/&#34;&gt;http://docs.dotcloud.com/services/mysql-masterslave/&lt;/a&gt;&lt;/p&gt;
+
+&lt;h1 id=&#34;first-steps:8d0e410e0ddddb0ed1940349f9f087b6&#34;&gt;First Steps:&lt;/h1&gt;
+
+&lt;p&gt;Like all cool services these days, dotCloud uses a python based CLI, so
+before we can get started we need to install the dotCloud client and
+configure it so that we can start using it.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;# create my dotcloud virtual environment.
+$ mkvirtualenv dotcloud
+
+# install dotcloud client using pip
+$ pip install dotcloud
+
+# create our application called blog
+$ dotcloud create blog
+
+#enter api key that we got from: http://www.dotcloud.com/account/settings when prompted
+#&amp;lt;key goes here&amp;gt;
+
+# if you were not prompted to enter your key you can run this command, and it will let you enter your API key again.
+$ dotcloud register
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Now that we have the client all setup, and an application created, now
+we can start building our service. I have forked my blog repository on
+github so that I could make dotCloud specific changes to it and not
+effect my original repo.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;# go into projects directory
+cd ~/projects
+
+# forked kencochranenet to kencochranenet_dotcloud, now clone that. locally
+git clone git://github.com/kencochrane/kencochranenet_dotcloud.git kencochranenet_dotcloud
+
+# go into the new directory.
+cd kencochrane_dotcloud
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Reading through the documentation tells me that I need to create a
+wsgi.py file and put in the root of my project. Using
+&lt;a href=&#34;http://docs.dotcloud.com/tutorials/python/django/#wsgi-py&#34;&gt;http://docs.dotcloud.com/tutorials/python/django/#wsgi-py&lt;/a&gt; as a
+template, I created my wsgi.py file below. I had issues with the default
+template and I needed to add a directory to the sys.path so that wsgi
+could find my django apps correctly. Here is my finished file.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode python&#34;&gt;import os
+import sys
+
+# Ken added this, only thing that is different from the example template (not counting settings file name)
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__),&#39;mysite&#39;)))
+os.environ[&#39;DJANGO_SETTINGS_MODULE&#39;] = &#39;mysite.settings&#39;
+
+import django.core.handlers.wsgi
+djangoapplication = django.core.handlers.wsgi.WSGIHandler()
+def application(environ, start_response):
+    if &#39;SCRIPT_NAME&#39; in environ:
+        del environ[&#39;SCRIPT_NAME&#39;]
+    return djangoapplication(environ, start_response)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;DotCloud uses &lt;a href=&#34;http://www.pip-installer.org/en/latest/#requirements-files&#34;&gt;PIP requirements
+files&lt;/a&gt; to
+manage your project dependencies. We already have our pip requirements
+file where it needs to be and named correctly so we don&amp;rsquo;t need to do
+anything, but if we didn&amp;rsquo;t have one, we would need to create one and put
+it in the root, and call it requirements.txt&lt;/p&gt;
+
+&lt;h2 id=&#34;services:8d0e410e0ddddb0ed1940349f9f087b6&#34;&gt;Services&lt;/h2&gt;
+
+&lt;p&gt;When we add a service to our deployment stack, dotCloud gives us the
+appropriate connection information in a file called
+&amp;lsquo;/home/dotcloud/environment.json&amp;rsquo; that is available to us on our
+deployment container. This allows us to not have to hard code
+username/password and server urls in our settings.py file, and it also
+makes it a little more secure for us since we don&amp;rsquo;t have to have that
+info in our source repository.&lt;/p&gt;
+
+&lt;p&gt;This is how we use it. At the top of your settings.py file you will need
+to add the following. snippet.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode python&#34;&gt;import json
+with open(&#39;/home/dotcloud/environment.json&#39;) as f:
+  env = json.load(f)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Once we have that added to the settings.py file, we now have a variable
+env that has all of the env settings we need.&lt;/p&gt;
+
+&lt;p&gt;You could go a little further add some custom code to check if the
+environment.json file exists, and if it does, you know you are in
+production, so use that setup, or if not, then you must be in local
+mode, so use your local settings. If you want to get really cool, you
+can have your own json file that has a similar setup for local
+development, and if it doesn&amp;rsquo;t find the dotcloud one, it could look for
+your own, and load your settings from that. This will allow you to use
+the same settings file for both production and dev, with only a little
+bit of code at the top to load the correct env file.&lt;/p&gt;
+
+&lt;h2 id=&#34;database:8d0e410e0ddddb0ed1940349f9f087b6&#34;&gt;Database&lt;/h2&gt;
+
+&lt;p&gt;Most applications need a database, and this blog is no different. This
+is how we setup our database to work with our blog on dotcloud. We are
+going to be using mysql for our database. With Django you need to set
+your database settings in your settings.py. This is how we setup a mysql
+database connection inside of our settings.py. Notice that the name of
+the database doesn&amp;rsquo;t come from the env, you pick that yourself.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode python&#34;&gt;DATABASES = {
+    &#39;default&#39;: {
+        &#39;ENGINE&#39;: &#39;django.db.backends.mysql&#39;,
+        &#39;NAME&#39;: &#39;blogdb&#39;,
+        &#39;USER&#39;: env[&#39;DOTCLOUD_DB_MYSQL_LOGIN&#39;],
+        &#39;PASSWORD&#39;: env[&#39;DOTCLOUD_DB_MYSQL_PASSWORD&#39;],
+        &#39;HOST&#39;: env[&#39;DOTCLOUD_DB_MYSQL_HOST&#39;],
+        &#39;PORT&#39;: int(env[&#39;DOTCLOUD_DB_MYSQL_PORT&#39;]),
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;create-the-database:8d0e410e0ddddb0ed1940349f9f087b6&#34;&gt;Create the Database&lt;/h2&gt;
+
+&lt;p&gt;dotCloud gives you your own dedicated database, with full root access.
+With great power comes great responsibilities. One of those
+responsibilities is that you need to create your own database schemas,
+and users yourself. Which means you normally need to do something like
+this.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;# connect to dotcloud mysql server instance
+$ dotcloud run blog.db -- mysql -u root -p
+
+# mysql -u root -p
+Enter password:
+Welcome to the MySQL monitor.  Commands end with ; or \g.
+Your MySQL connection id is 34
+Server version: 5.1.41-3ubuntu12.10 (Ubuntu)
+
+# create the user and database and give user permissions to database.
+
+Type &#39;help;&#39; or &#39;\h&#39; for help. Type &#39;\c&#39; to clear the current input statement.
+
+mysql&amp;gt; create database blogdb;
+Query OK, 1 row affected (0.00 sec)
+
+mysql&amp;gt; create user &#39;blog_username&#39; identified by &#39;strong_password&#39;;
+Query OK, 0 rows affected (0.05 sec)
+
+mysql&amp;gt; grant all on blogdb.* to &#39;blog_user&#39;@&#39;%&#39;;
+Query OK, 0 rows affected (0.04 sec)
+
+mysql&amp;gt; flush privileges;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql&amp;gt; exit;Bye
+Shared connection to database closed.
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Does that look familiar? I have it here in case you want to do it the
+long way.&lt;/p&gt;
+
+&lt;p&gt;To make things easier, we are going to create a small python script that
+will check to see if we have our database created, and if not, it will
+create it for us. This will make it so that we don&amp;rsquo;t have to login into
+our database and do it by hand before we deploy. The file is called
+createdb.py and this is what it looks like. This script is for mysql. If
+you want a postgreSQL database, you can use this as a template and
+change it so that it will work with postgreSQL.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode python&#34;&gt;import MySQLdb
+import os
+from wsgi import *
+
+def create_dbs(names):
+    print(&amp;quot;create_dbs: let&#39;s go.&amp;quot;)
+    django_settings = __import__(os.environ[&#39;DJANGO_SETTINGS_MODULE&#39;], fromlist=&#39;DATABASES&#39;)
+    print(&amp;quot;create_dbs: got settings.&amp;quot;)
+    databases = django_settings.DATABASES
+    for name, db in databases.iteritems():
+        if name in names and db[&#39;ENGINE&#39;].endswith(&#39;mysql&#39;):
+            host = db[&#39;HOST&#39;]
+            user = db[&#39;USER&#39;]
+            password = db[&#39;PASSWORD&#39;]
+            port = db[&#39;PORT&#39;]
+            db_name = db[&#39;NAME&#39;]
+            print &#39;creating database %s on %s&#39; % (db_name, host)
+            db = MySQLdb.connect(user=user,
+                                passwd=password,
+                                host=host,
+                                port=port)
+            cur = db.cursor()
+            print(&amp;quot;Check if database is already there.&amp;quot;)
+            cur.execute(&amp;quot;&amp;quot;&amp;quot;SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA
+                         WHERE SCHEMA_NAME = %s&amp;quot;&amp;quot;&amp;quot;, (db_name,))
+            results = cur.fetchone()
+            if not results:
+                print(&amp;quot;Database %s doesn&#39;t exist, lets create it.&amp;quot; % db_name)
+                sql = &amp;quot;&amp;quot;&amp;quot;CREATE DATABASE IF NOT EXISTS %s &amp;quot;&amp;quot;&amp;quot; % (db_name,)
+                print(&amp;quot;&amp;gt; %s&amp;quot; % sql)
+                cur.execute(sql)
+                print(&amp;quot;.....&amp;quot;)
+            else:
+                print(&amp;quot;database already exists, moving on to next step.&amp;quot;)
+
+
+if __name__ == &#39;__main__&#39;:
+    import sys
+    print(&amp;quot;create_dbs start&amp;quot;)
+    create_dbs(sys.argv[1:])
+    print(&amp;quot;create_dbs all done&amp;quot;)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;adding-a-cache:8d0e410e0ddddb0ed1940349f9f087b6&#34;&gt;Adding a cache&lt;/h2&gt;
+
+&lt;p&gt;Since most of the blog content doesn&amp;rsquo;t change much, it is a great
+candidate for caching. So we are going to take advantage of Django&amp;rsquo;s
+built in caching abilities and add some caching to our blog. Normally I
+use &lt;a href=&#34;http://memcached.org&#34;&gt;memcached&lt;/a&gt; for my caching, but dotCloud&amp;rsquo;s
+memcached support is limited right now. The reason why it is limited is
+because memcached doesn&amp;rsquo;t have any built in authentication mechanism,
+and in order to make sure it is secure, you need to run a special
+version of memcached that supports
+&lt;a href=&#34;http://code.google.com/p/memcached/wiki/SASLAuthProtocol&#34;&gt;SASL&lt;/a&gt;, and
+most of the memcached clients don&amp;rsquo;t support this. So instead of
+deploying an insecure service, they decided to not support it fully.
+There are ways to use it, but it involves all kind of complicated
+firewall rules and running something like stunnel. So it is possible,
+but it isn&amp;rsquo;t very clean.&lt;/p&gt;
+
+&lt;p&gt;Instead they recommend that you use &lt;a href=&#34;http://redis.io&#34;&gt;redis&lt;/a&gt; instead,
+redis has the same caching abilities that memcached has, plus a lot
+more, including authentication. So we are going to use redis for our
+cache. In order to use redis, we will need to add the redis library
+because redis caching support isn&amp;rsquo;t built into Django. In your
+requirements.txt file you will need to add &lt;code&gt;django-redis==1.4.5&lt;/code&gt; so that
+the libraries will be available for Django to use.&lt;/p&gt;
+
+&lt;p&gt;Once you have the library installed, you will need to add these settings
+to your settings.py file so that django knows which redis server and
+password to use.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode python&#34;&gt;CACHES = {
+    &#39;default&#39;: {
+        &#39;BACKEND&#39;: &#39;redis_cache.cache.RedisCache&#39;,
+        &#39;LOCATION&#39;: env[&#39;DOTCLOUD_CACHE_REDIS_HOST&#39;]+&#39;:&#39;+env[&#39;DOTCLOUD_CACHE_REDIS_PORT&#39;],
+        &#39;OPTIONS&#39;: {
+            &#39;DB&#39;: 1,
+            &#39;PASSWORD&#39;: env[&#39;DOTCLOUD_CACHE_REDIS_PASSWORD&#39;],
+            &#39;PARSER_CLASS&#39;: &#39;redis.connection.HiredisParser&#39;
+        },
+    },
+}
+
+# we also are going to use redis for our session cache as well.
+SESSION_ENGINE = &#39;django.contrib.sessions.backends.cached_db&#39;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;For more information about using redis as your cache for Django, check
+out these links.&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/niwibe/django-redis&#34;&gt;https://github.com/niwibe/django-redis&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://pypi.python.org/pypi/django-redis/1.4.5&#34;&gt;http://pypi.python.org/pypi/django-redis/1.4.5&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://docs.djangoproject.com/en/1.3/topics/cache/&#34;&gt;https://docs.djangoproject.com/en/1.3/topics/cache/&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://answers.dotcloud.com/question/213/redis-cache-settings-for-django&#34;&gt;http://answers.dotcloud.com/question/213/redis-cache-settings-for-django&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&#34;django-admin:8d0e410e0ddddb0ed1940349f9f087b6&#34;&gt;Django Admin&lt;/h2&gt;
+
+&lt;p&gt;We also need an easy way to create our django admin account for us. In
+order to do that I have this mkadmin.py script. This will default the
+password to &amp;lt;&amp;lsquo;P@s$w0rd1&amp;rsquo;&amp;gt;, once you have your code installed, you will
+need to login to the admin account and change your password to something
+more secure.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode python&#34;&gt;#!/usr/bin/env python
+from wsgi import *
+from django.contrib.auth.models import User
+u, created = User.objects.get_or_create(username=&#39;admin&#39;)
+if created:
+    u.set_password(&#39;P@s$w0rd1&#39;)
+    u.is_superuser = True
+    u.is_staff = True
+    u.save()
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;media:8d0e410e0ddddb0ed1940349f9f087b6&#34;&gt;Media&lt;/h2&gt;
+
+&lt;p&gt;We need to put our static and media files in the following locations:
+&lt;code&gt;static=/home/dotcloud/data/static/&lt;/code&gt; and
+&lt;code&gt;media=/home/dotcloud/data/media/&lt;/code&gt;. Because of this we need to make sure
+we change our settings.py file, and setup an nginx.conf file to map to
+the correct locations. Here are the settings.py file changes.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode python&#34;&gt;# media settings
+MEDIA_ROOT = &#39;/home/dotcloud/data/media/&#39;
+MEDIA_URL = &#39;/media/&#39;
+
+# static settings
+STATIC_ROOT = &#39;/home/dotcloud/data/static/&#39;
+STATIC_URL = &#39;/static/&#39;
+
+# admin prefix
+ADMIN_MEDIA_PREFIX = &#39;/static/admin/&#39;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Here is the nginx.conf&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode nginx&#34;&gt;location /media/ { root /home/dotcloud/data ; }
+location /static/ { root /home/dotcloud/data ; }
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;post-install:8d0e410e0ddddb0ed1940349f9f087b6&#34;&gt;Post Install&lt;/h2&gt;
+
+&lt;p&gt;We are going to create a
+&lt;a href=&#34;http://docs.dotcloud.com/guides/postinstall/&#34;&gt;postinstall&lt;/a&gt; script to
+handle all of the tasks we need to do after we install our code on the
+server. This is what will call our createdb.py, and mkadmin.py files
+from above, as well as syncing our database, running migrations and
+running collectstatic to move all static files into the right locations.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;#!/bin/sh
+python createdb.py default
+python mysite/manage.py syncdb --noinput
+python mysite/manage.py migrate
+python mkadmin.py
+mkdir -p /home/dotcloud/data/media /home/dotcloud/data/static
+python mysite/manage.py collectstatic --noinput
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Don&amp;rsquo;t forget to make sure your postinstall, createdb.py and mkadmin.py
+scripts are executable.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;# make the script executable.
+$ chmod +x postinstall createdb.py mkadmin.py
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;dotcloud-yml:8d0e410e0ddddb0ed1940349f9f087b6&#34;&gt;dotcloud.yml&lt;/h2&gt;
+
+&lt;p&gt;Now that we have our application&amp;rsquo;s project structure all setup and
+configured the way dotCloud wants it, we can configure our deployment
+stack. This is done with a file called dotcloud.yml. For more
+information about the dotcloud.yml file check out this link:
+&lt;a href=&#34;http://docs.dotcloud.com/guides/build-file/&#34;&gt;http://docs.dotcloud.com/guides/build-file/&lt;/a&gt;&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode yaml&#34;&gt;www:
+  type: python
+db:
+  type: mysql
+cache:
+  type: redis
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;This is telling us that we want 3 services, a python www service, a
+mysql db service, and a redis cache service. This is a very basic setup,
+and you can get a lot more complicated depending on what you want to
+achieve. Notice that this isn&amp;rsquo;t setup for high availability because none
+of the instances are scaled. See the section about scaling below for
+more information. If you are running in a production app on dotCloud it
+is recommended that you scale all of your services so that they can
+withstand EC2 server crashes, and other unforeseen issues.&lt;/p&gt;
+
+&lt;h2 id=&#34;deployment:8d0e410e0ddddb0ed1940349f9f087b6&#34;&gt;Deployment&lt;/h2&gt;
+
+&lt;p&gt;Now we are ready to deploy our Django app, but before I go any further
+it is important to know the following. Dotcloud will pay attention to
+your .gitignore files. If you have a settings file in your .gitignore
+file so that it doesn&amp;rsquo;t get saved in the repo, it will not push those
+changes up to the cloud. You will need to remove it from the .gitignore
+in order to get those files out there. It is also import to remember
+that only changes that are committed are pushed, so don&amp;rsquo;t forget to
+commit your changes. If you wanted to be tricky you could use a post
+install script to pull down the file from a secure location and install
+it that way, if you want to make things super secure.&lt;/p&gt;
+
+&lt;p&gt;Everything is all setup, so all we have to do is push our application to
+dotCloud.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;# push out your changes to the server
+$ dotcloud push blog .
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;service-info:8d0e410e0ddddb0ed1940349f9f087b6&#34;&gt;Service info&lt;/h2&gt;
+
+&lt;p&gt;Once you push your code to dotCloud you can see what it looks like by
+running the info command.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;# get the information about our new services
+$ dotcloud info blog
+cache:
+    config:
+        redis_password: &amp;lt;password&amp;gt;
+        redis_replication: true
+    instances: 1
+    type: redis
+db:
+    config:
+        mysql_masterslave: true
+        mysql_password: &amp;lt;password&amp;gt;
+    instances: 1
+    type: mysql
+www:
+    config:
+        static: static
+        uwsgi_processes: 4
+    instances: 1
+    type: python
+    url: &amp;lt;url was here&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;scaling:8d0e410e0ddddb0ed1940349f9f087b6&#34;&gt;Scaling&lt;/h2&gt;
+
+&lt;p&gt;Scaling is the ability to grow your application so that it can handle
+more traffic, or possible failures that might occur. With a normal non
+PaaS setup, scaling an application can be quite painful and time
+consuming, but with a PaaS it can be as easy as running a few commands.
+There are three types of scaling, Vertical, Horizontal, High
+Availability.&lt;/p&gt;
+
+&lt;p&gt;Vertical scaling, means growing the service you have now so that it can
+get bigger. This is popular with databases, the bigger a database gets
+the more space and memory it needs.&lt;/p&gt;
+
+&lt;p&gt;Horizontal scaling means creating more then one instance of a service so
+it spread the work between the different services, giving you greater
+capacity.&lt;/p&gt;
+
+&lt;p&gt;High Availability means that you have more then one service running at a
+time, so that if one of the services has an issue, the other one will
+pick up the slack. This will help avoid downtime, when failures occur
+(EC2 instance crashes). Ideally when running in production, all of your
+services should be scaled for High Availability.&lt;/p&gt;
+
+&lt;p&gt;There are two kinds of services, stateful, and stateless. Stateful
+services are services that holds persistent data. Examples of stateful
+services are mysql, redis, postgresql, solr, MongoDB and RabbitMQ.&lt;/p&gt;
+
+&lt;p&gt;Horizontally High availability scaling a stateful service on dotCloud
+means creating a master/slave setup, which can switch the slave with the
+master automatically if the master has any issues. dotCloud supports HA
+scaling on MySQL, redis, and MongoDB.&lt;/p&gt;
+
+&lt;p&gt;Stateful services scale like this&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;ul&gt;
+&lt;li&gt;mysql : 2 (master/slave)&lt;/li&gt;
+&lt;li&gt;redis : 2 (master/slave)&lt;/li&gt;
+&lt;li&gt;mongodb : 3 or 5 (using replica sets)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Scaling a stateless and one of the supported stateful services is the
+same. You would just run the scale command line command.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;$ dotcloud scale app db=2
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;For stateless applications, you are limited to a set number of scaling
+units, unless you are on the enterprise plan. If you need to have an
+application with lots of scale units, you should contact dotCloud, and
+let them know what you are planning to do, and they will advise you on
+how best to accomplish your goals.&lt;/p&gt;
+
+&lt;p&gt;Link: &lt;a href=&#34;http://docs.dotcloud.com/guides/scaling/&#34;&gt;http://docs.dotcloud.com/guides/scaling/&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;database-backups:8d0e410e0ddddb0ed1940349f9f087b6&#34;&gt;Database Backups&lt;/h2&gt;
+
+&lt;p&gt;Just because you are hosting your application on dotCloud doesn&amp;rsquo;t mean
+you shouldn&amp;rsquo;t backup your data. The most important data to backup is
+your database. Luckily dotCloud makes it easy to back up your database.
+There is a very helpful guide on how to setup your database backups
+here: &lt;a href=&#34;http://docs.dotcloud.com/guides/backups/&#34;&gt;http://docs.dotcloud.com/guides/backups/&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;email:8d0e410e0ddddb0ed1940349f9f087b6&#34;&gt;Email&lt;/h2&gt;
+
+&lt;p&gt;If you need to send or receive email from your application, you can do
+that to. Because dotCloud runs on EC2, and EC2 is a popular place where
+SPAMMERS send SPAM from, it is best to use a 3rd party email provider to
+send your emails for you. Popular ones are
+&lt;a href=&#34;http://mailgun.net/&#34;&gt;MailGun&lt;/a&gt;, &lt;a href=&#34;http://sendgrid.com/&#34;&gt;SendGrid&lt;/a&gt;,
+&lt;a href=&#34;http://www.critsend.com/&#34;&gt;CritSend&lt;/a&gt;, and &lt;a href=&#34;http://aws.amazon.com/ses/&#34;&gt;Amazon
+SES&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;You can set this up a couple of different ways. The first way is the
+easiest way possible, it allows you to configure the SMTP settings for
+each service. You would do it like this (see below). You can manually
+set the smtp settings for that service, and when your application needs
+to send an email it will use those settings. This is the most simple
+setup, but there are downsides to this approach. You would need to set
+this for each service, if you have more then one that will be duplicated
+everywhere. Also if you want to change your settings, you will need to
+destroy your service and recreate it, since those configs can only be
+set once when the service is created.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode yaml&#34;&gt;www:
+  type: python
+  config:
+    smtp_server: smtp.mailgun.org
+    smtp_port: 25
+    smtp_username: postmaster@company.com
+    smtp_password: YourMailGunPassword
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;A better approach would be to use dotCloud&amp;rsquo;s SMTP service. The SMTP
+service is built to receive emails from your services and forward them
+to the appropriate location. It is best to use a 3rd party email
+provider, but you can also use the typical poor mans solution, where you
+use gmail to send your emails. Be careful when using gmail, because you
+aren&amp;rsquo;t aloud to send a lot of emails via gmail, once you hit your daily
+limit you will be blocked, so this is fine for a few emails a day, don&amp;rsquo;t
+trust it for everyday stuff. Also, the emails will always be coming from
+your gmail address, fine for system emails, but not if you are trying to
+run a legit business.&lt;/p&gt;
+
+&lt;p&gt;Here is an example using mailgun.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode yaml&#34;&gt;mailer:
+  type: smtp
+  config:
+    smtp_relay_server: smtp.mailgun.org
+    smtp_relay_port: 587
+    smtp_relay_username: postmaster@yourmailgundomain.com
+    smtp_relay_password: YourMailgunPassword
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Here is an example using gmail.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode yaml&#34;&gt;mailer:
+  type: smtp
+  config:
+    smtp_relay_server: smtp.gmail.com
+    smtp_relay_port: 587
+    smtp_relay_username: your_gmail_username@gmail.com
+    smtp_relay_password: Your_Gmail_Password
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Once you have these all setup, they will be available in your
+environment.json file.&lt;/p&gt;
+
+&lt;p&gt;If you want to receive email, it is best to use a service like
+&lt;a href=&#34;http://mailgun.net/&#34;&gt;MailGun&lt;/a&gt; .&lt;/p&gt;
+
+&lt;p&gt;Links:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://docs.dotcloud.com/guides/emails/&#34;&gt;http://docs.dotcloud.com/guides/emails/&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://docs.dotcloud.com/services/smtp/&#34;&gt;http://docs.dotcloud.com/services/smtp/&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&#34;cron-jobs:8d0e410e0ddddb0ed1940349f9f087b6&#34;&gt;Cron jobs&lt;/h2&gt;
+
+&lt;p&gt;If your app needs to run cron jobs, follow the steps in this guide:
+&lt;a href=&#34;http://docs.dotcloud.com/guides/periodic-tasks/&#34;&gt;http://docs.dotcloud.com/guides/periodic-tasks/&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;celery:8d0e410e0ddddb0ed1940349f9f087b6&#34;&gt;Celery&lt;/h2&gt;
+
+&lt;p&gt;This blog doesn&amp;rsquo;t really have a need for celery, but dotCloud does
+support it. For more information follow this link:
+&lt;a href=&#34;http://docs.dotcloud.com/tutorials/python/django-celery/&#34;&gt;http://docs.dotcloud.com/tutorials/python/django-celery/&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;s3fs:8d0e410e0ddddb0ed1940349f9f087b6&#34;&gt;S3FS&lt;/h2&gt;
+
+&lt;p&gt;If you store data on s3 you can mount your s3 bucket so that you can
+have access to s3 from your application, just like it was a local
+directory on your container. This is helpful for storing files that are
+uploaded by your visitors, or to share files between different web
+processes. Follow these instructions to set it up:
+&lt;a href=&#34;http://docs.dotcloud.com/guides/s3fs/&#34;&gt;http://docs.dotcloud.com/guides/s3fs/&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;logs:8d0e410e0ddddb0ed1940349f9f087b6&#34;&gt;Logs&lt;/h2&gt;
+
+&lt;p&gt;If you need to look at the logs to see how it is going you can do it two
+ways. The first way will tail your logs for you to your console.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;# look at logs of your service, it will tail them to your console. ctrl-c to stop.
+$ dotcloud logs blog.www
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Or login via ssh and look at your logs.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;# Open up a shell
+$ dotcloud ssh blog.www
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Here are the ones you most likely care about.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;# nginx access and error logs.
+/var/log/nginx/&amp;lt;app_name&amp;gt;.{access,error}.log
+
+# wsgi error logs
+/var/log/supervisor/uswgi.log
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;restart-service:8d0e410e0ddddb0ed1940349f9f087b6&#34;&gt;Restart Service&lt;/h2&gt;
+
+&lt;p&gt;If you need to restart your service just issue this command.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;# restart the service
+dotcloud restart blog.www
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;links:8d0e410e0ddddb0ed1940349f9f087b6&#34;&gt;Links&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Read how this service stacks up against other services like it in my
+&lt;a href=&#34;http://kencochrane.net/blog/2011/06/django-hosting-roundup-who-wins/&#34;&gt;Django hosting
+roundup&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.dotCloud.com&#34;&gt;http://www.dotCloud.com&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Running sentry on DotCloud</title>
+      <link>http://www.kencochrane.net/blog/2012/01/running-sentry-on-dotcloud/</link>
+      <pubDate>Sat, 28 Jan 2012 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.kencochrane.net/blog/2012/01/running-sentry-on-dotcloud/</guid>
+      <description>&lt;p&gt;&lt;a href=&#34;https://github.com/dcramer/sentry&#34;&gt;Sentry&lt;/a&gt; is a realtime event logging
+and aggregation platform. At it’s core it specializes in monitoring
+errors and extracting all the information needed to do a proper
+post-mortum without any of the hassle of the standard user feedback
+loop.&lt;/p&gt;
+
+&lt;p&gt;The main feature of sentry and the ability to send all of your
+application logs to one place, and then aggregate them, so that you only
+get one error email for the same error. This will keep your mailbox from
+flooding, when something goes wrong.&lt;/p&gt;
+
+&lt;p&gt;Putting your logging server on a different server or network then your
+production servers is a good idea. If something goes wrong, and you
+can&amp;rsquo;t access your servers, you can still see what errors were getting
+thrown before the servers started having problems.&lt;/p&gt;
+
+&lt;p&gt;Follow these easy steps to get sentry up and running on DotCloud.&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Create a place to store your project&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;$ mkdir -p ~/projects
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Go into the projects directory&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;$ cd ~/projects
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Clone git repo from github, requires git client&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;$ git clone git://github.com/kencochrane/sentry-on-dotcloud.git
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Go into the new project directory&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;$ cd sentry-on-dotcloud
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Creating the virtualenv (using virtualenvwrapper, virtualenv,
+and pip)&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;$ mkvirtualenv --no-site-packages --distribute sentry-on-dotcloud
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Install all of the Sentry requirements via pip and the
+requirements.txt file.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;$ pip install -r requirements.txt
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Installing the dotCloud client
+&lt;a href=&#34;http://docs.dotcloud.com/firststeps/install/&#34;&gt;http://docs.dotcloud.com/firststeps/install/&lt;/a&gt; (here are the steps
+for Linux and Mac OSX)&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;$ sudo pip install -U dotcloud
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Sign up for a dotcloud account
+&lt;a href=&#34;https://www.dotcloud.com/accounts/register/&#34;&gt;https://www.dotcloud.com/accounts/register/&lt;/a&gt; if you
+haven&amp;rsquo;t already.&lt;/li&gt;
+&lt;li&gt;The first time you use the dotCloud account you will need to add
+your api key. So type dotcloud and follow the steps. You can find
+your API key at &lt;a href=&#34;http://www.dotcloud.com/account/settings&#34;&gt;http://www.dotcloud.com/account/settings&lt;/a&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;$ dotcloud
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Create your dotcloud application&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;$ dotcloud create sentry
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Change the SENTRY_KEY settings in these files, to the same
+unique value.
+
+&lt;ul&gt;
+&lt;li&gt;sentry_conf.py&lt;/li&gt;
+&lt;li&gt;sentryproj/settings.py&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;Here is an example on how to generate a good unique key that you can use
+in the files above.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode python&#34;&gt;&amp;gt;&amp;gt;&amp;gt; import base64
+&amp;gt;&amp;gt;&amp;gt; import os
+&amp;gt;&amp;gt;&amp;gt; KEY_LENGTH = 40
+&amp;gt;&amp;gt;&amp;gt; base64.b64encode(os.urandom(KEY_LENGTH))
+&#39;6+tSEh1qYwDuTaaQRcxUjMDkvlj4z9BU/caCFV5QKtvnH7ZF3i0knA==&#39;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Add your email address to SENTRY_ADMINS in sentryproj/settings.py .
+This will send you emails when an error occurs.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode python&#34;&gt;SENTRY_ADMINS = (&#39;youremail@example.com&#39;,)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Push your code into dotcloud&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;$ dotcloud push sentry .
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Find out your application url&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;$ dotcloud url sentry
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Open url in your browser and start using sentry on dotcloud.&lt;/li&gt;
+&lt;li&gt;First things first you should change the admin password from the
+default one that was created on deployment. The default username and
+password are found in the mkadmin.py file.&lt;/li&gt;
+&lt;li&gt;Test out sentry using the raven client to make sure it is working as
+it should. Open up a python shell on your local machine and do
+the following.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;Replace the server_url with your sentry url you found out in step 14.
+Make sure it ends in /store/ . Also make sure you replace my_key with
+your sentry key&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode python&#34;&gt;&amp;gt;&amp;gt;&amp;gt; from raven import Client
+&amp;gt;&amp;gt;&amp;gt; server_url = &amp;quot;http://sentry-username.dotcloud.com/store/&amp;quot;
+&amp;gt;&amp;gt;&amp;gt; my_key=&#39;1234-CHANGEME-WITH-YOUR-OWN-KEY-567890&#39;
+&amp;gt;&amp;gt;&amp;gt; client = Client(servers=[server_url], key=my_key)
+&amp;gt;&amp;gt;&amp;gt; client.create_from_text(&#39;My event just happened!&#39;)
+(&#39;48ba88039e0f425399118f82173682dd&#39;, &#39;3313fc5636650cccaee55dfc2f2ee7dd&#39;)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;If you go to the sentry webpage you should see your test message. If
+not, double check everything, and see if there was any errors during the
+send.&lt;/p&gt;
+
+&lt;p&gt;Once this is all up and running you can install the raven client in your
+applications, and start sending your logs to sentry.&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Optional: If you don&amp;rsquo;t like the URL they gave you, you can use your
+custom domain. Assuming your application was sentry.www and your
+domain was www.example.com you would do the following&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;$ dotcloud alias add sentry.www www.example.com
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Once you get comfortable with how things work, don&amp;rsquo;t forget to change
+your DEBUG setting to False. Go ahead and fork my project and get
+started today.&lt;/p&gt;
+
+&lt;dl&gt;
+&lt;dt&gt;For more info about dotcloud, sentry, and Raven and what you can do with with it. Check out their docs&lt;/dt&gt;
+&lt;dd&gt;&lt;ul&gt;
+&lt;li&gt;Sentry on DotCloud GitHub repo :
+&lt;a href=&#34;https://github.com/kencochrane/sentry-on-dotcloud&#34;&gt;https://github.com/kencochrane/sentry-on-dotcloud&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;ul&gt;
+&lt;li&gt;DotCloud overview:
+&lt;a href=&#34;http://docs.dotcloud.com/firststeps/platform-overview/&#34;&gt;http://docs.dotcloud.com/firststeps/platform-overview/&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Sentry Documentation:
+&lt;a href=&#34;http://sentry.readthedocs.org/en/latest/index.html&#34;&gt;http://sentry.readthedocs.org/en/latest/index.html&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Raven Documentation:
+&lt;a href=&#34;http://raven.readthedocs.org/en/latest/index.html&#34;&gt;http://raven.readthedocs.org/en/latest/index.html&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/dd&gt;
+&lt;dt&gt;Links:&lt;/dt&gt;
+&lt;dd&gt;&lt;ul&gt;
+&lt;li&gt;Virtualenv : &lt;a href=&#34;http://pypi.python.org/pypi/virtualenv&#34;&gt;http://pypi.python.org/pypi/virtualenv&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;ul&gt;
+&lt;li&gt;pip : &lt;a href=&#34;http://www.pip-installer.org/&#34;&gt;http://www.pip-installer.org/&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;virtualenvwrapper :
+&lt;a href=&#34;http://www.doughellmann.com/projects/virtualenvwrapper/&#34;&gt;http://www.doughellmann.com/projects/virtualenvwrapper/&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;git : &lt;a href=&#34;http://git-scm.com/&#34;&gt;http://git-scm.com/&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/dd&gt;
+&lt;/dl&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Getting DjangoCMS up and running on ActiveState&#39;s Stackato</title>
+      <link>http://www.kencochrane.net/blog/2012/01/getting-djangocms-up-and-running-on-stackato/</link>
+      <pubDate>Sun, 15 Jan 2012 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.kencochrane.net/blog/2012/01/getting-djangocms-up-and-running-on-stackato/</guid>
+      <description>
+
+&lt;p&gt;ActiveState has recently started their own PAAS based on
+&lt;a href=&#34;http://cloudfoundry.org/&#34;&gt;CloudFoundry&lt;/a&gt; this blog post is to help you
+get up and running quickly with a Django CMS installation, and hopefully
+give you enough information to get your own applications on there as
+well.&lt;/p&gt;
+
+&lt;p&gt;To keep things simple, I&amp;rsquo;ll just go through the steps that are required
+in order to get this up and running and add some comments along the way.
+If I missed anything or if you have any questions, please ask in the
+comments.&lt;/p&gt;
+
+&lt;h1 id=&#34;running-on-stackato:55e1c02ded8c9fbb4411836cd601d2c4&#34;&gt;Running on Stackato&lt;/h1&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Register for an account
+&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;ndash;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;Go to &lt;a href=&#34;http://community.activestate.com/stackato&#34;&gt;http://community.activestate.com/stackato&lt;/a&gt; and register for your
+account. They are currently in beta, and you need to be approved before
+they will give you access.&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Install the client
+&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;There are a few different options, follow the steps outlined here.
+&lt;a href=&#34;http://docs.stackato.com/quick-start.html#stackato-client-setup&#34;&gt;http://docs.stackato.com/quick-start.html#stackato-client-setup&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;I tried the option where you download the file, and rename it and put it
+in your path. It wasn&amp;rsquo;t complicated, but it wasn&amp;rsquo;t clean either. I chose
+this option because I didn&amp;rsquo;t want to install
+&lt;a href=&#34;http://code.activestate.com/pypm/&#34;&gt;pypm&lt;/a&gt;, so I&amp;rsquo;m not sure if that way
+is easier or not.&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Register your client to the cloud
+&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;Now that you have the client installed you need to tell it which cloud
+to deploy too. With Stackato, you can run your own local cloud as well
+as using the sandbox that ActiveState provided. To make things simple,
+I&amp;rsquo;m going to use the sandbox. If you want to use the local cloud you
+will need to &lt;a href=&#34;http://docs.stackato.com/quick-start.html#accesssing-the-micro-cloud&#34;&gt;read the
+directions&lt;/a&gt;
+on how to use the local cloud option.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;$ stackato target api.sandbox.activestate.com
+&amp;gt; Successfully targeted to [https://api.sandbox.activestate.com]
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Login to stackato
+&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;ndash;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;Once you point your client in the correct location, you will need to
+login to the cloud. You can find your login information on your
+&lt;a href=&#34;https://account.activestate.com/&#34;&gt;activestate account page&lt;/a&gt;. Type the
+following and answer the questions when prompted.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;$ stackato login
+&amp;gt; Successfully logged into [https://api.sandbox.activestate.com]
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Download this github repo
+&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;-&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;To make things easier, I have made a simple django project that has all
+of the configuration information setup so that you don&amp;rsquo;t need to do
+anything if you want to use djangoCMS. Look at my &lt;a href=&#34;https://github.com/kencochrane/django-cms-stackato&#34;&gt;github
+repo&lt;/a&gt;, and see how I
+did things if you want to get your own application up and running. If
+you want to use djangoCMS, then all you have to do is follow these
+steps.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;$ cd ~/projects
+$ git clone git://github.com/kencochrane/django-cms-stackato.git
+$ cd django-cms-stackato
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Deploy the project to stackato
+&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;Once you have your application ready, you can push the application to
+the cloud. When you do this it will prompt you for a bunch of questions,
+answer them and keep track of what you picked for a website url, because
+you will need that later. My application is called myblog, but you can
+put whatever you want, just change myblog with your name.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;$ stackato push myblog
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Initialize the database (optional)
+&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;-&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;I have set this up so that it should happen automatically at deployment
+see the stackato.yml file for more details. If you want to run the
+commands outside of deployments this is what you can do.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;$ stackato run myblog python mycms/manage.py syncdb --noinput
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Run south migrations (optional)
+&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;-&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;I have set this up so that it should happen automatically at deployment
+see the stackato.yml file for more details. If you want to run the
+commands outside of deployments this is what you can do. It is important
+to note &lt;em&gt;I had to run more then once since it was killed the first time.
+Maybe it took too long?&lt;/em&gt;.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;$ stackato run myblog python mycms/manage.py migrate --noinput
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Collect the static files (optional)
+&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;ndash;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;I have set this up so that it should happen automatically at deployment
+see the stackato.yml file for more details. If you want to run the
+commands outside of deployments this is what you can do.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;$ stackato run myblog python mycms/manage.py collectstatic --noinput
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Create the django admin account
+&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;ndash;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;Now that you have your application installed and you have your database
+setup, you need to create the django admin, you can do that with ths
+django management command. Make sure you replace the variables with your
+values.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;$ stackato run myblog python mycms/manage.py createsuperuser --username=admin --email=admin@example.com --noinput
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Change the password for the admin user
+&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;You need to set a password for the admin account so that you can login.
+Pick a more secure password then the example I have here. &lt;em&gt;(notice it is
+changepassword2 not changepassword)&lt;/em&gt;&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;$ stackato run myblog python mycms/manage.py changepassword2 admin secret123P@ssw0rd!
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Open up the url in your browser
+&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;&amp;ndash;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;When you open up the URL that you picked when you deployed in your
+browser you should find the DjangoCMS pony welcome page. If not, try
+debugging using some of the tips below.&lt;/p&gt;
+
+&lt;h1 id=&#34;conclusion:55e1c02ded8c9fbb4411836cd601d2c4&#34;&gt;Conclusion&lt;/h1&gt;
+
+&lt;p&gt;That is it, I did all the hard work, so you should be able to follow
+those simple steps and get djangoCMS up and running in no time. Once you
+get that working, play around with it, and let me know what you think.
+Have you tried the other PAAS options yet, if not check those out as
+well, and then let me know which ones you like better and why. I have
+written blog posts about most of them at this point, so feel free to
+check those out (links below), and have fun playing around.&lt;/p&gt;
+
+&lt;h2 id=&#34;other-useful-information:55e1c02ded8c9fbb4411836cd601d2c4&#34;&gt;Other Useful Information&lt;/h2&gt;
+
+&lt;h3 id=&#34;starting-an-application-if-it-isn-t-running:55e1c02ded8c9fbb4411836cd601d2c4&#34;&gt;Starting an application if it isn&amp;rsquo;t running&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;$ stackato start myblog
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;restarting-an-application:55e1c02ded8c9fbb4411836cd601d2c4&#34;&gt;Restarting an application&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;$ stackato restart myblog
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;stopping-an-application:55e1c02ded8c9fbb4411836cd601d2c4&#34;&gt;Stopping an application&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;$ stackato stop myblog
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;updating-application-after-it-is-already-deployed:55e1c02ded8c9fbb4411836cd601d2c4&#34;&gt;Updating application after it is already deployed&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;$ stackato update myblog
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;find-out-how-many-instances-you-have-running:55e1c02ded8c9fbb4411836cd601d2c4&#34;&gt;Find out how many instances you have running&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;$  stackato stats myblog
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;find-out-which-apps-you-have-installed-and-their-status:55e1c02ded8c9fbb4411836cd601d2c4&#34;&gt;Find out which apps you have installed, and their status&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;$ stackato apps
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;find-out-what-logs-you-have-for-your-applications:55e1c02ded8c9fbb4411836cd601d2c4&#34;&gt;Find out what logs you have for your applications&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;$ stackato files myblog logs
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;viewing-logs-for-your-app:55e1c02ded8c9fbb4411836cd601d2c4&#34;&gt;Viewing logs for your app&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;$ stackato logs myblog --all
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;running-cat-on-a-particular-log-file:55e1c02ded8c9fbb4411836cd601d2c4&#34;&gt;Running cat on a particular log file&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;$ stackato run myblog cat ../logs/myapp-err.log
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h1 id=&#34;links:55e1c02ded8c9fbb4411836cd601d2c4&#34;&gt;Links&lt;/h1&gt;
+
+&lt;ul&gt;
+&lt;li&gt;My github repo for this blog post:
+&lt;a href=&#34;https://github.com/kencochrane/django-cms-stackato&#34;&gt;https://github.com/kencochrane/django-cms-stackato&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Stackato Client command reference:
+&lt;a href=&#34;http://docs.stackato.com/commands.html#command-ref-client&#34;&gt;http://docs.stackato.com/commands.html#command-ref-client&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;stackato.yml reference:
+&lt;a href=&#34;http://docs.stackato.com/client.html#configure-stackato-yml&#34;&gt;http://docs.stackato.com/client.html#configure-stackato-yml&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Stackato quick start guide:
+&lt;a href=&#34;http://docs.stackato.com/quick-start.html&#34;&gt;http://docs.stackato.com/quick-start.html&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Stackato Sandbox Ground Rules, Content Policy and Quotas:
+&lt;a href=&#34;http://docs.stackato.com/sandbox.html&#34;&gt;http://docs.stackato.com/sandbox.html&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;ActiveState Account page: &lt;a href=&#34;https://account.activestate.com/&#34;&gt;https://account.activestate.com/&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;pip : &lt;a href=&#34;http://www.pip-installer.org/&#34;&gt;http://www.pip-installer.org/&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;git : &lt;a href=&#34;http://git-scm.com/&#34;&gt;http://git-scm.com/&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&#34;my-other-articles-related-to-paas:55e1c02ded8c9fbb4411836cd601d2c4&#34;&gt;My other articles related to PAAS:&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://kencochrane.net/blog/2011/04/my-experiences-with-epio/&#34;&gt;My Experiences with
+ep.io&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://kencochrane.net/blog/2011/05/apphosted-com-django-hosting-review/&#34;&gt;AppHosted.com Django Hosting Service
+Review&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://kencochrane.net/blog/2011/04/my-day-gondorio/&#34;&gt;My Day in
+Gondor.io&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://kencochrane.net/blog/2011/04/deploying-my-django-application-to-dotcloud/&#34;&gt;Deploying my Django application to
+DotCloud.com&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://DjangoZoom.com&#34;&gt;DjangoZoom.com Review&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://kencochrane.net/blog/2011/06/django-hosting-roundup-who-wins/&#34;&gt;Django hosting
+roundup&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://kencochrane.net/blog/2011/12/installing-djangocms-on-heroku-in-13-easy-steps/&#34;&gt;Installing DjangoCMS on Heroku in 13 easy
+steps&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://kencochrane.net/blog/2011/12/installing-djangocms-dotcloud-12-easy-steps/&#34;&gt;Installing DjangoCMS on dotCloud in 12 easy
+steps&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://kencochrane.net/blog/2011/11/developers-guide-for-running-django-apps-on-heroku/&#34;&gt;Developers guide to Running Django Applications on
+Heroku&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://kencochrane.net/blog/2012/01/installing-django-application-on-openshift/&#34;&gt;Installing a Django application on Red Hat&amp;rsquo;s OpenShift
+PAAS&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&#34;update:55e1c02ded8c9fbb4411836cd601d2c4&#34;&gt;Update&lt;/h2&gt;
+
+&lt;p&gt;2/16/2012: Full disclosure. On Feb 16th 2012, I accepted a job with
+dotCloud a competitor to Stackato. I plan on keeping this blog post up
+to date and impartial. If you think there are any errors, please let me
+know in the comments.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Installing a Django application on Red Hat&#39;s OpenShift PAAS</title>
+      <link>http://www.kencochrane.net/blog/2012/01/installing-django-application-on-openshift/</link>
+      <pubDate>Sat, 14 Jan 2012 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.kencochrane.net/blog/2012/01/installing-django-application-on-openshift/</guid>
+      <description>
+
+&lt;p&gt;It seems like everyone has their own
+&lt;a href=&#34;http://en.wikipedia.org/wiki/Platform_as_a_service&#34;&gt;PAAS&lt;/a&gt; solution
+these days, and if they don&amp;rsquo;t have one yet, it is just a matter of time
+before they will. Red Hat has recently joined in on the fun with their
+&lt;a href=&#34;https://openshift.redhat.com&#34;&gt;OpenShift&lt;/a&gt; platform.&lt;/p&gt;
+
+&lt;p&gt;I decided to take it for a test drive, and share my results with you.
+This service is still in beta and things are changing all of the time,
+so these notes might not work in the future, take that into
+consideration when using it as a guide.&lt;/p&gt;
+
+&lt;p&gt;There really isn&amp;rsquo;t much python documentation for this platform, and what
+documentation there is, is either a little out of date, or missing some
+important steps. Hopefully this guide will help you get your application
+up and running.&lt;/p&gt;
+
+&lt;p&gt;OpenShift is divided into two parts, Flex and Express.&lt;/p&gt;
+
+&lt;h1 id=&#34;flex-https-openshift-redhat-com-app-flex:7691e8103b37fb8a7e415dbcd78d4931&#34;&gt;&lt;a href=&#34;https://openshift.redhat.com/app/flex&#34;&gt;Flex&lt;/a&gt;:&lt;/h1&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;&amp;ldquo;Dedicated cloud solution. Get more control over your apps, or move
+your existing applications to the cloud with ease! Flex is a dedicated
+cloud solution that provides everything you need to easily scale,
+provision, deploy, and monitor your applications.&amp;rdquo;&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Flex runs on top of your amazon EC2 account, and currently only supports
+Java and PHP. It is targeting the enterprise crowd and has more features
+compared to Express.&lt;/p&gt;
+
+&lt;h1 id=&#34;express-https-openshift-redhat-com-app-express:7691e8103b37fb8a7e415dbcd78d4931&#34;&gt;&lt;a href=&#34;https://openshift.redhat.com/app/express&#34;&gt;Express&lt;/a&gt;:&lt;/h1&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;&amp;ldquo;Shared cloud solution. Express is a free, cloud-based application
+platform for Java, Perl, PHP, Python, and Ruby applications. It&amp;rsquo;s
+super-simple—your development environment is also your deployment
+environment: git push, and you&amp;rsquo;re in the cloud!&amp;rdquo;&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Express runs on Red Hat&amp;rsquo;s servers, and currently supports Java, Ruby,
+PHP, Perl and Python apps. It doesn&amp;rsquo;t have the same features of Flex,
+but if you don&amp;rsquo;t need those advanced features, then express might be
+fine for you. Since I&amp;rsquo;m interested in deploying python apps, and Express
+is the only one that supports python apps, that is the one I&amp;rsquo;ll show you
+today.&lt;/p&gt;
+
+&lt;p&gt;To make things easier to show you how things work, I&amp;rsquo;ll create a simple
+django application and walk you through the steps to deploying it. I&amp;rsquo;m
+going to deploy a djangoCMS to express that will connect to a mysql
+database.&lt;/p&gt;
+
+&lt;h2 id=&#34;steps:7691e8103b37fb8a7e415dbcd78d4931&#34;&gt;Steps:&lt;/h2&gt;
+
+&lt;h3 id=&#34;1-create-an-account:7691e8103b37fb8a7e415dbcd78d4931&#34;&gt;1. Create an account&lt;/h3&gt;
+
+&lt;p&gt;Create an account by filling out the form at
+&lt;a href=&#34;http://openshift.redhat.com/&#34;&gt;http://openshift.redhat.com/&lt;/a&gt; and don&amp;rsquo;t forget your username and
+password, you will need that later.&lt;/p&gt;
+
+&lt;h3 id=&#34;2-install-perquisites:7691e8103b37fb8a7e415dbcd78d4931&#34;&gt;2. Install Perquisites:&lt;/h3&gt;
+
+&lt;blockquote&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://git-scm.com/&#34;&gt;git&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://python.org&#34;&gt;python&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;openshift client&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;**&lt;a href=&#34;Git:**&#34;&gt;Git:**&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;I&amp;rsquo;m not going to go over the steps to install git, for more info, you
+can get it from the git website. &lt;a href=&#34;http://git-scm.com/download&#34;&gt;http://git-scm.com/download&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Python:&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;If you are using a Mac or linux, it most likely already has python
+installed, if you are using windows, you you don&amp;rsquo;t have python
+installed. Goto the python website and you will find instructions on
+how to install python on your system. &lt;a href=&#34;http://python.org/download/&#34;&gt;http://python.org/download/&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;OpenShift client:&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;For instructions on how to Install the client go to this page.
+&lt;a href=&#34;https://openshift.redhat.com/app/express#mac&#34;&gt;https://openshift.redhat.com/app/express#mac&lt;/a&gt; Here are my steps for
+Mac OSX&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;$ sudo gem install json_pure
+$ sudo gem install rhc
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;3-create-a-domain:7691e8103b37fb8a7e415dbcd78d4931&#34;&gt;3. Create a domain.&lt;/h3&gt;
+
+&lt;p&gt;Now that you have everything installed, your first step is to create a
+domain. Run the following command and replace \$mydoman and \$loginemail
+with your own domain and the login email you used when creating an
+account.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;$ rhc-create-domain -n $mydomain -l $loginemail
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;4-create-an-application:7691e8103b37fb8a7e415dbcd78d4931&#34;&gt;4. Create an application&lt;/h3&gt;
+
+&lt;p&gt;Now that you have a domain, you need to create an application that you
+can deploy to that domain. Running the following command will create a
+new wsgi application called &amp;lsquo;blog&amp;rsquo;. You can name your application
+anything you want, within reason. We pick wsgi, because our python
+application will be wsgi compatible.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;$ rhc-create-app -a blog -t wsgi-3.2
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;5-add-mysql-to-your-app:7691e8103b37fb8a7e415dbcd78d4931&#34;&gt;5. Add mysql to your app&lt;/h3&gt;
+
+&lt;p&gt;We want to use mysql as our database backend for this blog, so we need
+to add mysql to our application using the command below.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;$ rhc-ctl-app -a blog -e add-mysql-5.1
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;6-add-phpmyadmin-to-help-you-manage-your-database:7691e8103b37fb8a7e415dbcd78d4931&#34;&gt;6. Add phpmyadmin to help you manage your database&lt;/h3&gt;
+
+&lt;p&gt;OpenShift doesn&amp;rsquo;t give you direct access to your database, so you will
+need a way to manage your database a different way. They provide the
+ability to add PHPMyAdmin to your app so that you can get to your data.
+This step is optional, but recommended.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;$ rhc-ctl-app -a blog -e add-phpmyadmin-3.4
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;7-add-this-upstream-repo-from-github:7691e8103b37fb8a7e415dbcd78d4931&#34;&gt;7. Add this upstream repo from github&lt;/h3&gt;
+
+&lt;p&gt;When you create your application, it will create a directory with a
+bunch of other files and directories in it. If you were starting from
+scratch and building up your application you would start from here. To
+make things easier I created a project on github that will allow you to
+get up and running with DjangoCMS much faster. In order to use my
+project you will need to run the following commands so that it will pull
+down the code into your project.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;$ cd blog
+$ git remote add upstream -m master git://github.com/kencochrane/django-cms-openshift.git
+$ git pull -s recursive -X theirs upstream master
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Once the code is downloaded, you can take a look at the code, change
+anything you want and when you are ready you can deploy the app.&lt;/p&gt;
+
+&lt;h3 id=&#34;8-deploying-the-app:7691e8103b37fb8a7e415dbcd78d4931&#34;&gt;8. Deploying the app&lt;/h3&gt;
+
+&lt;p&gt;To deploy all you need to do is push the repo upstream into open shift.
+To this, you just need to run the following command.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;$ git push
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;When it pushes you application into open shift it will do the following.
+(without jenkins add-on installed)&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;ol&gt;
+&lt;li&gt;stop app&lt;/li&gt;
+&lt;li&gt;*pre_build&lt;/li&gt;
+&lt;li&gt;*build&lt;/li&gt;
+&lt;li&gt;start_dbs&lt;/li&gt;
+&lt;li&gt;*deploy&lt;/li&gt;
+&lt;li&gt;start_app&lt;/li&gt;
+&lt;li&gt;*post_deploy&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;The steps marked with a * are scripts that are located in
+&lt;em&gt;.openshift/action_hooks/&amp;lt;script_name&amp;gt;&lt;/em&gt; if you have something in
+those files it will run them, and if not, it will pass right by. These
+are very helpful if you want something to happen at points of the
+deployment process. For example, in the deploy script you will notice
+that I have some code to kick off the django syncdb, migrate, and
+collect static commands. These will run every time I deploy the app.&lt;/p&gt;
+
+&lt;p&gt;I have also created a django management command that will check to see
+if there is a django admin account created and if not, it will create
+one and set the default password. I had to do this because there is
+currently no way that I know of where you can kick off django management
+commands after the deployment is finished. It will only create the admin
+account once, and every other time it will just get ignored.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;IMPORTANT:&lt;/strong&gt; It is important to note that if you want to do anything
+related to the database, you can&amp;rsquo;t do it in the &lt;em&gt;pre_build&lt;/em&gt; or &lt;em&gt;build&lt;/em&gt;
+scripts, because the database isn&amp;rsquo;t available yet. This one thing caused
+me lots of pain, because I couldn&amp;rsquo;t figure out by my migrations were not
+working. If you do make the mistake of trying to do something database
+related in the &lt;em&gt;build&lt;/em&gt; script you will see an error like this.&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;&amp;ldquo;remote: ERROR 2003 (HY000): Can&amp;rsquo;t connect to MySQL server on
+&amp;lsquo;xxx.x.xx.x&amp;rsquo; (111)&amp;rdquo;&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;That&amp;rsquo;s it, you can now checkout your application at (default admin
+account is admin/&amp;lt;password given at deploy time&amp;gt;):&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;&lt;a href=&#34;http://blog-$yourdomain.rhcloud.com&#34;&gt;http://blog-$yourdomain.rhcloud.com&lt;/a&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Once you visit the page you should see the djangoCMS default page. First
+things first, login to the django admin, and change the password from
+the default password to something secure. Then get started building your
+own app.&lt;/p&gt;
+
+&lt;h2 id=&#34;helpful-tips:7691e8103b37fb8a7e415dbcd78d4931&#34;&gt;Helpful tips:&lt;/h2&gt;
+
+&lt;h3 id=&#34;viewing-logs:7691e8103b37fb8a7e415dbcd78d4931&#34;&gt;Viewing logs:&lt;/h3&gt;
+
+&lt;p&gt;If you would like to view your logs to see what is going on with your
+application you just need to run this command.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;$ rhc-tail-files -a blog
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;application-information:7691e8103b37fb8a7e415dbcd78d4931&#34;&gt;Application information:&lt;/h3&gt;
+
+&lt;p&gt;If you would like more information about your application you can run
+this command.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;$ rhc-user-info
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Also checkout the README file they add when you create an application,
+it is pretty helpful, and might answer some common questions.&lt;/p&gt;
+
+&lt;h3 id=&#34;application-dependencies:7691e8103b37fb8a7e415dbcd78d4931&#34;&gt;Application dependencies:&lt;/h3&gt;
+
+&lt;p&gt;OpenShift uses virtualenv but it doesn&amp;rsquo;t use pip, it depends on the
+dependencies be listed in the setup.py file. During the deploy process I
+did notice that it installed pip, so it might be possible to add a
+requirements.txt file, and then in your build action_hook script call
+pip install -r &amp;lt;path&amp;gt;/requirements.txt but I&amp;rsquo;m not sure if this is
+supported, or if it will cause problems, so it might be best to stick
+with what they have for now.&lt;/p&gt;
+
+&lt;h3 id=&#34;static-media:7691e8103b37fb8a7e415dbcd78d4931&#34;&gt;Static media:&lt;/h3&gt;
+
+&lt;p&gt;If you look in wsgi/static/.htaccess there a rewrite rule to get the
+media to work correctly, you can use this trick for other apache tricks
+if you want. For more information on this checkout the README file.&lt;/p&gt;
+
+&lt;h3 id=&#34;what-is-it-open-shift-running:7691e8103b37fb8a7e415dbcd78d4931&#34;&gt;What is it open shift running:&lt;/h3&gt;
+
+&lt;p&gt;Red Hat linux with Apache / mod_wsgi, and mysql 5.1&lt;/p&gt;
+
+&lt;h3 id=&#34;what-type-of-apps-do-they-support:7691e8103b37fb8a7e415dbcd78d4931&#34;&gt;What type of apps do they support?&lt;/h3&gt;
+
+&lt;p&gt;Here is the current link which can be found if you run this commands and
+look at the types.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;$ rhc-create-app -h
+
+raw-0.1, php-5.3, jbossas-7.0, rack-1.1, jenkins-1.4, perl-5.10, wsgi-3.2
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;what-else-does-it-support:7691e8103b37fb8a7e415dbcd78d4931&#34;&gt;What else does it support?&lt;/h3&gt;
+
+&lt;p&gt;Things are changing all of the time, but if you run this command you
+will get a list of the current supported addons.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;$ rhc-ctl-app -L
+
+List of supported embedded cartridges:
+
+Obtaining list of cartridges (please excuse the delay)...
+
+    - metrics-0.1
+    - mysql-5.1
+    - jenkins-client-1.4
+    - 10gen-mms-agent-0.1
+    - phpmyadmin-3.4
+    - rockmongo-1.1
+    - mongodb-2.0
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;web-based-control-panel:7691e8103b37fb8a7e415dbcd78d4931&#34;&gt;Web based control panel:&lt;/h3&gt;
+
+&lt;p&gt;They offer a web based control panel to do some of the things you can do
+with the command line, which will be nice, but it doesn&amp;rsquo;t work right
+now. It doesn&amp;rsquo;t display the correct information, and it doesn&amp;rsquo;t even
+show the applications I have created, so I don&amp;rsquo;t trust it. Hopefully
+these issues will get fixed in the future, and this tool will make it
+easier for less technical people to get started.&lt;/p&gt;
+
+&lt;h3 id=&#34;conclusion:7691e8103b37fb8a7e415dbcd78d4931&#34;&gt;Conclusion:&lt;/h3&gt;
+
+&lt;p&gt;It is nice to see another platform on the market, it is still pretty
+rough, and there isn&amp;rsquo;t much documentation, but I found it usable. I&amp;rsquo;m
+sure once they stabilize things, they will spend more time on the
+documentation side of things.&lt;/p&gt;
+
+&lt;h3 id=&#34;other-helpful-openshift-links:7691e8103b37fb8a7e415dbcd78d4931&#34;&gt;Other Helpful OpenShift links:&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/kencochrane/django-cms-openshift&#34;&gt;My GitHub repo for this
+article&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/openshift/django-example&#34;&gt;https://github.com/openshift/django-example&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://blog.ianweller.org/2011/05/12/openshift-express-first-thoughts/&#34;&gt;http://blog.ianweller.org/2011/05/12/openshift-express-first-thoughts/&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;my-other-articles-related-to-paas:7691e8103b37fb8a7e415dbcd78d4931&#34;&gt;My other articles related to PAAS:&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://kencochrane.net/blog/2011/04/my-experiences-with-epio/&#34;&gt;My Experiences with
+ep.io&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://kencochrane.net/blog/2011/05/apphosted-com-django-hosting-review/&#34;&gt;AppHosted.com Django Hosting Service
+Review&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://kencochrane.net/blog/2011/04/my-day-gondorio/&#34;&gt;My Day in
+Gondor.io&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://kencochrane.net/blog/2011/04/deploying-my-django-application-to-dotcloud/&#34;&gt;Deploying my Django application to
+DotCloud.com&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://DjangoZoom.com&#34;&gt;DjangoZoom.com Review&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://kencochrane.net/blog/2011/06/django-hosting-roundup-who-wins/&#34;&gt;Django hosting
+roundup&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://kencochrane.net/blog/2011/12/installing-djangocms-on-heroku-in-13-easy-steps/&#34;&gt;Installing DjangoCMS on Heroku in 13 easy
+steps&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://kencochrane.net/blog/2011/12/installing-djangocms-dotcloud-12-easy-steps/&#34;&gt;Installing DjangoCMS on dotCloud in 12 easy
+steps&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://kencochrane.net/blog/2011/11/developers-guide-for-running-django-apps-on-heroku/&#34;&gt;Developers guide to Running Django Applications on
+Heroku&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;update:7691e8103b37fb8a7e415dbcd78d4931&#34;&gt;Update&lt;/h3&gt;
+
+&lt;p&gt;2/16/2012: Full disclosure. On Feb 16th 2012, I accepted a job with
+dotCloud a competitor to openShift. I plan on keeping this blog post up
+to date and impartial. If you think there are any errors, please let me
+know in the comments.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Installing DjangoCMS on Heroku in 13 easy steps</title>
+      <link>http://www.kencochrane.net/blog/2011/12/installing-djangocms-on-heroku-in-13-easy-steps/</link>
+      <pubDate>Sat, 31 Dec 2011 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.kencochrane.net/blog/2011/12/installing-djangocms-on-heroku-in-13-easy-steps/</guid>
+      <description>&lt;p&gt;Do you want to use Django-cms on Heroku but don&amp;rsquo;t know where to start?
+All you need to do is follow these 13 easy steps, and they will get you
+on your way.&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;p&gt;Create a place to store your project&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;\$ mkdir -p ~/projects&lt;/p&gt;
+&lt;/blockquote&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Go into the projects directory&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;\$ cd ~/projects&lt;/p&gt;
+&lt;/blockquote&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Clone git repo from github, requires git client.&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;\$ git clone &lt;a href=&#34;git://github.com/kencochrane/django-cms-heroku.git&#34;&gt;git://github.com/kencochrane/django-cms-heroku.git&lt;/a&gt;&lt;/p&gt;
+&lt;/blockquote&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Go into the new project directory&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;\$ cd django-cms-heroku&lt;/p&gt;
+&lt;/blockquote&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Creating the virtualenv (using virtualenvwrapper, virtualenv,
+and pip)&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;\$ mkvirtualenv &amp;ndash;no-site-packages &amp;ndash;distribute django-cms-heroku&lt;/p&gt;
+&lt;/blockquote&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Sign-Up for a Heroku account. &lt;a href=&#34;https://api.heroku.com/signup&#34;&gt;https://api.heroku.com/signup&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Install the Heroku client.
+&lt;a href=&#34;http://devcenter.heroku.com/articles/quickstart&#34;&gt;http://devcenter.heroku.com/articles/quickstart&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;The first time you use the Heroku client you will need to login
+using the same information you used when you signed up. Follow the
+prompts, and it will finish your install.&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;\$ heroku login&lt;/p&gt;
+&lt;/blockquote&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Create your heroku application&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;\$ heroku create &amp;ndash;stack cedar&lt;/p&gt;
+&lt;/blockquote&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Push your code into heroku&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;\$ git push heroku master&lt;/p&gt;
+&lt;/blockquote&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Sync your database and create your admin account.&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;\$ heroku run python mycms/manage.py syncdb &amp;ndash;all&lt;/p&gt;
+&lt;/blockquote&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Run your database migrations.&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;\$ heroku run python mycms/manage.py migrate &amp;ndash;fake&lt;/p&gt;
+&lt;/blockquote&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Open application in your browser and start using djangoCMS
+on heroku.&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;\$ heroku open&lt;/p&gt;
+&lt;/blockquote&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;Once you get comfortable with how things work, you could add more
+plug-ins, create your own custom templates and then change your DEBUG
+setting to False. So go ahead &lt;a href=&#34;https://github.com/kencochrane/django-cms-heroku/fork&#34;&gt;fork my project on
+github&lt;/a&gt; and get
+started.&lt;/p&gt;
+
+&lt;p&gt;After you make changes to your local project directory, you can test it
+on the server by running the git push command again.&lt;/p&gt;
+
+&lt;dl&gt;
+&lt;dt&gt;For more info about Heroku and django-cms and what you can do with with it. check out their docs&lt;/dt&gt;
+&lt;dd&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://devcenter.heroku.com/categories/platform-basics&#34;&gt;http://devcenter.heroku.com/categories/platform-basics&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://www.django-cms.org/en/documentation/&#34;&gt;https://www.django-cms.org/en/documentation/&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/dd&gt;
+&lt;dt&gt;Links:&lt;/dt&gt;
+&lt;dd&gt;&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Virtualenv&lt;/strong&gt; : &lt;a href=&#34;http://pypi.python.org/pypi/virtualenv&#34;&gt;http://pypi.python.org/pypi/virtualenv&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;pip&lt;/strong&gt; : &lt;a href=&#34;http://www.pip-installer.org/&#34;&gt;http://www.pip-installer.org/&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;virtualenvwrapper&lt;/strong&gt; :
+&lt;a href=&#34;http://www.doughellmann.com/projects/virtualenvwrapper/&#34;&gt;http://www.doughellmann.com/projects/virtualenvwrapper/&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;git&lt;/strong&gt; : &lt;a href=&#34;http://git-scm.com/&#34;&gt;http://git-scm.com/&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/dd&gt;
+&lt;/dl&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Installing DjangoCMS on dotCloud in 12 easy steps</title>
+      <link>http://www.kencochrane.net/blog/2011/12/installing-djangocms-dotcloud-12-easy-steps/</link>
+      <pubDate>Sat, 31 Dec 2011 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.kencochrane.net/blog/2011/12/installing-djangocms-dotcloud-12-easy-steps/</guid>
+      <description>&lt;p&gt;Do you want to use Django-cms on dotcloud but don&amp;rsquo;t know where to start?
+All you need to do is follow these 12 easy steps, they will get you on
+your way.&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;p&gt;Create a place to store your project&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;\$ mkdir -p ~/projects&lt;/p&gt;
+&lt;/blockquote&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Go into the projects directory&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;\$ cd ~/projects&lt;/p&gt;
+&lt;/blockquote&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Clone git repo from github, requires git client.&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;\$ git clone
+&lt;a href=&#34;git://github.com/kencochrane/django-cms-dotcloud.git&#34;&gt;git://github.com/kencochrane/django-cms-dotcloud.git&lt;/a&gt;&lt;/p&gt;
+&lt;/blockquote&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Go into the new project directory&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;\$ cd django-cms-dotcloud&lt;/p&gt;
+&lt;/blockquote&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Creating the virtualenv (using virtualenvwrapper, virtualenv,
+and pip)&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;\$ mkvirtualenv &amp;ndash;no-site-packages &amp;ndash;distribute
+django-cms-dotcloud&lt;/p&gt;
+&lt;/blockquote&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Installing the dotCloud client
+&lt;a href=&#34;http://docs.dotcloud.com/firststeps/install/&#34;&gt;http://docs.dotcloud.com/firststeps/install/&lt;/a&gt; (here are the steps
+for Linux and Mac OSX)&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;\$ sudo pip install -U dotcloud&lt;/p&gt;
+&lt;/blockquote&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Sign up for a dotcloud account
+&lt;a href=&#34;https://www.dotcloud.com/accounts/register/&#34;&gt;https://www.dotcloud.com/accounts/register/&lt;/a&gt; if you
+haven&amp;rsquo;t already.&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;The first time you use the dotcloud account you will need to add
+your api key. So type dotcloud and follow the steps. You can find
+your API key at &lt;a href=&#34;http://www.dotcloud.com/account/settings&#34;&gt;http://www.dotcloud.com/account/settings&lt;/a&gt;&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;\$ dotcloud&lt;/p&gt;
+&lt;/blockquote&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Create your dotcloud application&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;\$ dotcloud create mycmsapp&lt;/p&gt;
+&lt;/blockquote&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Push your code into dotcloud&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;\$ dotcloud push mycmsapp .&lt;/p&gt;
+&lt;/blockquote&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Find out your application url.&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;\$ dotcloud url mycmsapp&lt;/p&gt;
+&lt;/blockquote&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Open url in your browser and start using djangoCMS on dotcloud.&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Optional: If you don&amp;rsquo;t like the URL they gave you, you can use your
+custom domain. Assuming your application was ramen.www and your
+domain was www.example.com you would do the following.&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;\$ dotcloud alias add ramen.www www.example.com&lt;/p&gt;
+&lt;/blockquote&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;Once you get comfortable with how things work, you could add more
+plug-ins, create your own custom templates and then change your DEBUG
+setting to False. So go ahead &lt;a href=&#34;https://github.com/kencochrane/django-cms-dotcloud/fork&#34;&gt;fork my project on
+github&lt;/a&gt; and get
+started.&lt;/p&gt;
+
+&lt;p&gt;After you make changes to your local project directory, you can test it
+on the server by running the dotcloud push command again.&lt;/p&gt;
+
+&lt;dl&gt;
+&lt;dt&gt;For more info about dotcloud and django-cms and what you can do with with it. check out their docs&lt;/dt&gt;
+&lt;dd&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://docs.dotcloud.com/firststeps/platform-overview/&#34;&gt;http://docs.dotcloud.com/firststeps/platform-overview/&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://www.django-cms.org/en/documentation/&#34;&gt;https://www.django-cms.org/en/documentation/&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/dd&gt;
+&lt;dt&gt;&lt;strong&gt;Links:&lt;/strong&gt;&lt;/dt&gt;
+&lt;dd&gt;&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;dotcloud&lt;/strong&gt; : &lt;a href=&#34;http://dotcloud.com&#34;&gt;http://dotcloud.com&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Virtualenv&lt;/strong&gt; : &lt;a href=&#34;http://pypi.python.org/pypi/virtualenv&#34;&gt;http://pypi.python.org/pypi/virtualenv&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;pip&lt;/strong&gt; : &lt;a href=&#34;http://www.pip-installer.org/&#34;&gt;http://www.pip-installer.org/&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;virtualenvwrapper&lt;/strong&gt; :
+&lt;a href=&#34;http://www.doughellmann.com/projects/virtualenvwrapper/&#34;&gt;http://www.doughellmann.com/projects/virtualenvwrapper/&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;git&lt;/strong&gt; : &lt;a href=&#34;http://git-scm.com/&#34;&gt;http://git-scm.com/&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/dd&gt;
+&lt;/dl&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Using New Relic with supervisord and gunicorn</title>
+      <link>http://www.kencochrane.net/blog/2011/12/using-new-relic-with-supervisord-and-gunicorn/</link>
+      <pubDate>Fri, 30 Dec 2011 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.kencochrane.net/blog/2011/12/using-new-relic-with-supervisord-and-gunicorn/</guid>
+      <description>&lt;p&gt;New Relic recently added support for python to their awesome web
+application performance tool, and I have been playing with it on a
+number of projects.&lt;/p&gt;
+
+&lt;p&gt;Installing and configuring new relic is pretty well covered in their own
+&lt;a href=&#34;http://newrelic.com/docs/python/&#34;&gt;documentation&lt;/a&gt;, so there is no reason
+for me to repeat that here. One thing that isn&amp;rsquo;t covered in the
+documentation is how to use new relic if you are using supervisord to
+control your gunicorn processes, and I&amp;rsquo;ll take this time right now to
+show you what I did.&lt;/p&gt;
+
+&lt;p&gt;Setting up new relic with supervisord and gunicorn is pretty easy. All
+that you need to do, is change your supervisor.conf file and then update
+your supevisor config, and you are good to go.&lt;/p&gt;
+
+&lt;p&gt;Here is the supervisor.conf file for my awesome app, before I installed
+new relic.&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;Note: These are not my real conf files, they have been changed to
+protect the guilty, so please excuse any typos.&lt;/em&gt;&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode txt&#34;&gt;[program:awesome_app]
+directory=/opt/apps/awesome_home/awesome_app/
+command=/opt/apps/awesome_home/bin/python2.6 /opt/apps/awesome_home/bin/gunicorn_django -c /opt/apps/awesome_home/awesome_app/conf/gunicorn.conf
+user=aweman
+autostart=true
+autorestart=true
+environment=HOME=&#39;/opt/apps/awesome_home/awesome_app/&#39;,DJANGO_SETTINGS_MODULE=&#39;settings&#39;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;After I installed new relic. All you need to do is add the
+&amp;lsquo;newrelic-admin run-program&amp;rsquo; command before the &amp;lsquo;gunicorn_django&amp;rsquo;
+command and add an ENV variable called NEW_RELIC_CONFIG_FILE that is
+pointing to your newrelic.ini file.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode txt&#34;&gt;[program:awesome_app]
+directory=/opt/apps/awesome_home/awesome_app/
+command=/opt/apps/awesome_home/bin/newrelic-admin run-program /opt/apps/awesome_home/bin/gunicorn_django -c /opt/apps/awesome_home/awesome_app/conf/gunicorn.conf
+user=aweman
+autostart=true
+autorestart=true
+environment=HOME=&#39;/opt/apps/awesome_home/awesome_app/&#39;,DJANGO_SETTINGS_MODULE=&#39;settings&#39;,NEW_RELIC_CONFIG_FILE=/opt/apps/awesome_home/awesome_app/conf/newrelic.ini
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Now that you have the new configuration setup, you will need to let
+supervisord know that you have changed t he configuration for that app.
+If you run the update command it will prompt supervisord to reread the
+configuration file for that app, and reload the config, and then restart
+the application with the new configuration.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;$ supervisorctl update
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Another thing that is important to note here, is the fact that New Relic
+currently doesn&amp;rsquo;t work well with Gunicorn in gevent mode. If you try to
+use gevent with gunicorn and new relic, it may not start up at all, or
+just not work as it should. Here is what they say in the &lt;a href=&#34;http://newrelic.com/docs/python/status-of-python-agent&#34;&gt;Known
+Issues&lt;/a&gt; section
+of their docs.&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;Gunicorn gevent mode - When using gevent mode of gunicorn and the
+&amp;lsquo;newrelic-admin run-program&amp;rsquo; command is used to wrap the invocation of
+gunicorn, the hosted web application can fail in strange ways. One way
+this is manifesting is with requests blocking for a period of 1
+minute. The cause of the problem is believed in this case to
+specifically relate to the order in which module imports are occuring.
+The monkey patching performed by gevent is not working properly for
+the case where the Python threading module is imported before the
+gevent monkey patching routine is run.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Because of this, I have changed my gunicorn&amp;rsquo;s to use eventlet when using
+new relic, and that seems to work fine. I normally prefer to use gevent,
+so hopefully they will be able to fix the issue with gevent so I can
+revert back to that setup.&lt;/p&gt;
+
+&lt;p&gt;All and all I have been pretty happy with new relic, it has helped us
+find issues with our code that would have been a pain otherwise. There
+support has been awesome, and they have been adding new fixes/
+improvements all the time. Can&amp;rsquo;t wait to see what else they have in
+store for the future. I would try it out if you can, they have a lite
+version that is free which even includes server monitoring.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Developers guide to Running Django Applications on Heroku</title>
+      <link>http://www.kencochrane.net/blog/2011/11/developers-guide-for-running-django-apps-on-heroku/</link>
+      <pubDate>Wed, 30 Nov 2011 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.kencochrane.net/blog/2011/11/developers-guide-for-running-django-apps-on-heroku/</guid>
+      <description>
+
+&lt;p&gt;&lt;a href=&#34;http://Heroku.com&#34;&gt;Heroku&lt;/a&gt; the platform as a service (PAAS) company,
+very popular in the Ruby on Rails community, has now started opening up
+their platform to languages besides Ruby. They now offer support for
+Python, Java, Clojure, Node.js, and Scala on their new Cedar stack.
+Heroku&amp;rsquo;s Cedar stack is still in beta, but that shouldn&amp;rsquo;t stop you from
+trying it out, and that is just what I&amp;rsquo;m going to do.&lt;/p&gt;
+
+&lt;p&gt;6 months ago I wrote a series of blog posts that reviewed all of the
+cool new django hosting services that were popping up. My goal was to
+look at them all, and compare them to find out what they had to offer,
+and to see if I could use them on my future projects. I&amp;rsquo;m going to
+review Heroku using the same process that I used to review those other
+services, so that I can we can compare apples to apples.&lt;/p&gt;
+
+&lt;p&gt;For those of you who are not familiar with my other blog posts, feel
+free to check them out now
+&lt;a href=&#34;http://kencochrane.net/blog/2011/04/my-experiences-with-epio/&#34;&gt;ep.io&lt;/a&gt;,
+&lt;a href=&#34;http://kencochrane.net/blog/2011/05/apphosted-com-django-hosting-review/&#34;&gt;apphosted.com&lt;/a&gt;,
+&lt;a href=&#34;http://kencochrane.net/blog/2011/04/my-day-gondorio/&#34;&gt;gondor.io&lt;/a&gt;,
+&lt;a href=&#34;http://kencochrane.net/blog/2011/04/deploying-my-django-application-to-dotcloud/&#34;&gt;dotcloud.com&lt;/a&gt;,
+&lt;a href=&#34;http://DjangoZoom.com&#34;&gt;DjangoZoom.com&lt;/a&gt;, &lt;a href=&#34;http://kencochrane.net/blog/2011/06/django-hosting-roundup-who-wins/&#34;&gt;Django hosting
+roundup&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;For those of you that are lazy, I&amp;rsquo;ll sum it up pretty quickly. What I&amp;rsquo;m
+trying to do is pretty simple, I sign up for the service, and just
+looking at the documentation available, can I get my blog application up
+and running, and what did I have to do, in order for it to work. I&amp;rsquo;ll
+describe each step along the way, as a helpful guide for others who
+might be trying to do the same with their application. If I come across
+an error, I will tell you what the error was, and how I fixed it, so
+that if you get the same error, hopefully what I did to fix my problem,
+will also fix yours.&lt;/p&gt;
+
+&lt;h1 id=&#34;heroku-django-documentation:cee93c979b55038b1b1ec8056ba75fc3&#34;&gt;Heroku Django Documentation&lt;/h1&gt;
+
+&lt;p&gt;Before you start using any new platform, you should take the time to
+read the documentation. I know it doesn&amp;rsquo;t sound like fun,but trust me,
+it will save you a lot of pain and frustration later on. Here are some
+links that I found helpful.&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Quickstart guide&lt;/strong&gt;:
+&lt;a href=&#34;http://devcenter.heroku.com/articles/quickstart&#34;&gt;http://devcenter.heroku.com/articles/quickstart&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Python articles&lt;/strong&gt;: &lt;a href=&#34;http://devcenter.heroku.com/articles/python&#34;&gt;http://devcenter.heroku.com/articles/python&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Django article&lt;/strong&gt;: &lt;a href=&#34;http://devcenter.heroku.com/articles/django&#34;&gt;http://devcenter.heroku.com/articles/django&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Dev Center&lt;/strong&gt;: &lt;a href=&#34;http://devcenter.heroku.com/&#34;&gt;http://devcenter.heroku.com/&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&#34;prerequisites:cee93c979b55038b1b1ec8056ba75fc3&#34;&gt;Prerequisites&lt;/h1&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Heroku account&lt;/li&gt;
+&lt;li&gt;Heroku command line client&lt;/li&gt;
+&lt;li&gt;Python 2.7, virtualenv, pip, git&lt;/li&gt;
+&lt;li&gt;Must use pip to manage dependencies with a requirements.txt file&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&#34;signing-up-for-heroku:cee93c979b55038b1b1ec8056ba75fc3&#34;&gt;Signing up for Heroku&lt;/h1&gt;
+
+&lt;p&gt;Signing up was as simple as can be, all I needed to do was follow this
+link: &lt;a href=&#34;https://api.heroku.com/signup&#34;&gt;https://api.heroku.com/signup&lt;/a&gt; and fill out my email address. Go
+into my email and click on the link they sent, which took me to a page
+that had me pick my password, and I was done. The whole process took
+less then 1 minute. Can&amp;rsquo;t beat that.&lt;/p&gt;
+
+&lt;h1 id=&#34;verifying-you-heroku-account:cee93c979b55038b1b1ec8056ba75fc3&#34;&gt;Verifying you Heroku account&lt;/h1&gt;
+
+&lt;p&gt;When you sign up for an account, you have limited access to some
+features (add-ons, etc.) until you verify your account. Verifing your
+account is easy all you have to do is enter your credit card
+information. This proves to them you are real, and also allows you to
+use some of the paid features. I recommend that you verify your account
+so that you can get access to some of the nice free add-ons that are
+available.&lt;/p&gt;
+
+&lt;h1 id=&#34;installing-the-heroku-command-line-client:cee93c979b55038b1b1ec8056ba75fc3&#34;&gt;Installing the heroku command line client&lt;/h1&gt;
+
+&lt;p&gt;I&amp;rsquo;m using a mac so I&amp;rsquo;m going to install the following version of the
+heroku command line client (toolbelt).
+&lt;a href=&#34;http://toolbelt.herokuapp.com/osx/download&#34;&gt;http://toolbelt.herokuapp.com/osx/download&lt;/a&gt;&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Click on link, download the file.&lt;/li&gt;
+&lt;li&gt;Find the file that was downloaded (heroku-toolbelt.pkg) and double
+click it.&lt;/li&gt;
+&lt;li&gt;Follow prompts; enter password when prompted, and click close.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h1 id=&#34;test-heroku-command-line-client:cee93c979b55038b1b1ec8056ba75fc3&#34;&gt;Test heroku command line client&lt;/h1&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Open terminial&lt;/li&gt;
+&lt;li&gt;Type &amp;ldquo;heroku version&amp;rdquo; you should see something like this
+&amp;ldquo;heroku-gem/2.14.0&amp;rdquo; if so, it worked. if not, you did
+something wrong.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h1 id=&#34;login-to-heroku-from-command-line-client:cee93c979b55038b1b1ec8056ba75fc3&#34;&gt;Login to heroku from command line client&lt;/h1&gt;
+
+&lt;p&gt;Logging into the client will try to find your ssh key, and upload it to
+heroku for pushing code later on. If you don&amp;rsquo;t have a key it will prompt
+you to create one. If you have more then one it will ask you which one
+you want to use.&lt;/p&gt;
+
+&lt;h2 id=&#34;no-key-found-example:cee93c979b55038b1b1ec8056ba75fc3&#34;&gt;No key found example&lt;/h2&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;$ heroku login
+Enter your Heroku credentials.
+Email: adam@example.comPassword:
+Could not find an existing public key.
+Would you like to generate one? [Yn]
+Generating new SSH public key.
+Uploading ssh public key /Users/adam/.ssh/id_rsa.pub
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;found-more-then-one-key-example:cee93c979b55038b1b1ec8056ba75fc3&#34;&gt;Found more then one key example&lt;/h2&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;$ heroku login
+Enter your Heroku credentials.
+Email: &amp;lt;my email&amp;gt;
+Password:
+Found the following SSH public keys:
+1) apphosted.key.pub
+2) id_rsa.pub
+Which would you like to use with your Heroku account? 2
+Uploading ssh public key /Users/ken/.ssh/id_rsa.pub
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h1 id=&#34;getting-your-django-application-ready:cee93c979b55038b1b1ec8056ba75fc3&#34;&gt;Getting your Django application ready&lt;/h1&gt;
+
+&lt;p&gt;Now that you have an account and the client installed, you are ready to
+get started. If you are starting from scratch I recommend following the
+steps in this tutorial. &lt;a href=&#34;http://devcenter.heroku.com/articles/django&#34;&gt;http://devcenter.heroku.com/articles/django&lt;/a&gt; .
+If you are like me and already have an application that you want to
+install on to Heroku, keep reading.&lt;/p&gt;
+
+&lt;p&gt;Since I already have a project, I&amp;rsquo;m going to tell you what I needed to
+do in order to get my blog application up and running on heroku. I
+followed the instructions from the heroku tutorial and went from there.
+Heroku depends on git, so I&amp;rsquo;m using a copy of my blog app that is hosted
+on github: &lt;a href=&#34;https://github.com/kencochrane/kencochrane_blog_heroku&#34;&gt;https://github.com/kencochrane/kencochrane_blog_heroku&lt;/a&gt;&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;$ cd /Users/ken/projects/github
+
+$ git clone https://kencochrane@github.com/kencochrane/kencochrane_blog_heroku.git kencochrane_heroku
+$ cd kencochrane_heroku
+
+# making a new virtual environment using virtualenvwrapper.
+$ mkvirtualenv --no-site-packages --distribute kencochrane_heroku
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;It should automatically activate the environment for you. If it doesn&amp;rsquo;t,
+run this command.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;$ workon kencochrane_heroku
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Now that I have my virtualenv, I need to install my requirements using
+pip.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;$ pip install -r requirements.txt
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h1 id=&#34;creating-django-application-on-heroku:cee93c979b55038b1b1ec8056ba75fc3&#34;&gt;Creating django application on heroku&lt;/h1&gt;
+
+&lt;p&gt;Creating an application on heroku is easy, you just need to run the
+following command.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;$ heroku create --stack cedar
+Creating some-name-4741... done, stack is cedar
+http://some-name-4741.herokuapp.com/ | git@heroku.com:some-name-4741.git
+Git remote heroku added
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h1 id=&#34;deploying-django-application-to-heroku:cee93c979b55038b1b1ec8056ba75fc3&#34;&gt;Deploying django application to Heroku&lt;/h1&gt;
+
+&lt;p&gt;Once you are ready you can deploy your django application to Heroku.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;$ git push heroku master
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;If everything went well, it should look something like this.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;$ git push heroku master
+Counting objects: 209, done.
+Delta compression using up to 4 threads.
+Compressing objects: 100% (176/176), done.
+Writing objects: 100% (209/209), 271.89 KiB, done.
+Total 209 (delta 28), reused 192 (delta 23)
+
+-----&amp;gt; Heroku receiving push
+-----&amp;gt; Python/Django app detected
+-----&amp;gt; Preparing virtualenv version 1.6.4
+       New python executable in ./bin/python
+       Installing setuptools............done.
+       Installing pip...............done.
+-----&amp;gt; Django settings injection
+       Injecting code into blog/settings.py to read from DATABASE_URL
+
+&amp;lt;removed a lot of output that doesn&#39;t need to be shown&amp;gt;
+
+       Successfully installed South django-activitysync django-debug-toolbar django-disqus django-memcache-status django-tagging django-xmlrpc feedparser httplib2 oauth2 python-memcached python-twitter simplejson yolk docutils Pygments psycopg2 Django
+       Cleaning up...
+-----&amp;gt; Discovering process types
+       Procfile declares types         -&amp;gt; (none)
+       Default types for Python/Django -&amp;gt; web
+-----&amp;gt; Compiled slug size is 10.3MB
+-----&amp;gt; Launching... done, v5
+       http://some-name-4741.herokuapp.com deployed to Heroku
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h1 id=&#34;deploying-application-to-heroku-failed-now-what:cee93c979b55038b1b1ec8056ba75fc3&#34;&gt;Deploying application to Heroku failed, now what?&lt;/h1&gt;
+
+&lt;p&gt;The very first time you push to master you will get something like this.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;$ git push heroku master
+
+The authenticity of host &#39;heroku.com (50.19.85.132)&#39; can&#39;t be established.
+RSA key fingerprint is 8b:48:5e:67:0e:c9:16:47:32:f2:87:0c:1f:c8:60:ad.
+Are you sure you want to continue connecting (yes/no)? yes
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;This is normal, just type &amp;lsquo;yes&amp;rsquo;, and you will never be prompted for this
+again.&lt;/p&gt;
+
+&lt;h2 id=&#34;django-app-must-be-in-a-package-subdirectory:cee93c979b55038b1b1ec8056ba75fc3&#34;&gt;Django app must be in a package subdirectory&lt;/h2&gt;
+
+&lt;p&gt;If you django project isn&amp;rsquo;t setup correctly, you will get an error like
+this.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;$ git push heroku master
+Counting objects: 199, done.
+Delta compression using up to 4 threads.
+Compressing objects: 100% (167/167), done.
+Writing objects: 100% (199/199), 270.86 KiB, done.
+Total 199 (delta 26), reused 192 (delta 23)
+
+
+-----&amp;gt; Heroku receiving push
+-----&amp;gt; Python app detected
+ !     Django app must be in a package subdirectory
+ !     Heroku push rejected, failed to compile Python app
+
+
+To git@heroku.com:some-name-4741.git
+ ! [remote rejected] master -&amp;gt; master (pre-receive hook declined)
+error: failed to push some refs to &#39;git@heroku.com:some-name-4741.git&#39;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;This failed, because django app must be in a package subdirectory.. So
+you need to change the way my django app is setup. Move all of the files
+under a django project directory except the .git directory and
+.gitignore and requirements.txt files. For an example of what this looks
+like, check out the project directory structure on my repo in github.&lt;/p&gt;
+
+&lt;h2 id=&#34;heroku-push-rejected-no-cedar-supported-app-detected:cee93c979b55038b1b1ec8056ba75fc3&#34;&gt;Heroku push rejected, no Cedar-supported app detected&lt;/h2&gt;
+
+&lt;p&gt;Another error you can get is this one. &amp;ldquo;Heroku push rejected, no
+Cedar-supported app detected&amp;rdquo;&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;$ git push heroku master
+Counting objects: 204, done.
+Delta compression using up to 4 threads.
+Compressing objects: 100% (171/171), done.
+Writing objects: 100% (204/204), 271.34 KiB, done.
+Total 204 (delta 27), reused 192 (delta 23)
+
+-----&amp;gt; Heroku receiving push
+ !     Heroku push rejected, no Cedar-supported app detected
+
+To git@heroku.com:cold-summer-4741.git
+ ! [remote rejected] master -&amp;gt; master (pre-receive hook declined)
+error: failed to push some refs to &#39;git@heroku.com:cold-summer-4741.git&#39;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;I had this error and I couldn&amp;rsquo;t figure it out. After searching through
+all of the heroku python docs (all 2 of them), I didn&amp;rsquo;t find anything,
+so I started doing some trial and error testing, and I finally figure
+out what was wrong. My django project directory was kencochrane_blog,
+and this had an underscore, and when I changed it to just kenblog (no
+more underscore), it worked. I couldn&amp;rsquo;t find anything anywhere that said
+you can&amp;rsquo;t use underscores for your django app name, so they might want
+to update their documentation, or possibly fix the bug. I&amp;rsquo;m not sure if
+this is by design or not, maybe someone can let me know.&lt;/p&gt;
+
+&lt;h1 id=&#34;check-django-application-status-on-heroku:cee93c979b55038b1b1ec8056ba75fc3&#34;&gt;Check Django application status on heroku&lt;/h1&gt;
+
+&lt;p&gt;Now that you have pushed your application out onto Heroku how do you
+know if it is actually running? The Heroku client has a command called
+ps, which will tell you what your processes are doing.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;$ heroku ps
+
+Process       State               Command
+------------  ------------------  ------------------------------
+web.1         crashed for 2m      python kenblog/manage.py runserver 0...
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;My django application looks like it crashed. Most likely because I
+didn&amp;rsquo;t setup the database yet, lets look at the logs to see what is
+causing the problems to be sure.&lt;/p&gt;
+
+&lt;h1 id=&#34;checking-django-application-logs-on-heroku:cee93c979b55038b1b1ec8056ba75fc3&#34;&gt;Checking Django application logs on Heroku&lt;/h1&gt;
+
+&lt;p&gt;The Heroku client has a nifty logs command that you can use to view the
+last chunk of logs for your application. It will combine all of your
+logs into one view, so that you don&amp;rsquo;t have to have more then one log
+process running. You can call it directly and get an output similar to
+the shell command &amp;lsquo;tail&amp;rsquo; and you can all use the &amp;lsquo;&amp;ndash;tail&amp;rsquo; option to
+follow the logs.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;$ heroku logs --tail
+2011-11-27T18:40:00+00:00 heroku[api]: Deploy 5f194d2 by kencochrane@2011-11-27T18:40:00+00:00 heroku[api]: Release v7 created by kencochrane@
+2011-11-27T18:40:00+00:00 heroku[web.1]: State changed from crashed to created
+2011-11-27T18:40:00+00:00 heroku[web.1]: State changed from created to starting
+2011-11-27T18:40:00+00:00 heroku[slugc]: Slug compilation finished
+2011-11-27T18:40:03+00:00 heroku[web.1]: Starting process with command `python kenblog/manage.py runserver 0.0.0.0:12033 --noreload`
+2011-11-27T18:40:04+00:00 app[web.1]: Unexpected error: (&amp;lt;type &#39;exceptions.NameError&#39;&amp;gt;, NameError(&amp;quot;name &#39;DATABASES&#39; is not defined&amp;quot;,), &amp;lt;traceback object at 0x1a7b128&amp;gt;)
+2011-11-27T18:40:05+00:00 app[web.1]: There is no South database module &#39;south.db.None&#39; for your database. Please either choose a supported database, check for SOUTH_DATABASE_ADAPTER[S] settings, or remove South from INSTALLED_APPS.
+2011-11-27T18:40:06+00:00 heroku[web.1]: State changed from starting to crashed
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Looks like it is an issue with the settings file. If you wanted to take
+a look at the settings file to see if we can find out what is wrong you
+can run the following command.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;# (your path will be different)
+$ heroku run cat kenblog/settings.py
+
+&amp;lt;normal settings file stuff with the following added at the end.&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode python&#34;&gt;import os, sys, urlparse
+urlparse.uses_netloc.append(&#39;postgres&#39;)
+urlparse.uses_netloc.append(&#39;mysql&#39;)
+try:
+    if os.environ.has_key(&#39;DATABASE_URL&#39;):
+        url = urlparse.urlparse(os.environ[&#39;DATABASE_URL&#39;])
+        DATABASES[&#39;default&#39;] = {
+            &#39;NAME&#39;:     url.path[1:],
+            &#39;USER&#39;:     url.username,
+            &#39;PASSWORD&#39;: url.password,
+            &#39;HOST&#39;:     url.hostname,
+            &#39;PORT&#39;:     url.port,
+        }
+        if url.scheme == &#39;postgres&#39;:
+            DATABASES[&#39;default&#39;][&#39;ENGINE&#39;] = &#39;django.db.backends.postgresql_psycopg2&#39;
+        if url.scheme == &#39;mysql&#39;:
+            DATABASES[&#39;default&#39;][&#39;ENGINE&#39;] = &#39;django.db.backends.mysql&#39;
+except:
+    print &amp;quot;Unexpected error:&amp;quot;, sys.exc_info()
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;This is odd, not sure why this is like this since I&amp;rsquo;m seeing the
+DATABASES variable above. Let&amp;rsquo;s check to see if the environment
+variables are there. (the output has been changed to protect the
+innocent, but you still get the picture). You can also use the command
+&amp;lsquo;heroku config&amp;rsquo; if you just want to see your application configuration
+options.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;$ heroku run env
+Running env attached to terminal... up, run.6
+DATABASE_URL=postgres://blah:somethingelse@ec2-555-55-555-555.compute-1.amazonaws.com/morestuff
+PORT=37265
+HOME=/app
+PYTHONUNBUFFERED=true
+TERM=xterm
+COLUMNS=153
+
+PATH=bin:/usr/local/bin:/usr/bin:/bin
+PWD=/app
+SHARED_DATABASE_URL=postgres://blah:evenmorestuff@ec2-555-55-555-555.compute-1.amazonaws.com/morestuff
+LINES=32
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;This output looks good the DATABASE_URL env variable is there, so that
+is OK. Looking more closely at my settings.py file I didn&amp;rsquo;t have a
+DATABASES variable because the last time I used this project, the other
+hosting provider didn&amp;rsquo;t require that I have one. So I have added a blank
+DATABASES variable, and that seems to have fixed my issue. Heroku,
+should make the error message a little nicer, add more notes to their
+documentation, or even better make their code handle the case when there
+is no DATABASES variable in the settings file. I have submitted a patch
+to fix this, so hopefully that will get rolled out in the near future.
+(&lt;a href=&#34;https://github.com/heroku/heroku-buildpack-python/pull/8&#34;&gt;https://github.com/heroku/heroku-buildpack-python/pull/8&lt;/a&gt;)&lt;/p&gt;
+
+&lt;p&gt;Now if we redeploy the app and look at the logs, they look much better.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;$ heroku logs
+2011-11-27T18:59:25+00:00 heroku[api]: Deploy 96be00f by kencochrane@
+2011-11-27T18:59:25+00:00 heroku[api]: Release v8 created by kencochrane@
+2011-11-27T18:59:25+00:00 heroku[web.1]: State changed from crashed to created
+2011-11-27T18:59:26+00:00 heroku[web.1]: State changed from created to starting
+2011-11-27T18:59:26+00:00 heroku[slugc]: Slug compilation finished
+2011-11-27T18:59:31+00:00 app[web.1]: 0 errors found
+2011-11-27T18:59:31+00:00 heroku[web.1]: State changed from starting to up
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h1 id=&#34;running-django-management-commands-on-heroku:cee93c979b55038b1b1ec8056ba75fc3&#34;&gt;Running django management commands on Heroku&lt;/h1&gt;
+
+&lt;p&gt;Running django management commands are easy you just need to run the
+following command and replace &amp;lt;command&amp;gt; with the management
+command you want to run. There are a few examples below.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;$ heroku run python kenblog/manage.py &amp;lt;command&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;running-django-shell-on-heroku:cee93c979b55038b1b1ec8056ba75fc3&#34;&gt;Running django shell on Heroku&lt;/h2&gt;
+
+&lt;p&gt;If you need to use the interactive python shell with django, you still
+can, you just need to run the following command.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;$ heroku run python kenblog/manage.py shell
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;syncing-django-database-on-heroku:cee93c979b55038b1b1ec8056ba75fc3&#34;&gt;Syncing Django Database on Heroku&lt;/h2&gt;
+
+&lt;p&gt;Now that our application is starting like it should let&amp;rsquo;s sync the db.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;$ heroku run python kenblog/manage.py syncdb
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;running-django-south-migrations-on-heroku:cee93c979b55038b1b1ec8056ba75fc3&#34;&gt;Running Django South Migrations on Heroku&lt;/h2&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;$ heroku run python kenblog/manage.py migrate
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Now lets look at our processes now&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;$ heroku ps
+Process       State               Command
+------------  ------------------  ------------------------------
+run.5         complete for 21m    cat kenblog/settings.py
+run.6         complete for 18m    env
+run.7         complete for 1m     python kenblog/manage.py syncdb
+run.8         complete for 1m     python kenblog/manage.py migrate
+web.1         up for 4m           python kenblog/manage.py runserver..
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Things are looking better, we are up, and it also shows our old commands
+that we ran.&lt;/p&gt;
+
+&lt;p&gt;if you need to work with the processes you have the following options.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;ps:dynos [QTY]                 # scale to QTY web processes
+ps:restart [PROCESS]           # restart an app process
+ps:scale PROCESS1=AMOUNT1 ...  # scale processes by the given amount
+ps:stop PROCESS                # stop an app process
+ps:workers [QTY]               # scale to QTY background processes
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h1 id=&#34;opening-your-django-application-in-a-web-browser:cee93c979b55038b1b1ec8056ba75fc3&#34;&gt;Opening your django application in a web browser&lt;/h1&gt;
+
+&lt;p&gt;If you run this command it will open a web browser and hopefully your
+site is running as it should&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;$ heroku open
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h1 id=&#34;running-django-and-gunicorn-on-heroku:cee93c979b55038b1b1ec8056ba75fc3&#34;&gt;Running django and gunicorn on heroku&lt;/h1&gt;
+
+&lt;p&gt;By default heroku deploys with the built in django runserver, which
+isn&amp;rsquo;t recommended for production. If you are playing around it is ok,
+but once you get past that, the first thing you should do is switch to
+something better like guincorn. Switching is quick and painless, and you
+will be glad that you did.&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Add gunicorn==0.13.4 to your requirements file.&lt;/li&gt;
+&lt;li&gt;create a new file called Procfile at the same level as your
+requirements.txt file with the following in it.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;web: python kenblog/manage.py run_gunicorn -b &amp;quot;0.0.0.0:$PORT&amp;quot; -w 3
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Add gunicorn to the installed_apps in settings.py&lt;/p&gt;
+
+&lt;p&gt;then&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;$ git commit -am &amp;quot;use gunicorn&amp;quot;
+$ git push heroku master
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Looking at your logs you will see it up and running&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;$ heroku logs
+2011-11-27T21:06:24+00:00 heroku[slugc]: Slug compilation started
+2011-11-27T21:06:32+00:00 heroku[api]: Deploy 7b2eec1 by kencochrane@
+2011-11-27T21:06:32+00:00 heroku[api]: Release v8 created by kencochrane@
+2011-11-27T21:06:32+00:00 heroku[web.1]: State changed from created to starting
+2011-11-27T21:06:35+00:00 heroku[web.1]: Starting process with command `python kenblog/manage.py run_gunicorn -b &amp;quot;0.0.0.0:4075&amp;quot; -w 3`
+2011-11-27T21:06:36+00:00 app[web.1]: Validating models...
+2011-11-27T21:06:37+00:00 heroku[web.1]: State changed from starting to up
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h1 id=&#34;running-django-celery-background-tasks-on-heroku:cee93c979b55038b1b1ec8056ba75fc3&#34;&gt;Running django/celery background tasks on Heroku&lt;/h1&gt;
+
+&lt;p&gt;Heroku offers you two types of processes, a web process and a worker
+process. Web processes are used for serving web pages, etc. Worker
+processes are used for items that run in the background. The heroku
+tutorial goes over how to setup background task using celery and kombu
+(&lt;a href=&#34;http://devcenter.heroku.com/articles/django&#34;&gt;http://devcenter.heroku.com/articles/django&lt;/a&gt;) if you want more info I
+would check that out.&lt;/p&gt;
+
+&lt;h1 id=&#34;serving-django-static-media-on-heroku:cee93c979b55038b1b1ec8056ba75fc3&#34;&gt;Serving Django Static media on Heroku&lt;/h1&gt;
+
+&lt;p&gt;I&amp;rsquo;m not sure how to serve up static media on heroku, to get my app
+working I just used the built in &amp;ldquo;django.views.static.serve&amp;rdquo; views for
+now, this isn&amp;rsquo;t ideal and you would want a more permanent solution. A
+more long term solution would be to push all static media into Amazon s3
+and then use Amazon cloudfront to serve everything.&lt;/p&gt;
+
+&lt;h1 id=&#34;uploading-files-to-heroku-with-django:cee93c979b55038b1b1ec8056ba75fc3&#34;&gt;Uploading files to Heroku with Django&lt;/h1&gt;
+
+&lt;p&gt;Heroku allows you to upload files to their app&amp;rsquo;s &amp;ldquo;Emphemeral
+Filesystem&amp;rdquo;:
+&lt;a href=&#34;http://devcenter.heroku.com/articles/dyno-isolation#ephemeral_filesystem&#34;&gt;http://devcenter.heroku.com/articles/dyno-isolation#ephemeral_filesystem&lt;/a&gt;&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;&amp;ldquo;Which the app can use as a temporary scratchpad, but no files it
+writes are visible to any other &amp;ldquo;Each dyno gets its own ephemeral
+filesystem, with a fresh copy of the most recently deployed code.
+During its lifetime the dyno can use the filesystem as a temporary
+scratchpad, but no files it writes are visible to any other dyno
+(including other dynos in the application) and any files written will
+be discarded the moment the dyno is stopped or restarted.&amp;rdquo;&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;This means you can&amp;rsquo;t use this space to store uploaded files, but it
+should allow you to upload it there for a minute, and then send it over
+to Amazon S3 for a more permant storage solution. You could use a tool
+like Django Queued storage for this:
+&lt;a href=&#34;https://github.com/jezdez/django-queued-storage&#34;&gt;https://github.com/jezdez/django-queued-storage&lt;/a&gt;&lt;/p&gt;
+
+&lt;h1 id=&#34;databases:cee93c979b55038b1b1ec8056ba75fc3&#34;&gt;Databases&lt;/h1&gt;
+
+&lt;p&gt;Heroku gives each app a 5MB shared postgresql database for FREE. If you
+pay \$15/month you get upgraded to 20GB of space. They also offer
+dedicated database instances if you need that. See this page for more
+details. &lt;a href=&#34;http://www.heroku.com/pricing#0-0&#34;&gt;http://www.heroku.com/pricing#0-0&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;They also have a bunch of other addons (redis, mongodb, couchdb, amazon
+RDS) that you should be able to tie into, see the addons page for a
+complete list. &lt;a href=&#34;http://addons.heroku.com/&#34;&gt;http://addons.heroku.com/&lt;/a&gt;&lt;/p&gt;
+
+&lt;h1 id=&#34;setting-up-django-caching-on-herku:cee93c979b55038b1b1ec8056ba75fc3&#34;&gt;Setting up Django Caching on Herku&lt;/h1&gt;
+
+&lt;p&gt;To use memcache on Heroku, I went to the add-on page and installed the
+free memcache addon. Once I did this I can run the heroku config command
+to find out my config settings. I then use that information in my django
+settings file so that I can have access to caching in my app.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;$ heroku config
+...
+MEMCACHE_PASSWORD    =&amp;gt; xxxxxxxxxxxx
+MEMCACHE_SERVERS     =&amp;gt; instance.hostname.net
+MEMCACHE_USERNAME    =&amp;gt; xxxxxxxxxxxx
+...
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;They also offer redis if you prefer that.&lt;/p&gt;
+
+&lt;h1 id=&#34;sending-email-from-django-on-heroku:cee93c979b55038b1b1ec8056ba75fc3&#34;&gt;Sending Email from django on Heroku&lt;/h1&gt;
+
+&lt;p&gt;If you need to send or receive email in your application there are a few
+email add-ons that you can use. Pick the one you want and then run the
+&amp;lsquo;heroku config&amp;rsquo; command described above to get your settings, and update
+your django settings accordingly.&lt;/p&gt;
+
+&lt;h1 id=&#34;application-size:cee93c979b55038b1b1ec8056ba75fc3&#34;&gt;Application size&lt;/h1&gt;
+
+&lt;p&gt;You application and all of it&amp;rsquo;s dependencies can&amp;rsquo;t be more then 100MB in
+size.&lt;/p&gt;
+
+&lt;h1 id=&#34;heroku-pricing:cee93c979b55038b1b1ec8056ba75fc3&#34;&gt;Heroku Pricing&lt;/h1&gt;
+
+&lt;p&gt;Directly from this page:
+&lt;a href=&#34;http://devcenter.heroku.com/articles/how-much-does-a-dyno-cost&#34;&gt;http://devcenter.heroku.com/articles/how-much-does-a-dyno-cost&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;Dynos cost \$0.05 per hour, prorated to the second. For example, an app
+with four dynos is charged \$0.20 per hour for each hour that the four
+dynos are running.&lt;/p&gt;
+
+&lt;p&gt;Pricing is based on calendar time. If you set your app to four dynos,
+you will be charged \$0.20 per hour regardless of the traffic your site
+serves during that time.&lt;/p&gt;
+
+&lt;p&gt;Each application receives 750 free dyno hours per month. For example if
+you have 1 web dyno running for all of April, and a worker dyno running
+half the time you would have 330 dyno-hours billed that month or \$16.50
+(720 web dyno hours + 360 worker dyno hours - 750 free dyno hours).&lt;/p&gt;
+
+&lt;p&gt;See this page for more details: &lt;a href=&#34;http://www.heroku.com/pricing#0-0&#34;&gt;http://www.heroku.com/pricing#0-0&lt;/a&gt;&lt;/p&gt;
+
+&lt;h1 id=&#34;conclusion:cee93c979b55038b1b1ec8056ba75fc3&#34;&gt;Conclusion&lt;/h1&gt;
+
+&lt;p&gt;I haven&amp;rsquo;t really had much time to really play with Heroku, and stress
+test it at all, but I have to say it is pretty impressive to begin with.
+There are still some rough edges, but I&amp;rsquo;m sure they will have those
+smoothed out before they remove the beta tag. The thing that impresses
+me the most is all of the addons that you have access to out of the box.
+I&amp;rsquo;m not sure how many of these work with the new platform, or with
+django right now, but I&amp;rsquo;m sure it is only a matter of time before they
+are available.&lt;/p&gt;
+
+&lt;p&gt;I would highly recommend signing up and trying out their service, it is
+free so what do you have to lose?&lt;/p&gt;
+
+&lt;h2 id=&#34;update:cee93c979b55038b1b1ec8056ba75fc3&#34;&gt;Update&lt;/h2&gt;
+
+&lt;p&gt;2/16/2012: Full disclosure. On Feb 16th 2012, I accepted a job with
+dotCloud a competitor to Heroku. I plan on keeping this blog post up to
+date and impartial. If you think there are any errors, please let me
+know in the comments.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>DjangoMaine.com - Django User group in Portland Maine</title>
+      <link>http://www.kencochrane.net/blog/2011/09/djangomainecom-django-user-group-portland-maine/</link>
+      <pubDate>Mon, 26 Sep 2011 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.kencochrane.net/blog/2011/09/djangomainecom-django-user-group-portland-maine/</guid>
+      <description>&lt;p&gt;When I was at DjangoCon a few weeks ago, it was great hanging out with
+all of the fellow Djangonauts talking about Django and all of other
+great technologies. Now that I&amp;rsquo;m home, I have decided to get off my butt
+and do something I should have done a while ago.&lt;/p&gt;
+
+&lt;p&gt;Without further ado, I am pleased to announce the creation of
+DjangoMaine.com, a new Django user group based in Portland Maine. We
+plan on meeting monthly to discuss Django and other python related
+technologies. We are currently looking for members, and topic ideas for
+future meetings. If you have any ideas or you are interesting in hearing
+more, check out our website &lt;a href=&#34;http:///www.DjangoMaine.com&#34;&gt;http:///www.DjangoMaine.com&lt;/a&gt;&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Introducing django-clickstream</title>
+      <link>http://www.kencochrane.net/blog/2011/08/django-clickstream/</link>
+      <pubDate>Fri, 12 Aug 2011 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.kencochrane.net/blog/2011/08/django-clickstream/</guid>
+      <description>
+
+&lt;p&gt;Track a visitors movements across your site.&lt;/p&gt;
+
+&lt;p&gt;Possible uses:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;See what they were doing before they got an error.&lt;/li&gt;
+&lt;li&gt;Use it for analytics and usability testing to see how people are
+moving around your site, and where you are losing people.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Inspired by OpenSymphony&amp;rsquo;s Java project of the same name.
+&lt;a href=&#34;http://code.google.com/p/clickstream/&#34;&gt;http://code.google.com/p/clickstream/&lt;/a&gt;&lt;/p&gt;
+
+&lt;h1 id=&#34;requirements:3f515b3e3e91ba27adbd5df675789901&#34;&gt;Requirements&lt;/h1&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Django 1.1 or newer&lt;/li&gt;
+&lt;li&gt;Django sessions need to be enabled&lt;/li&gt;
+&lt;li&gt;Django south 0.7 or newer for migrations&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&#34;settings:3f515b3e3e91ba27adbd5df675789901&#34;&gt;Settings&lt;/h2&gt;
+
+&lt;h3 id=&#34;custom-settings:3f515b3e3e91ba27adbd5df675789901&#34;&gt;Custom Settings&lt;/h3&gt;
+
+&lt;p&gt;Add the following properties to your settings file if you want to
+override the default settings.&lt;/p&gt;
+
+&lt;h3 id=&#34;clickstream-ignore-paths:3f515b3e3e91ba27adbd5df675789901&#34;&gt;CLICKSTREAM_IGNORE_PATHS&lt;/h3&gt;
+
+&lt;p&gt;Default = ()&lt;/p&gt;
+
+&lt;p&gt;Takes a list of regular expressions for paths that you want to ignore if
+it is picked up by these clicks won&amp;rsquo;t be tracked.&lt;/p&gt;
+
+&lt;p&gt;CLICKSTREAM_IGNORE_PATHS = (&amp;rsquo;\^/private/&amp;lsquo;, &amp;lsquo;\^/dont-track-me/&amp;lsquo;,
+&amp;lsquo;super-secret.txt&amp;rsquo;)&lt;/p&gt;
+
+&lt;h3 id=&#34;clickstream-ignore-anonymous:3f515b3e3e91ba27adbd5df675789901&#34;&gt;CLICKSTREAM_IGNORE_ANONYMOUS&lt;/h3&gt;
+
+&lt;p&gt;Default = False&lt;/p&gt;
+
+&lt;p&gt;If you only want to track people that are logged in, change to True&lt;/p&gt;
+
+&lt;p&gt;CLICKSTREAM_IGNORE_ANONYMOUS = False&lt;/p&gt;
+
+&lt;h3 id=&#34;clickstream-ignore-ip:3f515b3e3e91ba27adbd5df675789901&#34;&gt;CLICKSTREAM_IGNORE_IP&lt;/h3&gt;
+
+&lt;p&gt;Default = ()&lt;/p&gt;
+
+&lt;p&gt;A list of IP&amp;rsquo;s that you don&amp;rsquo;t want to track&lt;/p&gt;
+
+&lt;p&gt;CLICKSTREAM_IGNORE_IP = (&amp;lsquo;127.0.0.1&amp;rsquo;, &amp;lsquo;10.10.10.10, &amp;lsquo;8.8.8.8&amp;rsquo;)&lt;/p&gt;
+
+&lt;h3 id=&#34;middleware:3f515b3e3e91ba27adbd5df675789901&#34;&gt;Middleware&lt;/h3&gt;
+
+&lt;p&gt;Add &amp;lsquo;clickstream.middleware.ClickStreamMiddleware&amp;rsquo; to your
+MIDDLEWARE_CLASSES settings it needs to be after
+&amp;lsquo;django.contrib.sessions.middleware.SessionMiddleware&amp;rsquo; in the list.&lt;/p&gt;
+
+&lt;h3 id=&#34;app:3f515b3e3e91ba27adbd5df675789901&#34;&gt;App&lt;/h3&gt;
+
+&lt;p&gt;Add clickstream to INSTALLED_APPS&lt;/p&gt;
+
+&lt;h3 id=&#34;sync-tables-migrate:3f515b3e3e91ba27adbd5df675789901&#34;&gt;Sync Tables + Migrate&lt;/h3&gt;
+
+&lt;p&gt;Run &amp;lsquo;./manage.py syncdb&amp;rsquo; to load up the tables in your database.&lt;/p&gt;
+
+&lt;p&gt;Run &amp;lsquo;./manage.py migrate&amp;rsquo; to run the south migrations&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Setting up Django with Green Unicorn, nginx, supervisord and fabric on CentOS 5.5</title>
+      <link>http://www.kencochrane.net/blog/2011/06/django-gunicorn-nginx-supervisord-fabric-centos55/</link>
+      <pubDate>Mon, 27 Jun 2011 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.kencochrane.net/blog/2011/06/django-gunicorn-nginx-supervisord-fabric-centos55/</guid>
+      <description>
+
+&lt;p&gt;When I first started working with django I deployed my apps using apache
+and mod_python. Then after a little while I started playing with nginx
+and switched my setup so that nginx was serving the static content and
+reverse proxied requests back to apache and mod_python. Not too long
+after that, I switched out mod_python with mod_wsgi and ran mod_wsgi
+in daemon mode.&lt;/p&gt;
+
+&lt;p&gt;This setup worked well for a while, but one thing I never really liked
+was the fact that I needed to run apache which is pretty heavy even when
+you strip out all the unused modules. Apache is great, but all I was
+really using it for was a router between nginx and mod_wsgi, I wasn&amp;rsquo;t
+using any of the other features in apache.&lt;/p&gt;
+
+&lt;p&gt;I looked at fastcgi and uswgi and they looked good, but for one reason
+or another I never made the jump. Recently I have been hearing a lot of
+good things about green unicorn, so I decided to check it out. When I
+first looked at it, it was fairly new and because of this a little
+concerned with stability, so I kept and eye on it and watched it mature.&lt;/p&gt;
+
+&lt;p&gt;While I was waiting for green unicorn to mature I ended up doing a lot
+of research on the &lt;a href=&#34;http://kencochrane.net/blog/2011/06/django-hosting-roundup-who-wins/&#34;&gt;new python hosting
+services&lt;/a&gt;
+that recently hit the market. Three out of the five services that I
+looked were using green unicorn, the other two were using uWSGI.&lt;/p&gt;
+
+&lt;p&gt;The fact that these three services are basing there new businesses on
+green unicorn gave it a lot of credibility. Not too long after that I
+started playing with green unicorn to see what it would take to get my
+sites up and running.&lt;/p&gt;
+
+&lt;p&gt;The first thing that I noticed was that I didn&amp;rsquo;t need to create a wsgi
+file if I used their gunicorn_django command, which was pretty sweet.
+The fact that they built it into the service shows you that django is a
+first class citizen.&lt;/p&gt;
+
+&lt;p&gt;The second thing that I noticed was that I needed a way to start up
+green unicorn and keep it running, something that apache does for you
+with mod_wsgi. I did a little bit of research and found out that
+supervisord would work perfectly for what I needed to do with green
+unicorn.&lt;/p&gt;
+
+&lt;p&gt;Because seeing is better then reading, I&amp;rsquo;ll guide you throw the steps
+that you will need to do in order to get your system setup in a way that
+will make using green unicorn very easy, especially if you want to run
+more then one website on your server. I&amp;rsquo;m going to use a 256MB rackspace
+cloud instance running centos 5.5.&lt;/p&gt;
+
+&lt;h1 id=&#34;create-a-rackspace-cloud-server:c618fab5154c76fcdb1f622089e4dd3f&#34;&gt;Create a rackspace cloud server&lt;/h1&gt;
+
+&lt;p&gt;Go into the rackspace cloud server management website and allocate
+yourself a new 256MB CentOS 5.5 server or if you prefer do the same
+thing using their API. Now that you have a server and the root password,
+follow along step by step to get you system all setup.&lt;/p&gt;
+
+&lt;h1 id=&#34;software-and-versions:c618fab5154c76fcdb1f622089e4dd3f&#34;&gt;Software and versions&lt;/h1&gt;
+
+&lt;ul&gt;
+&lt;li&gt;RackSpace Cloud Server 256MB&lt;/li&gt;
+&lt;li&gt;CentOS 5.5&lt;/li&gt;
+&lt;li&gt;Python 2.6.6&lt;/li&gt;
+&lt;li&gt;nginx 1.0.4&lt;/li&gt;
+&lt;li&gt;supervisord 3.0a10&lt;/li&gt;
+&lt;li&gt;virtualenv 1.6.1&lt;/li&gt;
+&lt;li&gt;pip 1.0.1&lt;/li&gt;
+&lt;li&gt;gunicorn 0.12.2&lt;/li&gt;
+&lt;li&gt;fabric 1.1.0&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&#34;bitbucket-project:c618fab5154c76fcdb1f622089e4dd3f&#34;&gt;Bitbucket project&lt;/h1&gt;
+
+&lt;p&gt;To make things easier I have created a django bootstrap project
+directory with all of the file used in the blog post. It is located
+here, so feel free to clone and fork.&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://bitbucket.org/kencochrane/django-gunicorn-nginx-supervisord-bootstrap/&#34;&gt;https://bitbucket.org/kencochrane/django-gunicorn-nginx-supervisord-bootstrap/&lt;/a&gt;&lt;/p&gt;
+
+&lt;h1 id=&#34;login-to-server:c618fab5154c76fcdb1f622089e4dd3f&#34;&gt;Login to server&lt;/h1&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;ssh root@&amp;lt;RackSpaceIP&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h1 id=&#34;update-packages:c618fab5154c76fcdb1f622089e4dd3f&#34;&gt;Update packages&lt;/h1&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;yum -y update
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h1 id=&#34;install-packages:c618fab5154c76fcdb1f622089e4dd3f&#34;&gt;Install packages&lt;/h1&gt;
+
+&lt;p&gt;You might not need all of these right now, but I normally need these
+down the line, so doing them all now.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;yum -y install emacs readline-devel ncurses-devel libevent-devel glib2-devel libjpeg-devel freetype-devel bzip2 bzip2-devel bzip2-libs openssl-devel pcre pcre-devel gpg make gcc yum-utils unzip
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h1 id=&#34;add-a-django-user-as-a-system-user:c618fab5154c76fcdb1f622089e4dd3f&#34;&gt;Add a django user as a system user&lt;/h1&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;useradd -d /opt/django -m -r django
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h1 id=&#34;set-password-for-django-to-what-ever-you-want:c618fab5154c76fcdb1f622089e4dd3f&#34;&gt;Set password for django to what ever you want&lt;/h1&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;passwd django
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h1 id=&#34;setup-directories:c618fab5154c76fcdb1f622089e4dd3f&#34;&gt;Setup directories&lt;/h1&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;mkdir -p /opt/django
+mkdir -p /opt/django/apps
+mkdir -p /opt/django/logs
+mkdir -p /opt/django/logs/nginx
+mkdir -p /opt/django/logs/apps
+mkdir -p /opt/django/configs
+mkdir -p /opt/django/scripts
+mkdir -p /opt/django/htdocs
+mkdir -p /opt/django/tmp
+mkdir -p /opt/django/configs/nginx
+mkdir -p /opt/django/configs/supervisord
+mkdir -p /opt/django/apps/my_app
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h1 id=&#34;add-blank-html-page:c618fab5154c76fcdb1f622089e4dd3f&#34;&gt;Add blank html page&lt;/h1&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;echo &amp;quot;&amp;lt;html&amp;gt;&amp;lt;body&amp;gt;nothing here&amp;lt;/body&amp;gt;&amp;lt;/html&amp;gt; &amp;quot; &amp;gt; /opt/django/htdocs/index.html
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h1 id=&#34;install-zlib:c618fab5154c76fcdb1f622089e4dd3f&#34;&gt;Install Zlib&lt;/h1&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;# download from zlib.net
+mkdir -p /tmp/downloads
+cd /tmp/downloads
+wget http://www.zlib.net/zlib-1.2.5.tar.gz
+tar -xvzf zlib-1.2.5.tar.gz
+cd zlib-1.2.5
+./configure -s
+make install
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h1 id=&#34;install-python-2-6-6:c618fab5154c76fcdb1f622089e4dd3f&#34;&gt;Install python 2.6.6&lt;/h1&gt;
+
+&lt;p&gt;CentOS 5.5 doesn&amp;rsquo;t come with python2.6 pre installed so we need to do
+that on our own.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;mkdir -p /tmp/downloads
+cd /tmp/downloads
+wget http://www.python.org/ftp/python/2.6.6/Python-2.6.6.tgz
+tar -xvzf Python-2.6.6.tgz
+cd Python-2.6.6
+./configure --enable-shared
+make
+make altinstall
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h1 id=&#34;add-the-following-to-etc-profile:c618fab5154c76fcdb1f622089e4dd3f&#34;&gt;Add the following to /etc/profile&lt;/h1&gt;
+
+&lt;p&gt;We need to add the lib path to the LD_LIBRARY_PATH or else you will
+get an error saying it can&amp;rsquo;t find libpython2.6.so.1.0&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib/:/usr/local/lib64/
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h1 id=&#34;source-the-new-profile:c618fab5154c76fcdb1f622089e4dd3f&#34;&gt;Source the new profile&lt;/h1&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;source /etc/profile
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h1 id=&#34;install-distribute:c618fab5154c76fcdb1f622089e4dd3f&#34;&gt;Install distribute&lt;/h1&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;mkdir -p /tmp/downloads
+cd /tmp/downloads
+curl -O http://python-distribute.org/distribute_setup.py
+python2.6 distribute_setup.py
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h1 id=&#34;install-pip-virtualenv:c618fab5154c76fcdb1f622089e4dd3f&#34;&gt;Install Pip &amp;amp; virtualenv&lt;/h1&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;mkdir -p /tmp/downloads
+cd /tmp/downloads
+curl -O -k https://raw.github.com/pypa/pip/master/contrib/get-pip.py
+python2.6 get-pip.py
+pip install virtualenv
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h1 id=&#34;install-supervisor:c618fab5154c76fcdb1f622089e4dd3f&#34;&gt;Install supervisor&lt;/h1&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;pip install supervisor
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h1 id=&#34;install-mercurial:c618fab5154c76fcdb1f622089e4dd3f&#34;&gt;Install mercurial&lt;/h1&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;pip install mercurial
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h1 id=&#34;install-nginx:c618fab5154c76fcdb1f622089e4dd3f&#34;&gt;Install NGINX&lt;/h1&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;mkdir -p /tmp/downloads
+cd /tmp/downloads
+wget http://nginx.org/download/nginx-1.0.4.tar.gz
+tar -xzvf nginx-1.0.4.tar.gz
+cd nginx-1.0.4
+./configure --sbin-path=/usr/local/sbin --with-http_ssl_module --with-http_stub_status_module
+make
+/etc/init.d/nginx stop
+sleep 2
+sudo make install
+sudo chmod +x /usr/local/sbin/nginx
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;install-my-app:c618fab5154c76fcdb1f622089e4dd3f&#34;&gt;Install my app&lt;/h2&gt;
+
+&lt;h1 id=&#34;add-first-virtualenv:c618fab5154c76fcdb1f622089e4dd3f&#34;&gt;Add first virtualenv&lt;/h1&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;cd /opt/django/apps/my_app/
+virtualenv --distribute --no-site-packages v0.1
+
+# make this a post_create hook?
+touch /opt/django/apps/my_app/v0.1/.venv
+
+cd /opt/django/apps/my_app/v0.1/
+hg clone https://bitbucket.org/kencochrane/django-gunicorn-nginx-supervisord-bootstrap my_app
+
+ln -s /opt/django/apps/my_app/v0.1 /opt/django/apps/my_app/current
+
+ln -s /opt/django/apps/my_app/current/my_app/conf/nginx.conf /opt/django/configs/nginx/myapp.conf
+
+ln -s /opt/django/apps/my_app/current/my_app/conf/supervisord.conf /opt/django/configs/supervisord/myapp.conf
+
+# activate the ve
+source /opt/django/apps/my_app/current/bin/activate
+cd /opt/django/apps/my_app/current/my_app/
+./bootstrap.py
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h1 id=&#34;configure-nginx:c618fab5154c76fcdb1f622089e4dd3f&#34;&gt;Configure nginx&lt;/h1&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;# as root
+mkdir -p /etc/nginx
+ln -s /opt/django/apps/my_app/current/my_app/server/etc/nginx.conf /etc/nginx/nginx.conf
+ln -s /usr/local/nginx/conf/mime.types /etc/nginx/mime.types
+ln -s /opt/django/apps/my_app/current/my_app/server/init.d/nginx /etc/init.d/nginx
+chmod 755 /etc/init.d/nginx
+chkconfig --add nginx
+chkconfig nginx on
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h1 id=&#34;configure-supervisord:c618fab5154c76fcdb1f622089e4dd3f&#34;&gt;Configure Supervisord&lt;/h1&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;# as root
+ln -s /opt/django/apps/my_app/current/my_app/server/etc/supervisord.conf  /etc/supervisord.conf
+ln -s /opt/django/apps/my_app/current/my_app/server/init.d/supervisord /etc/init.d/supervisord
+chmod 755 /etc/init.d/supervisord
+chkconfig --add supervisord
+chkconfig supervisord on
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h1 id=&#34;firewall:c618fab5154c76fcdb1f622089e4dd3f&#34;&gt;Firewall&lt;/h1&gt;
+
+&lt;p&gt;We need to open up the firewall so that we are allowed connection, if
+you don&amp;rsquo;t know anything about this, check out these links.&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://cloudservers.rackspacecloud.com/index.php/Firewalls&#34;&gt;http://cloudservers.rackspacecloud.com/index.php/Firewalls&lt;/a&gt;
+&lt;a href=&#34;http://cloudservers.rackspacecloud.com/index.php/Introduction_to_iptables&#34;&gt;http://cloudservers.rackspacecloud.com/index.php/Introduction_to_iptables&lt;/a&gt;
+&lt;a href=&#34;http://cloudservers.rackspacecloud.com/index.php/Sample_iptables_ruleset&#34;&gt;http://cloudservers.rackspacecloud.com/index.php/Sample_iptables_ruleset&lt;/a&gt;&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;# Open http port 80
+iptables -I RH-Firewall-1-INPUT -p tcp --dport 80 -j ACCEPT
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h1 id=&#34;bashrc-file-changes:c618fab5154c76fcdb1f622089e4dd3f&#34;&gt;.bashrc file changes&lt;/h1&gt;
+
+&lt;p&gt;I can&amp;rsquo;t remember where I saw this little trick, if you know please let
+me know so that I can give them credit. If you put a file in your
+mercurial directory called .venv, when you cd into the directory this
+little bash hack will automatically activate your virtual environment
+for you. This allows you to have something similar to virtualenvwrapper
+in this custom setup.&lt;/p&gt;
+
+&lt;p&gt;Add this code to the .bashrc file&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;emacs /opt/django/.bashrc
+#
+# User specific aliases and functions
+has_virtualenv() {
+    if [ -e .venv ]; then
+        deactivate &amp;gt;/dev/null 2&amp;gt;&amp;amp;1
+        source bin/activate
+    fi
+}
+
+venv_cd () {
+    cd &amp;quot;$@&amp;quot; &amp;amp;&amp;amp; has_virtualenv
+}
+
+alias cd=&amp;quot;venv_cd&amp;quot;
+
+#end of changes
+
+# source the file to get new changes in active shell
+source /opt/django/.bashrc
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h1 id=&#34;change-permissions-of-the-django-home-directory-to-django:c618fab5154c76fcdb1f622089e4dd3f&#34;&gt;Change permissions of the django home directory to django&lt;/h1&gt;
+
+&lt;p&gt;This cleans up and left over root ownership&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;chown -R django:django /opt/django/*
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h1 id=&#34;switch-to-django-user:c618fab5154c76fcdb1f622089e4dd3f&#34;&gt;Switch to django user&lt;/h1&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;su - django
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h1 id=&#34;start-up-nginx:c618fab5154c76fcdb1f622089e4dd3f&#34;&gt;Start up nginx&lt;/h1&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;service nginx start
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h1 id=&#34;startup-supervisord:c618fab5154c76fcdb1f622089e4dd3f&#34;&gt;Startup supervisord&lt;/h1&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;service supervisord start
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h1 id=&#34;test-nginx-and-supervisord:c618fab5154c76fcdb1f622089e4dd3f&#34;&gt;Test Nginx and supervisord&lt;/h1&gt;
+
+&lt;p&gt;Check supervisord status&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;supervisorctl status
+my_app                           RUNNING    pid 13594, uptime 0:00:05
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;To check nginx go to the IP or domain name for your rackspace server in
+your browser and make sure it worked.&lt;/p&gt;
+
+&lt;h1 id=&#34;updating-the-application-using-fabric:c618fab5154c76fcdb1f622089e4dd3f&#34;&gt;Updating the application using fabric&lt;/h1&gt;
+
+&lt;p&gt;Inside of the bitbucket project directory there is a file called
+fabfile.py. This file will allow you to update the application from your
+machine whenever you want just by calling one command.&lt;/p&gt;
+
+&lt;p&gt;It will prompt you for your hostname and password for the django user.
+Then it will go out to the rackspace server and pull and update the app
+and restart the application in supervisord. It is very basic for right
+now, but should get you started if you want to do more advanced stuff.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;fab update_server
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h1 id=&#34;conclusion:c618fab5154c76fcdb1f622089e4dd3f&#34;&gt;Conclusion&lt;/h1&gt;
+
+&lt;p&gt;Now that we have everything setup, if you want to add a new application
+to our setup all we need to do is.&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;create a new directory under apps&lt;/li&gt;
+&lt;li&gt;create the virtualenv&lt;/li&gt;
+&lt;li&gt;run the bootstrap to install the software&lt;/li&gt;
+&lt;li&gt;make sure that the application has a supervisord and nginx
+configuration file&lt;/li&gt;
+&lt;li&gt;symlink those files to the correct locations in the config directory&lt;/li&gt;
+&lt;li&gt;run any python management commands you might need to run (syncdb,
+migrate, etc)&lt;/li&gt;
+&lt;li&gt;reload supervisord and nginx&lt;/li&gt;
+&lt;li&gt;you should be good to go.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;I hope this was helpful to someone besides myself, if it was helpful for
+you please let me know in the comments.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Django Hosting Roundup: (Ep.io vs Gondor.io vs DotCloud vs Heroku vs AppHosted vs DjangoZoom) Who wins?</title>
+      <link>http://www.kencochrane.net/blog/2011/06/django-hosting-roundup-who-wins/</link>
+      <pubDate>Mon, 06 Jun 2011 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.kencochrane.net/blog/2011/06/django-hosting-roundup-who-wins/</guid>
+      <description>
+
+&lt;h1 id=&#34;updates:bcec1efcbef3921a30bfadad97f88500&#34;&gt;Updates&lt;/h1&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Updated 2/16/2012: Full disclosure. On Feb 16th 2012, I accepted a
+job with dotCloud. I plan on keeping this blog post up to date
+and impartial. If you think there are any errors, please let me know
+in the comments below.&lt;/li&gt;
+&lt;li&gt;Updated 1/26/2012: Updated Gondor.io with info from Donald Stufft.&lt;/li&gt;
+&lt;li&gt;Updated 01/24/2012: changed gondor.io to include SSL support&lt;/li&gt;
+&lt;li&gt;Updated 01/01/2012: Added Heroku and updated ep.io, gondor.io,
+and dotcloud.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&#34;intro:bcec1efcbef3921a30bfadad97f88500&#34;&gt;Intro&lt;/h1&gt;
+
+&lt;p&gt;For the past 6 weeks I have been trying out all of the new django/python
+hosting services that are currently available today, and I have been
+writing about my experiences along the way. It only makes sense to
+conclude this series of articles with one last article comparing all of
+the services against each other. It is important to note that many of
+these services are still in development and aren&amp;rsquo;t even available to the
+general public, so I&amp;rsquo;ll try to keep this article up to date as these
+services change over time. With that said, don&amp;rsquo;t take my word for it, go
+out and try all of these services on your own and find out which one you
+like the best, you won&amp;rsquo;t be disappointed.&lt;/p&gt;
+
+&lt;h1 id=&#34;quick-recap:bcec1efcbef3921a30bfadad97f88500&#34;&gt;Quick Recap&lt;/h1&gt;
+
+&lt;h2 id=&#34;ep-io:bcec1efcbef3921a30bfadad97f88500&#34;&gt;ep.io&lt;/h2&gt;
+
+&lt;p&gt;Blog post: &lt;a href=&#34;http://kencochrane.net/blog/2011/04/my-experiences-with-epio/&#34;&gt;My Experiences with
+ep.io&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;Pretty solid offering, with a nice set of features and a decent price.
+Good set of documentation.&lt;/p&gt;
+
+&lt;p&gt;[&lt;strong&gt;Update&lt;/strong&gt;: Epio closed down on May 31st 2012 ]&lt;/p&gt;
+
+&lt;h2 id=&#34;gondor-io:bcec1efcbef3921a30bfadad97f88500&#34;&gt;gondor.io&lt;/h2&gt;
+
+&lt;p&gt;Blog post: &lt;a href=&#34;http://kencochrane.net/blog/2011/04/my-day-gondorio/&#34;&gt;My day in
+gondor.io&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;Their website has a nice list of features that they expect to have once
+they officially launch, but most of those features aren&amp;rsquo;t available yet.
+The documentation is a little light, but the service has a lot of
+potential.&lt;/p&gt;
+
+&lt;h2 id=&#34;dotcloud-com:bcec1efcbef3921a30bfadad97f88500&#34;&gt;dotCloud.com&lt;/h2&gt;
+
+&lt;p&gt;Blog post: &lt;a href=&#34;http://kencochrane.net/blog/2011/04/deploying-my-django-application-to-dotcloud/&#34;&gt;Deploying my Django application to
+dotcloud.com&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;They have a ton of money ($10M), and with it, a ton of features. They
+are very developer friendly, but you need to be pretty technical, it
+isn&amp;rsquo;t quite ready for beginners. Good set of documentation.&lt;/p&gt;
+
+&lt;p&gt;[&lt;strong&gt;Full disclosure&lt;/strong&gt;: I now work for dotCloud]&lt;/p&gt;
+
+&lt;h2 id=&#34;apphosted-com:bcec1efcbef3921a30bfadad97f88500&#34;&gt;AppHosted.com&lt;/h2&gt;
+
+&lt;p&gt;Blog post: &lt;a href=&#34;http://kencochrane.net/blog/2011/05/apphosted-com-django-hosting-review/&#34;&gt;apphosted.com Django Hosting
+Review&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;Built with security, stability and scalability on their mind from the
+beginning. They have a solid offering, and they look to be targeting
+enterprise customers who will pay more for that peace of mind. They are
+currently lacking some key features, which I&amp;rsquo;m sure they will be adding
+soon. Good set of documentation.&lt;/p&gt;
+
+&lt;h2 id=&#34;djangozoom-com:bcec1efcbef3921a30bfadad97f88500&#34;&gt;DjangoZoom.com&lt;/h2&gt;
+
+&lt;p&gt;Blog post: &lt;a href=&#34;http://kencochrane.net/blog/2011/06/djangozoom-com-review/&#34;&gt;DjangoZoom.com
+Review&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;Built to be fast and easy to use, still missing some key features, but
+I&amp;rsquo;m sure they will be available by the time they go live. Decent amount
+of documentation.&lt;/p&gt;
+
+&lt;h2 id=&#34;heroku-com:bcec1efcbef3921a30bfadad97f88500&#34;&gt;Heroku.com&lt;/h2&gt;
+
+&lt;p&gt;Blog post: &lt;a href=&#34;http://kencochrane.net/blog/2011/11/developers-guide-for-running-django-apps-on-heroku/&#34;&gt;Developers guide for running django apps on
+Heroku&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;Originally built as a Ruby on Rails service, they have now added support
+for python. The service is still in beta, but it has a lot of potential.
+It looks a lot like what dotCloud is offering, with the ability to run
+code from almost any language, and a ton of different add-ons for lots
+of different services.&lt;/p&gt;
+
+&lt;h1 id=&#34;awards:bcec1efcbef3921a30bfadad97f88500&#34;&gt;Awards&lt;/h1&gt;
+
+&lt;h2 id=&#34;fastest-deployments:bcec1efcbef3921a30bfadad97f88500&#34;&gt;Fastest Deployments:&lt;/h2&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://DjangoZoom.com&#34;&gt;DjangoZoom.com&lt;/a&gt; - Zoom is right, it doesn&amp;rsquo;t take
+long to configure your application and have it up and running on their
+servers.&lt;/p&gt;
+
+&lt;h2 id=&#34;easiest-to-use:bcec1efcbef3921a30bfadad97f88500&#34;&gt;Easiest To Use:&lt;/h2&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://DjangoZoom.com&#34;&gt;DjangoZoom.com&lt;/a&gt; - No command line interface
+needed, just a web browser, a project in a git repo that it has access
+too, and a few questions answered and your app is up and running.&lt;/p&gt;
+
+&lt;h2 id=&#34;most-features:bcec1efcbef3921a30bfadad97f88500&#34;&gt;Most Features:&lt;/h2&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://dotcloud.com&#34;&gt;dotCloud.com&lt;/a&gt; - They raised \$10 Million, and they
+are spending it on hiring people, buying companies, and building
+services. They have a bunch of services currently and they don&amp;rsquo;t plan on
+stopping, their roadmap has everything on it, and I think if you give
+them enough time they will eventually have a service for everything.&lt;/p&gt;
+
+&lt;h2 id=&#34;most-developer-friendly:bcec1efcbef3921a30bfadad97f88500&#34;&gt;Most Developer Friendly:&lt;/h2&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://dotcloud.com&#34;&gt;dotCloud.com&lt;/a&gt; - They give lots of features without
+handcuffing the developer. They are the only company with full database
+and shell access. They do a good job of offering the same type of
+service a developer could get if they built it themselves.&lt;/p&gt;
+
+&lt;h2 id=&#34;best-overall-value:bcec1efcbef3921a30bfadad97f88500&#34;&gt;Best Overall Value:&lt;/h2&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://ep.io&#34;&gt;ep.io&lt;/a&gt; - This one is hard since most of the services
+don&amp;rsquo;t have any pricing listed, but currently ep.io is in the lead, they
+offer reasonable prices with a nice Free tier. This allows developers to
+try out the service for FREE, as well as run smaller pet projects that
+they might not have tried before because they didn&amp;rsquo;t want to pay for
+hosting. They have the second most features available, second to only
+dotCloud, and there service is pretty solid.&lt;/p&gt;
+
+&lt;h2 id=&#34;easiest-project-setup:bcec1efcbef3921a30bfadad97f88500&#34;&gt;Easiest Project Setup:&lt;/h2&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://apphosted.com&#34;&gt;apphosted.com&lt;/a&gt; - Their goal was to make it real
+easy to get your project up onto their servers without having to change
+your project, and they did that, there was very little if any changes I
+needed to make in order to get my application up on their servers.&lt;/p&gt;
+
+&lt;h1 id=&#34;django-feature-hosting-matrix:bcec1efcbef3921a30bfadad97f88500&#34;&gt;Django Feature Hosting Matrix&lt;/h1&gt;
+
+&lt;p&gt;To make things easier when comparing all of the different services I
+have built this matrix with all of the information I compiled from each
+of the services. I don&amp;rsquo;t know the answers for all services, but I&amp;rsquo;ll
+update it when I find out those answers. If you know the answers feel
+free to post a comment to let me know.&lt;/p&gt;
+
+&lt;p&gt;I have included all of the new django services as well as google app
+engine and webfaction.com, a tradition hosting service. This should make
+it a little easier to see how these new services compare to other
+hosting options.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;[Chart removed since it was out of date]&lt;/strong&gt;&lt;/p&gt;
+
+&lt;h1 id=&#34;who-wins:bcec1efcbef3921a30bfadad97f88500&#34;&gt;Who wins?&lt;/h1&gt;
+
+&lt;p&gt;It is really hard to pick just one winner, mainly because most of these
+services are still in beta and not quite finished yet. Also because each
+service is a little different, and it will depend on what you are trying
+to do. So, go out try them out, and let me know which one you picked.&lt;/p&gt;
+
+&lt;p&gt;The real winner is us, the developers, and the python community in
+general. We now have a bunch of really cool services that will make our
+lives better, and that is awesome.&lt;/p&gt;
+
+&lt;h1 id=&#34;thank-you:bcec1efcbef3921a30bfadad97f88500&#34;&gt;Thank you!&lt;/h1&gt;
+
+&lt;p&gt;I want to thank all of the people who made these services, and gave me
+early access to their systems so that I could play around with them. I
+wish them the best of luck, and hope they all are really successful, and
+they are around for a long time.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>DjangoZoom.com Review</title>
+      <link>http://www.kencochrane.net/blog/2011/06/djangozoom-com-review/</link>
+      <pubDate>Sun, 05 Jun 2011 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.kencochrane.net/blog/2011/06/djangozoom-com-review/</guid>
+      <description>
+
+&lt;p&gt;This is part five in my series on django hosting services. Previously, I
+looked at
+&lt;a href=&#34;http://kencochrane.net/blog/2011/04/my-experiences-with-epio/&#34;&gt;ep.io&lt;/a&gt;,
+&lt;a href=&#34;http://kencochrane.net/blog/2011/05/apphosted-com-django-hosting-review/&#34;&gt;apphosted.com&lt;/a&gt;,
+&lt;a href=&#34;http://kencochrane.net/blog/2011/04/my-day-gondorio/&#34;&gt;gondor.io&lt;/a&gt;,
+&lt;a href=&#34;http://kencochrane.net/blog/2011/04/deploying-my-django-application-to-dotcloud/&#34;&gt;dotcloud.com&lt;/a&gt;
+and now I&amp;rsquo;m looking at &lt;a href=&#34;http://DjangoZoom.com&#34;&gt;DjangoZoom.com&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;DjangoZoom.com is the brain child of Nate Aune and Shimon Rura and is
+based in Boston, Massachusetts. It was founded in 2010 at
+&lt;a href=&#34;http://startupweekend.org/&#34;&gt;StartupWeekend Boston&lt;/a&gt; and was a finalist
+in the &lt;a href=&#34;http://www.masschallenge.org/&#34;&gt;MassChallenge&lt;/a&gt;. Their office is
+in the &lt;a href=&#34;http://dogpatchlabs.com/&#34;&gt;Dogpatch Labs&lt;/a&gt; space for startups in
+Cambridge, Massachusetts. They are currently still in a closed beta, but
+they were nice enough to send me an invite to check it out.&lt;/p&gt;
+
+&lt;p&gt;Normally when I check out a service for the first time, I look over the
+documentation to see what it can do, and what it can&amp;rsquo;t do, and what I
+need to do in order to get my app up and running. DjangoZoom has a nice
+collection of documents that help guide you through the process of
+getting your application up and running on their platform. You need to
+be logged in, in order to read the documents, so I won&amp;rsquo;t be able to link
+to any documents here, but if you are lucky enough to get an invite to
+DjangoZoom, I would check out the documents first, they will make the
+process much easier. They answer most of the common questions that you
+will have, and if you can&amp;rsquo;t find your answer you can send them a message
+and they are very fast to respond.&lt;/p&gt;
+
+&lt;p&gt;After reading the documents I learned a few things. First off,
+DjangoZoom is a little different then the other services, all of the
+previous services that I have reviewed ep.io, dotcloud, apphosted,
+gondor.io, had a command line client that you use to push your
+application up onto their servers.&lt;/p&gt;
+
+&lt;p&gt;DjangoZoom doesn&amp;rsquo;t have a command line client at all, they only have a
+web based control panel that you use to install and configure your
+application. Also, instead of pushing your application code up on to
+their servers, they pull the code down from your code repository at
+build time. Most of the other services try and make it so that you can
+run any python/wsgi based application, where as DjangoZoom, is only
+supporting Django applications.&lt;/p&gt;
+
+&lt;p&gt;Not having a command line client has it&amp;rsquo;s pros and cons. The main
+advantage of not having a command line client is simplicity. No need to
+install anything on your machine in order to deploy your code, all you
+need is a web browser. You can deploy your code from anywhere you have
+an internet connection. Making the application deployment as easy as
+possible will open up their service to people that are less technical,
+and might not be comfortable installing a command line client and
+running commands. The disadvantages of using just a web based console is
+that you are limited to what you can do in a browser. This is going to
+be less and less of an issue going forward as web browsers are getting
+more and more powerful all of the time. Also, just because they only
+offer a web based console now, doesn&amp;rsquo;t mean they can&amp;rsquo;t add a command
+line client later.&lt;/p&gt;
+
+&lt;p&gt;Just like all of the other reviews I&amp;rsquo;m going to test out the system by
+deploying my blog onto their system and see how it goes. My blog is
+currently hosted on bitbucket.org which uses mercurial, and currently
+djangozoom.com only offers support for git. In order to use
+djangozoom.com I needed to make a fork of my blog and put it on github.
+You can find my fork here:
+&lt;a href=&#34;https://github.com/kencochrane/kencochrane_blog&#34;&gt;https://github.com/kencochrane/kencochrane_blog&lt;/a&gt; . They recommend
+github for git hosting, but you can use just about any git repo that is
+publicly accessible. If you have a private git repo, and you are on
+github just add the user djangozoom as a collaborator on your project.
+If you aren&amp;rsquo;t on github and you have a private repo, you can add their
+public key to your repo, and it will give them permission to access your
+git repository from their servers.&lt;/p&gt;
+
+&lt;h1 id=&#34;install-process:927af003b7c8858a42469bacd2525b8a&#34;&gt;Install Process&lt;/h1&gt;
+
+&lt;p&gt;Once I had my code up on github I needed to make a few changes in order
+for it to work correctly, nothing major just needed to make my
+settings.py file a little more standard, which was pretty typical for
+the other services as well. Now that I had that done, I was ready to
+login to DjangoZoom and setup my application. Registering and logging
+into DjangoZoom was pretty straight forward, it was the same process as
+most online services, so just about anyone could do it with their eyes
+closed.&lt;/p&gt;
+
+&lt;p&gt;After I logged in, I was able to add my application, here are the steps
+that I took to get my application up and running.&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;Clicked on &amp;ldquo;add a new project&amp;rdquo;&lt;/p&gt;
+
+&lt;p&gt;Put in repo url: &lt;a href=&#34;git://github.com/kencochrane/kencochrane_blog.git&#34;&gt;git://github.com/kencochrane/kencochrane_blog.git&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;(Only SSH authentication is supported, so use either an
+unauthenticated public URL, or an SSH url (e.g.
+&lt;a href=&#34;mailto:git@github.com&#34;&gt;git@github.com&lt;/a&gt;:yourname/project.git. On github.org, use the Git
+Read-Only URL if your repo is public, or the SSH URL if private.)&lt;/p&gt;
+
+&lt;p&gt;Hit Next.&lt;/p&gt;
+
+&lt;p&gt;Entered my title &amp;ldquo;kencochrane_blog&amp;rdquo;&lt;/p&gt;
+
+&lt;p&gt;selected django 1.3&lt;/p&gt;
+
+&lt;p&gt;settings module : mysite.settings&lt;/p&gt;
+
+&lt;p&gt;static media location : &amp;ldquo;static /site-media&amp;rdquo;&lt;/p&gt;
+
+&lt;p&gt;no additional directories to add to python path&lt;/p&gt;
+
+&lt;p&gt;put in my requirements.txt file, so that it knows where to find my pip
+requirements. You don&amp;rsquo;t need to do this, djangozoom will scan your
+projects and find this out for you, but it didn&amp;rsquo;t work for me, I have
+an issue with my application that I wasn&amp;rsquo;t able to find, and it was
+causing issues with their autoscanner. I think this is more my fault
+then theirs.&lt;/p&gt;
+
+&lt;p&gt;not putting in any extra requirements.&lt;/p&gt;
+
+&lt;p&gt;base(repo) python package: put mysite.settings because my settings.py
+and root urls.py are at the top level of your repository. normally I
+don&amp;rsquo;t do this, but I was following the example of this repo
+&lt;a href=&#34;https://github.com/natea/mezzanine-site&#34;&gt;https://github.com/natea/mezzanine-site&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;Checked the &amp;ldquo;ready to roll, deploy my project now&amp;rdquo; check box and hit
+next&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;At first I had some errors with my requirements, I needed to remove
+django and mysql and update the python-twitter lib. Once I did that, it
+worked like a charm. The whole deploy process only took 2 minutes and 45
+seconds.&lt;/p&gt;
+
+&lt;p&gt;Wow that was fast, pretty impressive considering it needed to pull down
+all of the code from github, and download a ton of dependencies, and
+then do what ever it needs to do to set it up on to their servers. After
+talking with them about this, they said they hope to get it even faster,
+which would be pretty impressive.&lt;/p&gt;
+
+&lt;p&gt;Now that I have my app deployed I can change some of the settings.&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;I created an alias to for my app to
+&lt;a href=&#34;http://kencochrane.djangozoom.net&#34;&gt;http://kencochrane.djangozoom.net&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;You can also add a hostname like kencochrane.net.&lt;/p&gt;
+
+&lt;p&gt;you can add a wildcard hostname as well. *.kencochrane.net.&lt;/p&gt;
+
+&lt;p&gt;You can create a django superuser.&lt;/p&gt;
+
+&lt;p&gt;You can also run any of your manage.py commands right from the web
+console.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;This whole process was pretty straight forward and didn&amp;rsquo;t take long to
+complete. Now that I have done it with one application, it will be much
+easier for the next one.&lt;/p&gt;
+
+&lt;h1 id=&#34;cool-feature-request:927af003b7c8858a42469bacd2525b8a&#34;&gt;Cool Feature Request&lt;/h1&gt;
+
+&lt;p&gt;Currently DjangoZoom makes it really easy to deploy your application to
+their servers. What would be cool is if they would make it easy to
+deploy common django applications to their service. For example on their
+blog they have a video to show how easy it is to &lt;a href=&#34;http://djangozoom.com/blog/2011/03/15/deploying-django-cms-45-seconds-djangozoom/&#34;&gt;deploy django-cms to
+DjangoZoom&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;In the video it shows them going out to github, forking and copying the
+link to the project, and then making some minor changes on the
+djangozoom settings page to get it to work correctly, and then it
+deploys. These steps weren&amp;rsquo;t complicated but you needed to know what to
+do in order to get it to work. What if they made this a one step
+process?&lt;/p&gt;
+
+&lt;p&gt;Click on a &amp;ldquo;install django-cms&amp;rdquo; link, and then their service would do
+what it needs to do to get it up and running on their service, and then
+returns you to a page where you can configure the app, add a django
+admin user, change the url, etc. That would allow someone who doesn&amp;rsquo;t
+know anything about django an easy way to get a django-cms based website
+in no time. They could add one click installs for all kinds of common
+django projects, and expand outside of the developer community, which
+would expand their customer base. Those customers are the ones that
+really don&amp;rsquo;t want to worry about server deploys and server management,
+and they are the ones that will pay more for those features.&lt;/p&gt;
+
+&lt;p&gt;I&amp;rsquo;m sure this feature isn&amp;rsquo;t on their roadmap, but I just thought I would
+throw it out there and see what people have to say about it.&lt;/p&gt;
+
+&lt;h1 id=&#34;djangozoom-com-status:927af003b7c8858a42469bacd2525b8a&#34;&gt;DjangoZoom.com status&lt;/h1&gt;
+
+&lt;p&gt;DjangoZoom is still in closed beta, which means they are not done with
+it yet, and there may be some occasional bugs that pop up here and
+there, but that is expected. Another thing about a beta is that not all
+of the features are finished yet. So before you jump in and try and get
+your application up and running, check and make sure that your
+application can run correctly on the service with the features they have
+available so far. Here is a run down of all the different features your
+application might need and where they stand in DjangoZoom today.&lt;/p&gt;
+
+&lt;h2 id=&#34;logging:927af003b7c8858a42469bacd2525b8a&#34;&gt;Logging&lt;/h2&gt;
+
+&lt;p&gt;You currently can&amp;rsquo;t view your django or nginx logs at this time, they
+are working on this feature and hope to have it so that you can view
+your logs in the web based console in the future. In the meantime you
+can use a tool like django-sentry to view your django-logs.&lt;/p&gt;
+
+&lt;h2 id=&#34;ssl:927af003b7c8858a42469bacd2525b8a&#34;&gt;SSL&lt;/h2&gt;
+
+&lt;p&gt;Not available yet.&lt;/p&gt;
+
+&lt;h2 id=&#34;caching:927af003b7c8858a42469bacd2525b8a&#34;&gt;Caching&lt;/h2&gt;
+
+&lt;p&gt;They currently don&amp;rsquo;t support a caching server, they want to make sure
+they set it up correctly so that it is reliable and so that it is
+secure. In the meantime you can use django local memory caching.&lt;/p&gt;
+
+&lt;h2 id=&#34;database:927af003b7c8858a42469bacd2525b8a&#34;&gt;Database&lt;/h2&gt;
+
+&lt;p&gt;They support PostgreSQL 8.4, if you are using mysql you will need to
+convert your app to support PostgreSQL. Since the Django ORM handles
+this by default, this shouldn&amp;rsquo;t be a big deal unless you did something
+custom. No direct database access available. Loading data into system
+only supported by using django dumpdata/loaddata&lt;/p&gt;
+
+&lt;h2 id=&#34;background-tasks:927af003b7c8858a42469bacd2525b8a&#34;&gt;Background tasks&lt;/h2&gt;
+
+&lt;p&gt;Not available yet, celery support possible in the future.&lt;/p&gt;
+
+&lt;h2 id=&#34;cronjobs:927af003b7c8858a42469bacd2525b8a&#34;&gt;Cronjobs&lt;/h2&gt;
+
+&lt;p&gt;Not supported, they recommend &lt;a href=&#34;http://packages.python.org/APScheduler/&#34;&gt;Advanced Python
+Scheduler&lt;/a&gt; or
+&lt;a href=&#34;https://github.com/reavis/django-cron&#34;&gt;django-cron&lt;/a&gt; which should run on
+their system.&lt;/p&gt;
+
+&lt;h2 id=&#34;shell-access:927af003b7c8858a42469bacd2525b8a&#34;&gt;Shell Access&lt;/h2&gt;
+
+&lt;p&gt;Not supported&lt;/p&gt;
+
+&lt;h2 id=&#34;api:927af003b7c8858a42469bacd2525b8a&#34;&gt;API&lt;/h2&gt;
+
+&lt;p&gt;Not available yet, one planned for the future.&lt;/p&gt;
+
+&lt;h2 id=&#34;command-line-client:927af003b7c8858a42469bacd2525b8a&#34;&gt;Command line client&lt;/h2&gt;
+
+&lt;p&gt;Not available yet, one planned for the future. Use the web base control
+panel.&lt;/p&gt;
+
+&lt;h2 id=&#34;version-control:927af003b7c8858a42469bacd2525b8a&#34;&gt;Version control&lt;/h2&gt;
+
+&lt;p&gt;Currently only supports git.&lt;/p&gt;
+
+&lt;h2 id=&#34;videos:927af003b7c8858a42469bacd2525b8a&#34;&gt;Videos&lt;/h2&gt;
+
+&lt;p&gt;Here are some videos of the DjangoZoom.com deployment process.&lt;/p&gt;
+
+&lt;p&gt;&lt;p&gt;&lt;iframe title=&#34;YouTube video player&#34; width=&#34;480&#34; height=&#34;390&#34; src=&#34;http://www.youtube.com/embed/NCQxqw94Cgs&#34; frameborder=&#34;0&#34;&gt;&lt;/iframe&gt;&lt;/p&gt;
+&lt;p&gt;&lt;iframe title=&#34;YouTube video player&#34; src=&#34;http://www.youtube.com/embed/DSe6R1ByS5k&#34; width=&#34;480&#34; frameborder=&#34;0&#34; height=&#34;390&#34;&gt;&lt;/iframe&gt;&lt;/p&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;conclusion:927af003b7c8858a42469bacd2525b8a&#34;&gt;Conclusion&lt;/h2&gt;
+
+&lt;p&gt;I really enjoyed playing with DjangoZoom, it is quick and easy to use,
+it is still missing some key features that some people will need, but
+I&amp;rsquo;m sure they will add those soon enough. I wish them luck, and I can&amp;rsquo;t
+wait to see them go live to the general public.&lt;/p&gt;
+
+&lt;h1 id=&#34;update:927af003b7c8858a42469bacd2525b8a&#34;&gt;Update:&lt;/h1&gt;
+
+&lt;p&gt;Read how this service stacks up against other services like it in my
+&lt;a href=&#34;http://kencochrane.net/blog/2011/06/django-hosting-roundup-who-wins/&#34;&gt;Django hosting
+roundup&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;2/16/2012: Full disclosure. On Feb 16th 2012, I accepted a job with
+dotCloud a competitor to DjangoZoom. I plan on keeping this blog post up
+to date and impartial. If you think there are any errors, please let me
+know in the comments.&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -1,0 +1,1512 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+    <title>Installing a Django application on Red Hat&#39;s OpenShift PAAS &middot; KenCochrane.net</title>
+    <meta name="generator" content="Hugo 0.15" />
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="author" content="Ken Cochrane">
+    
+      <meta name="description" content="">
+    
+    
+    <link rel="icon" href="http://www.kencochrane.net/favicon.ico">
+    <link rel="apple-touch-icon" href="http://www.kencochrane.net/apple-touch-icon.png" />
+    <link rel="stylesheet" href="http://www.kencochrane.net/css/style.css">
+    <link rel="stylesheet" href="http://www.kencochrane.net/css/font-awesome.min.css">
+    <link rel="stylesheet" href="http://www.kencochrane.net/css/monokai.css">
+    <link rel="stylesheet" href="http://www.kencochrane.net/fancybox/jquery.fancybox.css">
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400italic,400,600' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Source+Code+Pro' rel='stylesheet' type='text/css'>
+    <meta property="og:title" content="Installing a Django application on Red Hat&#39;s OpenShift PAAS" />
+<meta property="og:description" content="It seems like everyone has their own PAAS solution these days, and if they don&rsquo;t have one yet, it is just a matter of time before they will. Red Hat has recently joined in on the fun with their OpenShift platform. I decided to take it for a test drive, and share my results with you. This service is still in beta and things are changing all of the time, so these notes might not work in the future, take that into consideration when using it as a guide." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="http://www.kencochrane.net/blog/2012/01/installing-django-application-on-openshift/" />
+
+
+<meta property="og:updated_time" content="2012-01-14T00:00:00&#43;00:00"/>
+
+
+
+
+
+
+
+
+
+
+    
+    
+<meta itemprop="name" content="Installing a Django application on Red Hat&#39;s OpenShift PAAS">
+<meta itemprop="description" content="It seems like everyone has their own PAAS solution these days, and if they don&rsquo;t have one yet, it is just a matter of time before they will. Red Hat has recently joined in on the fun with their OpenShift platform. I decided to take it for a test drive, and share my results with you. This service is still in beta and things are changing all of the time, so these notes might not work in the future, take that into consideration when using it as a guide.">
+
+
+<meta itemprop="dateModified" content="2012-01-14T00:00:00&#43;00:00" />
+<meta itemprop="wordCount" content="1719">
+
+
+
+<meta itemprop="keywords" content="blog,apache,api,apphosted,aufs,aws,blog,cashstar,centos5,clickstream,defender,deployment,developers,digital-ocean,django,django-maine,djangocms,djangomaine,djangozoom,docker,dotcloud,epio,fabric,facebook,go,gondor,guidebook,gunicorn,heroku,hosting,install,job,jobs,kernel,linux,lxc,macosx,memcached,mercurial,mysql,newrelic,nginx,openshift,paas,pci,pelican,percona,python,rackspace,raspberrypi,raspbian,redis,requests,rhel5,s3,script,sentry,stackato,supervisor,supervisord,tutorial,ubuntu,upgrade,video,work," />
+
+    
+
+  <meta name="twitter:card" content="summary"/>
+
+
+
+<meta name="twitter:title" content="Installing a Django application on Red Hat&#39;s OpenShift PAAS"/>
+<meta name="twitter:description" content="It seems like everyone has their own PAAS solution these days, and if they don&rsquo;t have one yet, it is just a matter of time before they will. Red Hat has recently joined in on the fun with their OpenShift platform. I decided to take it for a test drive, and share my results with you. This service is still in beta and things are changing all of the time, so these notes might not work in the future, take that into consideration when using it as a guide."/>
+<meta name="twitter:site" content="@kencochrane"/>
+
+
+</head>
+<body>
+<div class="container">
+
+
+<div id="container">
+	<header id="header">
+  <div id="header-main" class="header-inner">
+    <div class="outer">
+      <a href="http://www.kencochrane.net/" id="logo"><i class="logo" style="background-image: url('http://www.kencochrane.net/css/images/logo.png')"></i><span class="site-title">KenCochrane.net</span></a>
+      <nav id="main-nav">
+          
+          
+          <a class="main-nav-link" href="http://www.kencochrane.net/">Home</a>
+          
+          
+          
+          
+          
+          
+
+          
+
+          
+          
+          
+          
+          <a class="main-nav-link" href="http://www.kencochrane.net/tags/">Tags</a>
+          
+          
+          
+          <a class="main-nav-link" href="http://www.kencochrane.net/categories/">Categories</a>
+          
+          
+      </nav>
+        <nav id="sub-nav">
+          <div class="profile" id="profile-nav">
+            <a id="profile-anchor" href="javascript:;"><img class="avatar" src="http://www.kencochrane.net/img/kencochrane.jpeg"><i class="fa fa-caret-down"></i></a>
+          </div>
+        </nav>
+        <div id="search-form-wrap">
+          <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form">
+              <input type="search" name="q" results="0" class="search-form-input" placeholder="Search">
+              <button type="submit" class="search-form-submit">
+              </button>
+              <input type="hidden" name="q" value="site:http://www.kencochrane.net/">
+         </form>
+        </div>
+    </div>
+  </div>
+  <div id="main-nav-mobile" class="header-sub header-inner">
+    <table class="menu outer">
+      <tbody>
+          <tr>
+          
+          
+          <td><a class="main-nav-link" href="http://www.kencochrane.net/">Home</a></td>
+          
+          
+          
+          
+          
+          
+
+          
+
+          
+          
+          
+          
+          <td><a class="main-nav-link" href="http://www.kencochrane.net/tags/">Tags</a></td>
+          
+          
+          
+          <td><a class="main-nav-link" href="http://www.kencochrane.net/categories/">Categories</a></td>
+          
+          
+          <td>
+          <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form">
+          <input type="search" name="q" results="0" class="search-form-input" placeholder="Search">
+          <input type="hidden" name="q" value="site:http://www.kencochrane.net/">
+          </form>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</header>
+
+   	
+   	<div class="outer">
+	    <aside id="profile">
+  <div class="inner profile-inner">
+    <div class="base-info profile-block">
+      <img id="avatar" src="http://www.kencochrane.net/img/kencochrane.jpeg">
+      <h2 id="name">Ken Cochrane</h2>
+      <h3 id="title">Software developer living in Southern Maine</h3>
+      <span id="location"><i class="fa fa-map-marker"></i>Maine</span>
+      
+          <a id="follow" href="https://github.com/kencochrane">
+              Follow
+          </a>
+      
+    </div>
+    <div class="article-info profile-block">
+      <div class="article-info-block">
+        40
+        <span>Posts</span>
+      </div>
+      <div class="article-info-block">
+        
+          64
+          
+        <span>
+            Tags
+        </span>
+      </div>
+    </div>
+    <div class="contact-info profile-block">
+      <table class="contact-list">
+        <tr>
+          
+<td><a href="//github.com/kencochrane" target="_blank" title="GitHub"><i class="fa fa-github"></i></a></td>
+
+
+
+<td><a href="//bitbucket.com/kencochrane" target="_blank" title="Bitbucket"><i class="fa fa-bitbucket"></i></a></td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<td><a href="//linkedin.com/in/kencochrane" target="_blank" title="LinkedIn"><i class="fa fa-linkedin"></i></a></td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<td><a href="//twitter.com/kencochrane" target="_blank" title="Twitter"><i class="fa fa-twitter"></i></a></td>
+
+
+          <td><a href="" target="_blank" title="RSS"><i class="fa fa-rss"></i></a></td>
+        </tr>
+      </table>
+    </div>
+  </div>
+</aside>
+
+	    <section id="main">
+    <article id="page-undefined" class="article article-type-page" itemscope="" itemprop="blogPost">
+        <div class="article-inner">
+            
+
+            <header class="article-header">
+    <a href="http://www.kencochrane.net/blog/2012/01/installing-django-application-on-openshift/">
+    <h1 class="article-title" itemprop="name">
+        Installing a Django application on Red Hat&#39;s OpenShift PAAS
+    </h1>
+    </a>
+    <div class="article-meta">
+        <div class="article-date">
+            <i class="fa fa-calendar"></i>
+            <time datetime="2012-01-14 00:00:00 &#43;0000 UTC" itemprop="datePublished">2012-01-14</time>
+            &middot;
+            1719
+            words
+            &middot;
+            9
+            minute read
+        </div>
+
+        
+        
+            
+            
+            <div class="article-category">
+                <i class="fa fa-folder"></i>
+                
+                <a class="article-category-link" href="http://www.kencochrane.net/categories/blog">blog</a>
+                
+                
+            </div>
+            
+        
+
+        
+            
+            
+            <div class="article-category">
+                <i class="fa fa-tags"></i>
+                
+                <a class="article-category-link" href="http://www.kencochrane.net/tags/django">django</a>
+                &middot;
+                
+                <a class="article-category-link" href="http://www.kencochrane.net/tags/djangocms">djangocms</a>
+                &middot;
+                
+                <a class="article-category-link" href="http://www.kencochrane.net/tags/openshift">openshift</a>
+                &middot;
+                
+                <a class="article-category-link" href="http://www.kencochrane.net/tags/python">python</a>
+                &middot;
+                
+                <a class="article-category-link" href="http://www.kencochrane.net/tags/hosting">hosting</a>
+                &middot;
+                
+                <a class="article-category-link" href="http://www.kencochrane.net/tags/paas">paas</a>
+                
+                
+            </div>
+            
+        
+    </div>
+</header>
+
+            <div class="article-entry" itemprop="articleBody">
+                
+
+<p>It seems like everyone has their own
+<a href="http://en.wikipedia.org/wiki/Platform_as_a_service">PAAS</a> solution
+these days, and if they don&rsquo;t have one yet, it is just a matter of time
+before they will. Red Hat has recently joined in on the fun with their
+<a href="https://openshift.redhat.com">OpenShift</a> platform.</p>
+
+<p>I decided to take it for a test drive, and share my results with you.
+This service is still in beta and things are changing all of the time,
+so these notes might not work in the future, take that into
+consideration when using it as a guide.</p>
+
+<p>There really isn&rsquo;t much python documentation for this platform, and what
+documentation there is, is either a little out of date, or missing some
+important steps. Hopefully this guide will help you get your application
+up and running.</p>
+
+<p>OpenShift is divided into two parts, Flex and Express.</p>
+
+<h1 id="flex-https-openshift-redhat-com-app-flex:7691e8103b37fb8a7e415dbcd78d4931"><a href="https://openshift.redhat.com/app/flex">Flex</a>:</h1>
+
+<blockquote>
+<p>&ldquo;Dedicated cloud solution. Get more control over your apps, or move
+your existing applications to the cloud with ease! Flex is a dedicated
+cloud solution that provides everything you need to easily scale,
+provision, deploy, and monitor your applications.&rdquo;</p>
+</blockquote>
+
+<p>Flex runs on top of your amazon EC2 account, and currently only supports
+Java and PHP. It is targeting the enterprise crowd and has more features
+compared to Express.</p>
+
+<h1 id="express-https-openshift-redhat-com-app-express:7691e8103b37fb8a7e415dbcd78d4931"><a href="https://openshift.redhat.com/app/express">Express</a>:</h1>
+
+<blockquote>
+<p>&ldquo;Shared cloud solution. Express is a free, cloud-based application
+platform for Java, Perl, PHP, Python, and Ruby applications. It&rsquo;s
+super-simple—your development environment is also your deployment
+environment: git push, and you&rsquo;re in the cloud!&rdquo;</p>
+</blockquote>
+
+<p>Express runs on Red Hat&rsquo;s servers, and currently supports Java, Ruby,
+PHP, Perl and Python apps. It doesn&rsquo;t have the same features of Flex,
+but if you don&rsquo;t need those advanced features, then express might be
+fine for you. Since I&rsquo;m interested in deploying python apps, and Express
+is the only one that supports python apps, that is the one I&rsquo;ll show you
+today.</p>
+
+<p>To make things easier to show you how things work, I&rsquo;ll create a simple
+django application and walk you through the steps to deploying it. I&rsquo;m
+going to deploy a djangoCMS to express that will connect to a mysql
+database.</p>
+
+<h2 id="steps:7691e8103b37fb8a7e415dbcd78d4931">Steps:</h2>
+
+<h3 id="1-create-an-account:7691e8103b37fb8a7e415dbcd78d4931">1. Create an account</h3>
+
+<p>Create an account by filling out the form at
+<a href="http://openshift.redhat.com/">http://openshift.redhat.com/</a> and don&rsquo;t forget your username and
+password, you will need that later.</p>
+
+<h3 id="2-install-perquisites:7691e8103b37fb8a7e415dbcd78d4931">2. Install Perquisites:</h3>
+
+<blockquote>
+<ul>
+<li><a href="http://git-scm.com/">git</a></li>
+<li><a href="http://python.org">python</a></li>
+<li>openshift client</li>
+</ul>
+
+<p>**<a href="Git:**">Git:**</a></p>
+
+<p>I&rsquo;m not going to go over the steps to install git, for more info, you
+can get it from the git website. <a href="http://git-scm.com/download">http://git-scm.com/download</a></p>
+
+<p><strong>Python:</strong></p>
+
+<p>If you are using a Mac or linux, it most likely already has python
+installed, if you are using windows, you you don&rsquo;t have python
+installed. Goto the python website and you will find instructions on
+how to install python on your system. <a href="http://python.org/download/">http://python.org/download/</a></p>
+
+<p><strong>OpenShift client:</strong></p>
+
+<p>For instructions on how to Install the client go to this page.
+<a href="https://openshift.redhat.com/app/express#mac">https://openshift.redhat.com/app/express#mac</a> Here are my steps for
+Mac OSX</p>
+</blockquote>
+
+<pre><code class="language-sourceCode bash">$ sudo gem install json_pure
+$ sudo gem install rhc
+</code></pre>
+
+<h3 id="3-create-a-domain:7691e8103b37fb8a7e415dbcd78d4931">3. Create a domain.</h3>
+
+<p>Now that you have everything installed, your first step is to create a
+domain. Run the following command and replace \$mydoman and \$loginemail
+with your own domain and the login email you used when creating an
+account.</p>
+
+<pre><code class="language-sourceCode bash">$ rhc-create-domain -n $mydomain -l $loginemail
+</code></pre>
+
+<h3 id="4-create-an-application:7691e8103b37fb8a7e415dbcd78d4931">4. Create an application</h3>
+
+<p>Now that you have a domain, you need to create an application that you
+can deploy to that domain. Running the following command will create a
+new wsgi application called &lsquo;blog&rsquo;. You can name your application
+anything you want, within reason. We pick wsgi, because our python
+application will be wsgi compatible.</p>
+
+<pre><code class="language-sourceCode bash">$ rhc-create-app -a blog -t wsgi-3.2
+</code></pre>
+
+<h3 id="5-add-mysql-to-your-app:7691e8103b37fb8a7e415dbcd78d4931">5. Add mysql to your app</h3>
+
+<p>We want to use mysql as our database backend for this blog, so we need
+to add mysql to our application using the command below.</p>
+
+<pre><code class="language-sourceCode bash">$ rhc-ctl-app -a blog -e add-mysql-5.1
+</code></pre>
+
+<h3 id="6-add-phpmyadmin-to-help-you-manage-your-database:7691e8103b37fb8a7e415dbcd78d4931">6. Add phpmyadmin to help you manage your database</h3>
+
+<p>OpenShift doesn&rsquo;t give you direct access to your database, so you will
+need a way to manage your database a different way. They provide the
+ability to add PHPMyAdmin to your app so that you can get to your data.
+This step is optional, but recommended.</p>
+
+<pre><code class="language-sourceCode bash">$ rhc-ctl-app -a blog -e add-phpmyadmin-3.4
+</code></pre>
+
+<h3 id="7-add-this-upstream-repo-from-github:7691e8103b37fb8a7e415dbcd78d4931">7. Add this upstream repo from github</h3>
+
+<p>When you create your application, it will create a directory with a
+bunch of other files and directories in it. If you were starting from
+scratch and building up your application you would start from here. To
+make things easier I created a project on github that will allow you to
+get up and running with DjangoCMS much faster. In order to use my
+project you will need to run the following commands so that it will pull
+down the code into your project.</p>
+
+<pre><code class="language-sourceCode bash">$ cd blog
+$ git remote add upstream -m master git://github.com/kencochrane/django-cms-openshift.git
+$ git pull -s recursive -X theirs upstream master
+</code></pre>
+
+<p>Once the code is downloaded, you can take a look at the code, change
+anything you want and when you are ready you can deploy the app.</p>
+
+<h3 id="8-deploying-the-app:7691e8103b37fb8a7e415dbcd78d4931">8. Deploying the app</h3>
+
+<p>To deploy all you need to do is push the repo upstream into open shift.
+To this, you just need to run the following command.</p>
+
+<pre><code class="language-sourceCode bash">$ git push
+</code></pre>
+
+<p>When it pushes you application into open shift it will do the following.
+(without jenkins add-on installed)</p>
+
+<blockquote>
+<ol>
+<li>stop app</li>
+<li>*pre_build</li>
+<li>*build</li>
+<li>start_dbs</li>
+<li>*deploy</li>
+<li>start_app</li>
+<li>*post_deploy</li>
+</ol>
+</blockquote>
+
+<p>The steps marked with a * are scripts that are located in
+<em>.openshift/action_hooks/&lt;script_name&gt;</em> if you have something in
+those files it will run them, and if not, it will pass right by. These
+are very helpful if you want something to happen at points of the
+deployment process. For example, in the deploy script you will notice
+that I have some code to kick off the django syncdb, migrate, and
+collect static commands. These will run every time I deploy the app.</p>
+
+<p>I have also created a django management command that will check to see
+if there is a django admin account created and if not, it will create
+one and set the default password. I had to do this because there is
+currently no way that I know of where you can kick off django management
+commands after the deployment is finished. It will only create the admin
+account once, and every other time it will just get ignored.</p>
+
+<p><strong>IMPORTANT:</strong> It is important to note that if you want to do anything
+related to the database, you can&rsquo;t do it in the <em>pre_build</em> or <em>build</em>
+scripts, because the database isn&rsquo;t available yet. This one thing caused
+me lots of pain, because I couldn&rsquo;t figure out by my migrations were not
+working. If you do make the mistake of trying to do something database
+related in the <em>build</em> script you will see an error like this.</p>
+
+<blockquote>
+<p>&ldquo;remote: ERROR 2003 (HY000): Can&rsquo;t connect to MySQL server on
+&lsquo;xxx.x.xx.x&rsquo; (111)&rdquo;</p>
+</blockquote>
+
+<p>That&rsquo;s it, you can now checkout your application at (default admin
+account is admin/&lt;password given at deploy time&gt;):</p>
+
+<blockquote>
+<p><a href="http://blog-$yourdomain.rhcloud.com">http://blog-$yourdomain.rhcloud.com</a></p>
+</blockquote>
+
+<p>Once you visit the page you should see the djangoCMS default page. First
+things first, login to the django admin, and change the password from
+the default password to something secure. Then get started building your
+own app.</p>
+
+<h2 id="helpful-tips:7691e8103b37fb8a7e415dbcd78d4931">Helpful tips:</h2>
+
+<h3 id="viewing-logs:7691e8103b37fb8a7e415dbcd78d4931">Viewing logs:</h3>
+
+<p>If you would like to view your logs to see what is going on with your
+application you just need to run this command.</p>
+
+<pre><code class="language-sourceCode bash">$ rhc-tail-files -a blog
+</code></pre>
+
+<h3 id="application-information:7691e8103b37fb8a7e415dbcd78d4931">Application information:</h3>
+
+<p>If you would like more information about your application you can run
+this command.</p>
+
+<pre><code class="language-sourceCode bash">$ rhc-user-info
+</code></pre>
+
+<p>Also checkout the README file they add when you create an application,
+it is pretty helpful, and might answer some common questions.</p>
+
+<h3 id="application-dependencies:7691e8103b37fb8a7e415dbcd78d4931">Application dependencies:</h3>
+
+<p>OpenShift uses virtualenv but it doesn&rsquo;t use pip, it depends on the
+dependencies be listed in the setup.py file. During the deploy process I
+did notice that it installed pip, so it might be possible to add a
+requirements.txt file, and then in your build action_hook script call
+pip install -r &lt;path&gt;/requirements.txt but I&rsquo;m not sure if this is
+supported, or if it will cause problems, so it might be best to stick
+with what they have for now.</p>
+
+<h3 id="static-media:7691e8103b37fb8a7e415dbcd78d4931">Static media:</h3>
+
+<p>If you look in wsgi/static/.htaccess there a rewrite rule to get the
+media to work correctly, you can use this trick for other apache tricks
+if you want. For more information on this checkout the README file.</p>
+
+<h3 id="what-is-it-open-shift-running:7691e8103b37fb8a7e415dbcd78d4931">What is it open shift running:</h3>
+
+<p>Red Hat linux with Apache / mod_wsgi, and mysql 5.1</p>
+
+<h3 id="what-type-of-apps-do-they-support:7691e8103b37fb8a7e415dbcd78d4931">What type of apps do they support?</h3>
+
+<p>Here is the current link which can be found if you run this commands and
+look at the types.</p>
+
+<pre><code class="language-sourceCode bash">$ rhc-create-app -h
+
+raw-0.1, php-5.3, jbossas-7.0, rack-1.1, jenkins-1.4, perl-5.10, wsgi-3.2
+</code></pre>
+
+<h3 id="what-else-does-it-support:7691e8103b37fb8a7e415dbcd78d4931">What else does it support?</h3>
+
+<p>Things are changing all of the time, but if you run this command you
+will get a list of the current supported addons.</p>
+
+<pre><code class="language-sourceCode bash">$ rhc-ctl-app -L
+
+List of supported embedded cartridges:
+
+Obtaining list of cartridges (please excuse the delay)...
+
+    - metrics-0.1
+    - mysql-5.1
+    - jenkins-client-1.4
+    - 10gen-mms-agent-0.1
+    - phpmyadmin-3.4
+    - rockmongo-1.1
+    - mongodb-2.0
+</code></pre>
+
+<h3 id="web-based-control-panel:7691e8103b37fb8a7e415dbcd78d4931">Web based control panel:</h3>
+
+<p>They offer a web based control panel to do some of the things you can do
+with the command line, which will be nice, but it doesn&rsquo;t work right
+now. It doesn&rsquo;t display the correct information, and it doesn&rsquo;t even
+show the applications I have created, so I don&rsquo;t trust it. Hopefully
+these issues will get fixed in the future, and this tool will make it
+easier for less technical people to get started.</p>
+
+<h3 id="conclusion:7691e8103b37fb8a7e415dbcd78d4931">Conclusion:</h3>
+
+<p>It is nice to see another platform on the market, it is still pretty
+rough, and there isn&rsquo;t much documentation, but I found it usable. I&rsquo;m
+sure once they stabilize things, they will spend more time on the
+documentation side of things.</p>
+
+<h3 id="other-helpful-openshift-links:7691e8103b37fb8a7e415dbcd78d4931">Other Helpful OpenShift links:</h3>
+
+<ul>
+<li><a href="https://github.com/kencochrane/django-cms-openshift">My GitHub repo for this
+article</a></li>
+<li><a href="https://github.com/openshift/django-example">https://github.com/openshift/django-example</a></li>
+<li><a href="http://blog.ianweller.org/2011/05/12/openshift-express-first-thoughts/">http://blog.ianweller.org/2011/05/12/openshift-express-first-thoughts/</a></li>
+</ul>
+
+<h3 id="my-other-articles-related-to-paas:7691e8103b37fb8a7e415dbcd78d4931">My other articles related to PAAS:</h3>
+
+<ul>
+<li><a href="http://kencochrane.net/blog/2011/04/my-experiences-with-epio/">My Experiences with
+ep.io</a></li>
+<li><a href="http://kencochrane.net/blog/2011/05/apphosted-com-django-hosting-review/">AppHosted.com Django Hosting Service
+Review</a></li>
+<li><a href="http://kencochrane.net/blog/2011/04/my-day-gondorio/">My Day in
+Gondor.io</a></li>
+<li><a href="http://kencochrane.net/blog/2011/04/deploying-my-django-application-to-dotcloud/">Deploying my Django application to
+DotCloud.com</a></li>
+<li><a href="http://DjangoZoom.com">DjangoZoom.com Review</a></li>
+<li><a href="http://kencochrane.net/blog/2011/06/django-hosting-roundup-who-wins/">Django hosting
+roundup</a></li>
+<li><a href="http://kencochrane.net/blog/2011/12/installing-djangocms-on-heroku-in-13-easy-steps/">Installing DjangoCMS on Heroku in 13 easy
+steps</a></li>
+<li><a href="http://kencochrane.net/blog/2011/12/installing-djangocms-dotcloud-12-easy-steps/">Installing DjangoCMS on dotCloud in 12 easy
+steps</a></li>
+<li><a href="http://kencochrane.net/blog/2011/11/developers-guide-for-running-django-apps-on-heroku/">Developers guide to Running Django Applications on
+Heroku</a></li>
+</ul>
+
+<h3 id="update:7691e8103b37fb8a7e415dbcd78d4931">Update</h3>
+
+<p>2/16/2012: Full disclosure. On Feb 16th 2012, I accepted a job with
+dotCloud a competitor to openShift. I plan on keeping this blog post up
+to date and impartial. If you think there are any errors, please let me
+know in the comments.</p>
+
+            </div>
+            <footer class="article-footer">
+    <a data-url="http://www.kencochrane.net/blog/2012/01/installing-django-application-on-openshift/" data-id="7691e8103b37fb8a7e415dbcd78d4931" class="article-share-link">
+        Share
+    </a>
+    
+    <a href="http://www.kencochrane.net/blog/2012/01/installing-django-application-on-openshift//#disqus_thread" class="article-comment-link">
+        Comments
+    </a>
+    
+</footer>
+
+        </div>
+
+        
+<nav id="article-nav">
+    
+    <a href="http://www.kencochrane.net/blog/2011/12/installing-djangocms-on-heroku-in-13-easy-steps/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">
+          Older
+      </strong>
+      <div class="article-nav-title">Installing DjangoCMS on Heroku in 13 easy steps</div>
+    </a>
+    
+
+    
+    <a href="http://www.kencochrane.net/blog/2012/01/getting-djangocms-up-and-running-on-stackato/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">
+          Newer
+      </strong>
+      <div class="article-nav-title">Getting DjangoCMS up and running on ActiveState&#39;s Stackato</div>
+    </a>
+    
+</nav>
+
+
+    </article>
+    <section id="comments">
+        <div id="disqus_thread">
+            <div id="disqus_thread"></div>
+<script type="text/javascript">
+    var disqus_shortname = 'kencochrane';
+    var disqus_identifier = 'http:\/\/www.kencochrane.net\/blog\/2012\/01\/installing-django-application-on-openshift\/';
+    var disqus_title = 'Installing a Django application on Red Hat\x27s OpenShift PAAS';
+    var disqus_url = 'http:\/\/www.kencochrane.net\/blog\/2012\/01\/installing-django-application-on-openshift\/';
+
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+        </div>
+    </section>
+
+</section>
+
+	    <aside id="sidebar">
+    
+<div class="widget-wrap">
+    <h3 class="widget-title">
+        Recents
+    </h3>
+    <div class="widget">
+        <ul id="recent-post">
+            
+            <li>
+                <div class="item-thumbnail">
+                    <a href="http://www.kencochrane.net/blog/2015/02/introducing-django-defender/" class="thumbnail">
+                    
+                        <span class="thumbnail-image thumbnail-none"></span>
+                    
+                    </a>
+                </div>
+                <div class="item-inner">
+                    
+                    <p class="item-category">
+                        <a class="article-category-link" href="http://www.kencochrane.net/categories/blog">
+                        blog
+                        </a>
+                    </p>
+                    
+                    <p class="item-title"><a href="http://www.kencochrane.net/blog/2015/02/introducing-django-defender/" class="title">Introducing Django Defender</a></p>
+                    <p class="item-date">
+                        <time datetime="2015-02-15 00:00:00 &#43;0000 UTC" itemprop="datePublished">2015-02-15</time>
+                    </p>
+                </div>
+            </li>
+            
+            <li>
+                <div class="item-thumbnail">
+                    <a href="http://www.kencochrane.net/blog/2015/02/upload-video-to-facebook-from-s3-using-python/" class="thumbnail">
+                    
+                        <span class="thumbnail-image thumbnail-none"></span>
+                    
+                    </a>
+                </div>
+                <div class="item-inner">
+                    
+                    <p class="item-category">
+                        <a class="article-category-link" href="http://www.kencochrane.net/categories/blog">
+                        blog
+                        </a>
+                    </p>
+                    
+                    <p class="item-title"><a href="http://www.kencochrane.net/blog/2015/02/upload-video-to-facebook-from-s3-using-python/" class="title">Uploading a Video to Facebook from AWS S3 using python</a></p>
+                    <p class="item-date">
+                        <time datetime="2015-02-14 00:00:00 &#43;0000 UTC" itemprop="datePublished">2015-02-14</time>
+                    </p>
+                </div>
+            </li>
+            
+            <li>
+                <div class="item-thumbnail">
+                    <a href="http://www.kencochrane.net/blog/2013/08/the-docker-guidebook/" class="thumbnail">
+                    
+                        <span class="thumbnail-image thumbnail-none"></span>
+                    
+                    </a>
+                </div>
+                <div class="item-inner">
+                    
+                    <p class="item-category">
+                        <a class="article-category-link" href="http://www.kencochrane.net/categories/blog">
+                        blog
+                        </a>
+                    </p>
+                    
+                    <p class="item-title"><a href="http://www.kencochrane.net/blog/2013/08/the-docker-guidebook/" class="title">The Docker Guidebook</a></p>
+                    <p class="item-date">
+                        <time datetime="2013-08-23 00:00:00 &#43;0000 UTC" itemprop="datePublished">2013-08-23</time>
+                    </p>
+                </div>
+            </li>
+            
+            <li>
+                <div class="item-thumbnail">
+                    <a href="http://www.kencochrane.net/blog/2013/06/running-docker-on-digital-ocean/" class="thumbnail">
+                    
+                        <span class="thumbnail-image thumbnail-none"></span>
+                    
+                    </a>
+                </div>
+                <div class="item-inner">
+                    
+                    <p class="item-category">
+                        <a class="article-category-link" href="http://www.kencochrane.net/categories/blog">
+                        blog
+                        </a>
+                    </p>
+                    
+                    <p class="item-title"><a href="http://www.kencochrane.net/blog/2013/06/running-docker-on-digital-ocean/" class="title">Running Docker on Digital Ocean with Ubuntu</a></p>
+                    <p class="item-date">
+                        <time datetime="2013-06-07 00:00:00 &#43;0000 UTC" itemprop="datePublished">2013-06-07</time>
+                    </p>
+                </div>
+            </li>
+            
+            <li>
+                <div class="item-thumbnail">
+                    <a href="http://www.kencochrane.net/blog/2013/05/running-docker-on-a-raspberrypi/" class="thumbnail">
+                    
+                        <span class="thumbnail-image thumbnail-none"></span>
+                    
+                    </a>
+                </div>
+                <div class="item-inner">
+                    
+                    <p class="item-category">
+                        <a class="article-category-link" href="http://www.kencochrane.net/categories/blog">
+                        blog
+                        </a>
+                    </p>
+                    
+                    <p class="item-title"><a href="http://www.kencochrane.net/blog/2013/05/running-docker-on-a-raspberrypi/" class="title">Getting Docker up and running on a RaspberryPi</a></p>
+                    <p class="item-date">
+                        <time datetime="2013-05-17 00:00:00 &#43;0000 UTC" itemprop="datePublished">2013-05-17</time>
+                    </p>
+                </div>
+            </li>
+            
+        </ul>
+    </div>
+</div>
+
+
+    
+
+
+<div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+        <ul class="category-list">
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/categories/blog">
+                    blog
+                </a>
+                <span class="category-list-count">39</span>
+            </li>
+            
+        </ul>
+    </div>
+</div>
+
+
+
+    
+
+
+<div class="widget-wrap">
+    <h3 class="widget-title">
+        Tags
+    </h3>
+    <div class="widget">
+        <ul class="category-list">
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/apache">
+                    apache
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/api">
+                    api
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/apphosted">
+                    apphosted
+                </a>
+                <span class="category-list-count">2</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/aufs">
+                    aufs
+                </a>
+                <span class="category-list-count">3</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/aws">
+                    aws
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/blog">
+                    blog
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/cashstar">
+                    cashstar
+                </a>
+                <span class="category-list-count">2</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/centos5">
+                    centos5
+                </a>
+                <span class="category-list-count">3</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/clickstream">
+                    clickstream
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/defender">
+                    defender
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/deployment">
+                    deployment
+                </a>
+                <span class="category-list-count">8</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/developers">
+                    developers
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/digital-ocean">
+                    digital-ocean
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/django">
+                    django
+                </a>
+                <span class="category-list-count">23</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/django-maine">
+                    django-maine
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/djangocms">
+                    djangocms
+                </a>
+                <span class="category-list-count">4</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/djangomaine">
+                    djangomaine
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/djangozoom">
+                    djangozoom
+                </a>
+                <span class="category-list-count">2</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/docker">
+                    docker
+                </a>
+                <span class="category-list-count">4</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/dotcloud">
+                    dotcloud
+                </a>
+                <span class="category-list-count">6</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/epio">
+                    epio
+                </a>
+                <span class="category-list-count">2</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/fabric">
+                    fabric
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/facebook">
+                    facebook
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/go">
+                    go
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/gondor">
+                    gondor
+                </a>
+                <span class="category-list-count">2</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/guidebook">
+                    guidebook
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/gunicorn">
+                    gunicorn
+                </a>
+                <span class="category-list-count">2</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/heroku">
+                    heroku
+                </a>
+                <span class="category-list-count">3</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/hosting">
+                    hosting
+                </a>
+                <span class="category-list-count">14</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/install">
+                    install
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/job">
+                    job
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/jobs">
+                    jobs
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/kernel">
+                    kernel
+                </a>
+                <span class="category-list-count">4</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/linux">
+                    linux
+                </a>
+                <span class="category-list-count">6</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/lxc">
+                    lxc
+                </a>
+                <span class="category-list-count">3</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/macosx">
+                    macosx
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/memcached">
+                    memcached
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/mercurial">
+                    mercurial
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/mysql">
+                    mysql
+                </a>
+                <span class="category-list-count">2</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/newrelic">
+                    newrelic
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/nginx">
+                    nginx
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/openshift">
+                    openshift
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/paas">
+                    paas
+                </a>
+                <span class="category-list-count">13</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/pci">
+                    pci
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/pelican">
+                    pelican
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/percona">
+                    percona
+                </a>
+                <span class="category-list-count">2</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/python">
+                    python
+                </a>
+                <span class="category-list-count">26</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/rackspace">
+                    rackspace
+                </a>
+                <span class="category-list-count">2</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/raspberrypi">
+                    raspberrypi
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/raspbian">
+                    raspbian
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/redis">
+                    redis
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/requests">
+                    requests
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/rhel5">
+                    rhel5
+                </a>
+                <span class="category-list-count">4</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/s3">
+                    s3
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/script">
+                    script
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/sentry">
+                    sentry
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/stackato">
+                    stackato
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/supervisor">
+                    supervisor
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/supervisord">
+                    supervisord
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/tutorial">
+                    tutorial
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/ubuntu">
+                    ubuntu
+                </a>
+                <span class="category-list-count">3</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/upgrade">
+                    upgrade
+                </a>
+                <span class="category-list-count">2</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/video">
+                    video
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/work">
+                    work
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+        </ul>
+    </div>
+</div>
+
+
+
+    
+
+
+<div class="widget-wrap">
+    <h3 class="widget-title">
+        Tag cloud
+    </h3>
+    <div class="widget tagcloud">
+        
+        <a href="http://www.kencochrane.net/tags/apache" style="font-size: 12px;">apache</a>
+        
+        <a href="http://www.kencochrane.net/tags/api" style="font-size: 12px;">api</a>
+        
+        <a href="http://www.kencochrane.net/tags/apphosted" style="font-size: 12px;">apphosted</a>
+        
+        <a href="http://www.kencochrane.net/tags/aufs" style="font-size: 12px;">aufs</a>
+        
+        <a href="http://www.kencochrane.net/tags/aws" style="font-size: 12px;">aws</a>
+        
+        <a href="http://www.kencochrane.net/tags/blog" style="font-size: 12px;">blog</a>
+        
+        <a href="http://www.kencochrane.net/tags/cashstar" style="font-size: 12px;">cashstar</a>
+        
+        <a href="http://www.kencochrane.net/tags/centos5" style="font-size: 12px;">centos5</a>
+        
+        <a href="http://www.kencochrane.net/tags/clickstream" style="font-size: 12px;">clickstream</a>
+        
+        <a href="http://www.kencochrane.net/tags/defender" style="font-size: 12px;">defender</a>
+        
+        <a href="http://www.kencochrane.net/tags/deployment" style="font-size: 12px;">deployment</a>
+        
+        <a href="http://www.kencochrane.net/tags/developers" style="font-size: 12px;">developers</a>
+        
+        <a href="http://www.kencochrane.net/tags/digital-ocean" style="font-size: 12px;">digital-ocean</a>
+        
+        <a href="http://www.kencochrane.net/tags/django" style="font-size: 12px;">django</a>
+        
+        <a href="http://www.kencochrane.net/tags/django-maine" style="font-size: 12px;">django-maine</a>
+        
+        <a href="http://www.kencochrane.net/tags/djangocms" style="font-size: 12px;">djangocms</a>
+        
+        <a href="http://www.kencochrane.net/tags/djangomaine" style="font-size: 12px;">djangomaine</a>
+        
+        <a href="http://www.kencochrane.net/tags/djangozoom" style="font-size: 12px;">djangozoom</a>
+        
+        <a href="http://www.kencochrane.net/tags/docker" style="font-size: 12px;">docker</a>
+        
+        <a href="http://www.kencochrane.net/tags/dotcloud" style="font-size: 12px;">dotcloud</a>
+        
+        <a href="http://www.kencochrane.net/tags/epio" style="font-size: 12px;">epio</a>
+        
+        <a href="http://www.kencochrane.net/tags/fabric" style="font-size: 12px;">fabric</a>
+        
+        <a href="http://www.kencochrane.net/tags/facebook" style="font-size: 12px;">facebook</a>
+        
+        <a href="http://www.kencochrane.net/tags/go" style="font-size: 12px;">go</a>
+        
+        <a href="http://www.kencochrane.net/tags/gondor" style="font-size: 12px;">gondor</a>
+        
+        <a href="http://www.kencochrane.net/tags/guidebook" style="font-size: 12px;">guidebook</a>
+        
+        <a href="http://www.kencochrane.net/tags/gunicorn" style="font-size: 12px;">gunicorn</a>
+        
+        <a href="http://www.kencochrane.net/tags/heroku" style="font-size: 12px;">heroku</a>
+        
+        <a href="http://www.kencochrane.net/tags/hosting" style="font-size: 12px;">hosting</a>
+        
+        <a href="http://www.kencochrane.net/tags/install" style="font-size: 12px;">install</a>
+        
+        <a href="http://www.kencochrane.net/tags/job" style="font-size: 12px;">job</a>
+        
+        <a href="http://www.kencochrane.net/tags/jobs" style="font-size: 12px;">jobs</a>
+        
+        <a href="http://www.kencochrane.net/tags/kernel" style="font-size: 12px;">kernel</a>
+        
+        <a href="http://www.kencochrane.net/tags/linux" style="font-size: 12px;">linux</a>
+        
+        <a href="http://www.kencochrane.net/tags/lxc" style="font-size: 12px;">lxc</a>
+        
+        <a href="http://www.kencochrane.net/tags/macosx" style="font-size: 12px;">macosx</a>
+        
+        <a href="http://www.kencochrane.net/tags/memcached" style="font-size: 12px;">memcached</a>
+        
+        <a href="http://www.kencochrane.net/tags/mercurial" style="font-size: 12px;">mercurial</a>
+        
+        <a href="http://www.kencochrane.net/tags/mysql" style="font-size: 12px;">mysql</a>
+        
+        <a href="http://www.kencochrane.net/tags/newrelic" style="font-size: 12px;">newrelic</a>
+        
+        <a href="http://www.kencochrane.net/tags/nginx" style="font-size: 12px;">nginx</a>
+        
+        <a href="http://www.kencochrane.net/tags/openshift" style="font-size: 12px;">openshift</a>
+        
+        <a href="http://www.kencochrane.net/tags/paas" style="font-size: 12px;">paas</a>
+        
+        <a href="http://www.kencochrane.net/tags/pci" style="font-size: 12px;">pci</a>
+        
+        <a href="http://www.kencochrane.net/tags/pelican" style="font-size: 12px;">pelican</a>
+        
+        <a href="http://www.kencochrane.net/tags/percona" style="font-size: 12px;">percona</a>
+        
+        <a href="http://www.kencochrane.net/tags/python" style="font-size: 12px;">python</a>
+        
+        <a href="http://www.kencochrane.net/tags/rackspace" style="font-size: 12px;">rackspace</a>
+        
+        <a href="http://www.kencochrane.net/tags/raspberrypi" style="font-size: 12px;">raspberrypi</a>
+        
+        <a href="http://www.kencochrane.net/tags/raspbian" style="font-size: 12px;">raspbian</a>
+        
+        <a href="http://www.kencochrane.net/tags/redis" style="font-size: 12px;">redis</a>
+        
+        <a href="http://www.kencochrane.net/tags/requests" style="font-size: 12px;">requests</a>
+        
+        <a href="http://www.kencochrane.net/tags/rhel5" style="font-size: 12px;">rhel5</a>
+        
+        <a href="http://www.kencochrane.net/tags/s3" style="font-size: 12px;">s3</a>
+        
+        <a href="http://www.kencochrane.net/tags/script" style="font-size: 12px;">script</a>
+        
+        <a href="http://www.kencochrane.net/tags/sentry" style="font-size: 12px;">sentry</a>
+        
+        <a href="http://www.kencochrane.net/tags/stackato" style="font-size: 12px;">stackato</a>
+        
+        <a href="http://www.kencochrane.net/tags/supervisor" style="font-size: 12px;">supervisor</a>
+        
+        <a href="http://www.kencochrane.net/tags/supervisord" style="font-size: 12px;">supervisord</a>
+        
+        <a href="http://www.kencochrane.net/tags/tutorial" style="font-size: 12px;">tutorial</a>
+        
+        <a href="http://www.kencochrane.net/tags/ubuntu" style="font-size: 12px;">ubuntu</a>
+        
+        <a href="http://www.kencochrane.net/tags/upgrade" style="font-size: 12px;">upgrade</a>
+        
+        <a href="http://www.kencochrane.net/tags/video" style="font-size: 12px;">video</a>
+        
+        <a href="http://www.kencochrane.net/tags/work" style="font-size: 12px;">work</a>
+        
+    </div>
+</div>
+
+
+
+
+    <div id="toTop" class="fa fa-chevron-up"></div>
+</aside>
+
+	</div>
+</div>
+
+<footer id="footer">
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2016
+      Powered by <a href="//gohugo.io">Hugo</a>. Theme by <a href="http://github.com/ppoffice">PPOffice</a>.
+    </div>
+  </div>
+</footer>
+
+
+<script>
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-67696-11', 'auto');
+ga('send', 'pageview');
+</script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+<script src="http://www.kencochrane.net/fancybox/jquery.fancybox.pack.js"></script>
+<script src="http://www.kencochrane.net/js/script.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.8.0/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+<!-- MathJax -->
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  tex2jax: {
+    inlineMath: [['$','$'], ['\\(','\\)']]}
+  });
+</script>
+<script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+</body>
+</html>

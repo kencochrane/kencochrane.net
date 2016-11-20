@@ -1,0 +1,1315 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Linux on KenCochrane.net</title>
+    <link>http://www.kencochrane.net/tags/linux/</link>
+    <description>Recent content in Linux on KenCochrane.net</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Fri, 17 May 2013 00:00:00 +0000</lastBuildDate>
+    <atom:link href="http://www.kencochrane.net/tags/linux/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Getting Docker up and running on a RaspberryPi</title>
+      <link>http://www.kencochrane.net/blog/2013/05/running-docker-on-a-raspberrypi/</link>
+      <pubDate>Fri, 17 May 2013 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.kencochrane.net/blog/2013/05/running-docker-on-a-raspberrypi/</guid>
+      <description>
+
+&lt;p&gt;This year I attended &lt;a href=&#34;https://us.pycon.org/2013/&#34;&gt;PyCon US&lt;/a&gt; and I was
+lucky enough to get a FREE &lt;a href=&#34;http://www.raspberrypi.org&#34;&gt;RaspberryPi&lt;/a&gt;. At
+the same conference &lt;a href=&#34;http://www.dotcloud.com&#34;&gt;dotCloud&lt;/a&gt; (The company I
+work for), was giving a lightning talk for a project that we have been
+working on, called Docker. &lt;a href=&#34;http://www.docker.io&#34;&gt;Docker&lt;/a&gt; is a tool that
+allows you to better manage your Linux Containers
+(&lt;a href=&#34;http://lxc.sourceforge.net&#34;&gt;LXC&lt;/a&gt;). Shortly after I got the
+RaspberryPi, I started wondering if it would be possible to run Docker
+on it.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://www.kencochrane.net/rpi/RaspberryPi.jpg&#34; alt=&#34;image&#34; /&gt;{.img-polaroid}&lt;/p&gt;
+
+&lt;p&gt;I did some digging and technically speaking the Pi should be able to run
+Docker, it satisfies all of the requirements.&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Linux&lt;/li&gt;
+&lt;li&gt;LXC&lt;/li&gt;
+&lt;li&gt;AUFS&lt;/li&gt;
+&lt;li&gt;Go&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Getting it up and running isn&amp;rsquo;t going to be easy. The Linux kernels that
+come with the different Linux distros for the RaspberryPi, are kind of
+old, and don&amp;rsquo;t come with AUFS built in. The RaspberryPi also runs on an
+ARM based chip, and it is only 32bit. Currently Docker only supports
+64bit OS&amp;rsquo;s. There are plans to add 32 bit support in the future, but it
+isn&amp;rsquo;t there yet.&lt;/p&gt;
+
+&lt;p&gt;Doing some research I was able to find blog posts on how to get LXC and
+AUFS up and running on the RaspberryPi. Using those guides, I was able
+to make some progress but I&amp;rsquo;m not all of the way there yet. I&amp;rsquo;m hoping
+to describe my steps here so that others can see what I have done, and
+if they want, help me get over the hump.&lt;/p&gt;
+
+&lt;h1 id=&#34;goals:f1d498c06f1cd77c93351132c9d7bc1e&#34;&gt;Goals&lt;/h1&gt;
+
+&lt;p&gt;My goals for the project is to:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;provide a prebuilt image that people can download that has
+everything they needed in order to get started.&lt;/li&gt;
+&lt;li&gt;I also want to provide a prebuilt kernel, people can download and
+use without having to build their own.&lt;/li&gt;
+&lt;li&gt;Port Docker to 32bit so that it will run on RaspberryPi and provide
+a Debian package for easy install.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&#34;instructions:f1d498c06f1cd77c93351132c9d7bc1e&#34;&gt;Instructions&lt;/h1&gt;
+
+&lt;p&gt;Here are the steps that I used to make it so that my RaspberryPi could
+run Docker. These are still a work in progress, so please let me know if
+you have any issues, or you found a better way to do this.&lt;/p&gt;
+
+&lt;h2 id=&#34;install-linux-os:f1d498c06f1cd77c93351132c9d7bc1e&#34;&gt;Install Linux OS&lt;/h2&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Download &lt;a href=&#34;http://www.raspberrypi.org/downloads&#34;&gt;Raspbian&lt;/a&gt; and &lt;a href=&#34;http://elinux.org/RPi_Easy_SD_Card_Setup&#34;&gt;make
+an SD card&lt;/a&gt; (I used the
+2013-02-09-wheezy-raspbian.zip image)&lt;/li&gt;
+&lt;li&gt;Once you have the SD card, put it in the Pi and boot it up.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h2 id=&#34;update-and-prepare-raspbian:f1d498c06f1cd77c93351132c9d7bc1e&#34;&gt;Update and Prepare Raspbian&lt;/h2&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Switch to Root User on the Pi. These commands must be run as root.
+You can also use &amp;ldquo;su&amp;rdquo; or &amp;ldquo;sudo&amp;rdquo;, what ever you prefer:&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;$ sudo su root
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Expand to fill SD card and reboot after entering:&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;$ raspi-config
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Update Raspbian&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;$ apt-get update
+
+$ apt-get dist-upgrade
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Install git&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;$ sudo apt-get install git-core
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Update Firmware&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;The clone will take a while. You might consider cloning on a desktop
+machine to save time. Just transfer the firmware/boot and modules/
+directories from your desktop PC to the Pi after the checkout. Be aware
+that checking out on some OS&amp;rsquo;s that are case insensitive, may result in
+some files being missing. If you see funky issues, this might be the
+cause.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;$ cd /opt
+
+$ git clone git://github.com/raspberrypi/firmware.git
+
+$ cd firmware/boot
+
+$ cp * /boot
+
+$ cd ../modules
+
+$ cp -r * /lib/modules
+
+$ reboot
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Increase the Swap File Size&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;I found that in order to check out the source on the Pi, you’ll need a
+swap file with the 256MB Pi, otherwise it will run out of RAM during the
+checkout (with fatal: index-pack failed).&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;# use your favorite editor here.
+$ pico /etc/dphys-swapfile
+
+# change to 500 (MB)
+
+$ sudo dphys-swapfile setup
+
+$ sudo reboot
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Prepare to Build Kernel&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;We are going to use the 3.6 kernel since it is the lastest stable one.
+There is an effort to get &lt;a href=&#34;http://www.raspberrypi.org/phpBB3/viewtopic.php?f=87&amp;amp;t=40664&#34;&gt;3.8
+working&lt;/a&gt;,
+it isn&amp;rsquo;t 100% there yet, for more info see.&lt;/p&gt;
+
+&lt;p&gt;The clone will take a while. Again, you may consider using a desktop PC.
+Of course, if you do that, you’ll need to issue the “zcat” command from
+your Pi and copy the resulting “.config” file to the “linux” directory
+on your desktop PC.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;$ cd /opt
+
+$ mkdir raspberrypi
+
+$ cd raspberrypi
+
+$ git clone git://github.com/raspberrypi/linux.git
+
+$ cd linux
+
+$ zcat /proc/config.gz &amp;gt; .config
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Decrease the Swap Space File&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;$ pico /etc/dphys-swapfile
+
+# change to 100 (MB)
+
+$ sudo dphys-swapfile setup
+
+$ sudo reboot
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Install Packages for Kernel Compilation&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;$ apt-get install ncurses-dev
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Adding AUFS Patches&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;$ cd /opt/raspberrypi/linux
+
+git clone git://aufs.git.sourceforge.net/gitroot/aufs/aufs3-standalone.git
+cd aufs3-standalone
+git checkout origin/aufs3.6
+cp -rp *.patch ../
+cp -rp fs ../
+cp -rp Documentation/ ../
+cp -rp include/ ../
+cd ..
+
+patch -p1 &amp;lt; aufs3-base.patch
+patch -p1 &amp;lt; aufs3-proc_map.patch
+patch -p1 &amp;lt; aufs3-standalone.patch
+patch -p1 &amp;lt; aufs3-kbuild.patch
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;If you get this error&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;root@raspberrypi:/opt/raspberrypi/linux# patch -p1 &amp;lt; aufs3-kbuild.patch
+patching file fs/Kconfig
+patching file fs/Makefile
+patching file include/linux/Kbuild
+Hunk #1 FAILED at 66.
+1 out of 1 hunk FAILED -- saving rejects to file include/linux/Kbuild.rej
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Then you will need to manually update include/linux/Kbuild because the
+patch failed.&lt;/p&gt;
+
+&lt;p&gt;First I reverted change on the file, and manually added. the line
+(below) to line 66, below audit.h&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;header-y += aufs_type.h
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;here is my git diff:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;diff --git a/include/linux/Kbuild b/include/linux/Kbuild
+index fa21760..ee029e3 100644
+--- a/include/linux/Kbuild
++++ b/include/linux/Kbuild
+@@ -66,6 +66,7 @@ header-y += atmppp.h
+ header-y += atmsap.h
+ header-y += atmsvc.h
+ header-y += audit.h
++header-y += aufs_type.h
+ header-y += auto_fs.h
+ header-y += auto_fs4.h
+ header-y += auxvec.h
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Configuring Kernel&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;You’ll now need to set some kernel options to support LXC, via the menu
+config tool.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;$ cd /opt/raspberrypi/linx
+
+$ make menuconfig
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;You need to enable these options:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;General -&amp;gt; Control Group Support -&amp;gt; Memory Resource Controller
+for Control Groups (&lt;em&gt;and its three child options&lt;/em&gt;)&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://www.kencochrane.net/rpi/raspberrypi_kernel_config_1.png&#34; alt=&#34;image&#34; /&gt;{.img-polaroid}&lt;/p&gt;
+
+&lt;p&gt;(this has high overhead;only enable if you really need it, or else
+enable and remember to disable using the Kernel command line option
+“cgroup_disable=memory”) (image not shown)&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;General -&amp;gt; Control Group Support -&amp;gt; cpuset support&lt;/li&gt;
+&lt;li&gt;Device Drivers -&amp;gt; Character Devices -&amp;gt; Support multiple
+instances of devpts&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://www.kencochrane.net/rpi/raspberrypi_kernel_config_2.png&#34; alt=&#34;image&#34; /&gt;{.img-polaroid}&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Device Drivers -&amp;gt; Network Device Support -&amp;gt; Virtual ethernet
+pair device&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://www.kencochrane.net/rpi/raspberrypi_kernel_config_3.png&#34; alt=&#34;image&#34; /&gt;{.img-polaroid}&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;File Systems &amp;ndash;&amp;gt; Miscellaneous filesystems -&amp;gt;select &amp;ldquo;Aufs
+(Advanced multi layered unification filesystem) support (NEW)&amp;rdquo; (mine
+was the the very bottom)&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://www.kencochrane.net/rpi/docker_rasberrypi_aufs_kernel_config.png&#34; alt=&#34;image&#34; /&gt;{.img-polaroid}&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Build Kernel&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;This could take many hours if you compile on the Pi, there are ways to
+&lt;a href=&#34;http://elinux.org/RPi_Kernel_Compilation#2._Cross_compiling_from_Linux&#34;&gt;compile on another
+machine&lt;/a&gt;
+and transfer the kernel to the Pi when completed. If you are in a hurry,
+use this approach.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;$ make
+
+$ make modules_install
+
+$ cd /opt/raspberrypi
+
+$ git clone git://github.com/raspberrypi/tools.git
+
+$ cd tools/mkimage
+
+$ python ./imagetool-uncompressed.py /opt/raspberrypi/linux/arch/arm/boot/Image
+
+$ cp /boot/kernel.img /boot/kernel-old.img
+
+$ cp kernel.img /boot/
+
+$ reboot
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Download Latest LXC&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;The LXC tools provided with Raspbian are out-of-date, so let&amp;rsquo;s update to
+the latest version.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;$ mkdir /opt/lxc
+
+$ cd /opt/lxc
+
+$ git clone https://github.com/lxc/lxc.git
+
+$ apt-get install automake libcap-dev
+
+$ cd lxc
+
+$ ./autogen.sh &amp;amp;&amp;amp; ./configure &amp;amp;&amp;amp; make &amp;amp;&amp;amp; make install
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Testing the Install&lt;/p&gt;
+
+&lt;p&gt;Check LXC is happy with your kernel:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;$ lxc-checkconfig
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;User namespace should be “missing” (it checks for a kernel option that
+no longer exists) and Cgroup namespace should say “required”.&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Installing Go&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;If you install Go using the Go package that is available (apt-get
+install golang). You will get a floating point issue. For more
+information about the floating point issues see this page.
+&lt;a href=&#34;http://www.raspberrypi.org/phpBB3/viewtopic.php?p=129647&#34;&gt;http://www.raspberrypi.org/phpBB3/viewtopic.php?p=129647&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;To get it to work, we will compile Go from source. Feel free to change
+the location on where we are installing it.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;$ sudo apt-get install -y mercurial gcc libc6-dev
+
+$ hg clone -u default https://code.google.com/p/go $HOME/go
+warning: code.google.com certificate with fingerprint 9f:af:b9:ce:b5:10:97:c0:5d:16:90:11:63:78:fa:2f:37:f4:96:79 not verified (check hostfingerprints or web.cacerts config setting)
+destination directory: go
+requesting all changes
+adding changesets
+adding manifests
+adding file changes
+added 14430 changesets with 52478 changes to 7406 files (+5 heads)
+updating to branch default
+3520 files updated, 0 files merged, 0 files removed, 0 files unresolved
+
+$ cd $HOME/go/src
+$ ./all.bash
+
+ALL TESTS PASSED
+
+---
+Installed Go for linux/arm in /home/dfc/go
+Installed commands in /home/dfc/go/bin
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;If there was an error relating to out of memory, or you couldn’t
+configure an appropriate swap device, you can skip the test suite by
+executing&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;$ cd $HOME/go
+$ ./make.bash
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;as an alternative to ./all.bash.&lt;/p&gt;
+
+&lt;p&gt;The go command needs to be added to your \$PATH, you should also edit
+your profile script (.bashrc, etc) to include these changes.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;$ export PATH=$PATH:$HOME/go/bin
+$ go version
+go version devel +30c566874b83 Wed May 08 16:06:25 2013 -0700 linux/arm
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Installing Docker&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;$ apt-get -y install wget bsdtar curl git
+
+export GOPATH=~/docker/go/
+export PATH=$GOPATH/bin:$PATH
+
+$ mkdir -p $GOPATH/src/github.com/dotcloud
+$ cd $GOPATH/src/github.com/dotcloud
+$ git clone git://github.com/dotcloud/docker.git  # or clone your own fork/branch
+$ cd docker
+
+$ go get -v github.com/dotcloud/docker/...
+$ go install -v github.com/dotcloud/docker/...
+
+$ docker version
+$ docker -d
+The docker runtime currently only supports amd64 (not arm). This will change in the future. Aborting.
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Docker is installed but due to current limitations it won&amp;rsquo;t run. It is a
+start, we now have a development environment to start hacking on Docker
+to get it to work with the RaspberryPi.&lt;/p&gt;
+
+&lt;h1 id=&#34;what-s-next:f1d498c06f1cd77c93351132c9d7bc1e&#34;&gt;What&amp;rsquo;s Next&lt;/h1&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Now we have everything up and running, we need to change docker so
+that it will work on the ARM with only 32bit support.&lt;/li&gt;
+&lt;li&gt;I need to take my compiled kernel and make it downloadable to others&lt;/li&gt;
+&lt;li&gt;I need to make an SD card image of my setup for easy download, so
+that people can get started easier.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&#34;want-to-help:f1d498c06f1cd77c93351132c9d7bc1e&#34;&gt;Want to Help?&lt;/h1&gt;
+
+&lt;p&gt;If you want to help me with this, please send me a message on twitter
+&lt;a href=&#34;https://twitter.com/kencochrane&#34;&gt;@KenCochrane&lt;/a&gt; and also add your name
+to this &lt;a href=&#34;https://github.com/dotcloud/docker/issues/636&#34;&gt;Docker issue&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h1 id=&#34;resources:f1d498c06f1cd77c93351132c9d7bc1e&#34;&gt;Resources:&lt;/h1&gt;
+
+&lt;ul&gt;
+&lt;li&gt;LXC:
+&lt;a href=&#34;http://raspberrypicloud.wordpress.com/2013/03/12/building-an-lxc-friendly-kernel-for-the-raspberry-pi/&#34;&gt;http://raspberrypicloud.wordpress.com/2013/03/12/building-an-lxc-friendly-kernel-for-the-raspberry-pi/&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;AUFS: &lt;a href=&#34;http://rpitc.blogspot.sg/p/kernel-rebuild.html&#34;&gt;http://rpitc.blogspot.sg/p/kernel-rebuild.html&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Go: &lt;a href=&#34;http://dave.cheney.net/tag/go-golang-raspberrypi&#34;&gt;http://dave.cheney.net/tag/go-golang-raspberrypi&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Docker:
+&lt;a href=&#34;http://docs.docker.io/en/latest/contributing/devenvironment.html&#34;&gt;http://docs.docker.io/en/latest/contributing/devenvironment.html&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Setting up Django with Green Unicorn, nginx, supervisord and fabric on CentOS 5.5</title>
+      <link>http://www.kencochrane.net/blog/2011/06/django-gunicorn-nginx-supervisord-fabric-centos55/</link>
+      <pubDate>Mon, 27 Jun 2011 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.kencochrane.net/blog/2011/06/django-gunicorn-nginx-supervisord-fabric-centos55/</guid>
+      <description>
+
+&lt;p&gt;When I first started working with django I deployed my apps using apache
+and mod_python. Then after a little while I started playing with nginx
+and switched my setup so that nginx was serving the static content and
+reverse proxied requests back to apache and mod_python. Not too long
+after that, I switched out mod_python with mod_wsgi and ran mod_wsgi
+in daemon mode.&lt;/p&gt;
+
+&lt;p&gt;This setup worked well for a while, but one thing I never really liked
+was the fact that I needed to run apache which is pretty heavy even when
+you strip out all the unused modules. Apache is great, but all I was
+really using it for was a router between nginx and mod_wsgi, I wasn&amp;rsquo;t
+using any of the other features in apache.&lt;/p&gt;
+
+&lt;p&gt;I looked at fastcgi and uswgi and they looked good, but for one reason
+or another I never made the jump. Recently I have been hearing a lot of
+good things about green unicorn, so I decided to check it out. When I
+first looked at it, it was fairly new and because of this a little
+concerned with stability, so I kept and eye on it and watched it mature.&lt;/p&gt;
+
+&lt;p&gt;While I was waiting for green unicorn to mature I ended up doing a lot
+of research on the &lt;a href=&#34;http://kencochrane.net/blog/2011/06/django-hosting-roundup-who-wins/&#34;&gt;new python hosting
+services&lt;/a&gt;
+that recently hit the market. Three out of the five services that I
+looked were using green unicorn, the other two were using uWSGI.&lt;/p&gt;
+
+&lt;p&gt;The fact that these three services are basing there new businesses on
+green unicorn gave it a lot of credibility. Not too long after that I
+started playing with green unicorn to see what it would take to get my
+sites up and running.&lt;/p&gt;
+
+&lt;p&gt;The first thing that I noticed was that I didn&amp;rsquo;t need to create a wsgi
+file if I used their gunicorn_django command, which was pretty sweet.
+The fact that they built it into the service shows you that django is a
+first class citizen.&lt;/p&gt;
+
+&lt;p&gt;The second thing that I noticed was that I needed a way to start up
+green unicorn and keep it running, something that apache does for you
+with mod_wsgi. I did a little bit of research and found out that
+supervisord would work perfectly for what I needed to do with green
+unicorn.&lt;/p&gt;
+
+&lt;p&gt;Because seeing is better then reading, I&amp;rsquo;ll guide you throw the steps
+that you will need to do in order to get your system setup in a way that
+will make using green unicorn very easy, especially if you want to run
+more then one website on your server. I&amp;rsquo;m going to use a 256MB rackspace
+cloud instance running centos 5.5.&lt;/p&gt;
+
+&lt;h1 id=&#34;create-a-rackspace-cloud-server:c618fab5154c76fcdb1f622089e4dd3f&#34;&gt;Create a rackspace cloud server&lt;/h1&gt;
+
+&lt;p&gt;Go into the rackspace cloud server management website and allocate
+yourself a new 256MB CentOS 5.5 server or if you prefer do the same
+thing using their API. Now that you have a server and the root password,
+follow along step by step to get you system all setup.&lt;/p&gt;
+
+&lt;h1 id=&#34;software-and-versions:c618fab5154c76fcdb1f622089e4dd3f&#34;&gt;Software and versions&lt;/h1&gt;
+
+&lt;ul&gt;
+&lt;li&gt;RackSpace Cloud Server 256MB&lt;/li&gt;
+&lt;li&gt;CentOS 5.5&lt;/li&gt;
+&lt;li&gt;Python 2.6.6&lt;/li&gt;
+&lt;li&gt;nginx 1.0.4&lt;/li&gt;
+&lt;li&gt;supervisord 3.0a10&lt;/li&gt;
+&lt;li&gt;virtualenv 1.6.1&lt;/li&gt;
+&lt;li&gt;pip 1.0.1&lt;/li&gt;
+&lt;li&gt;gunicorn 0.12.2&lt;/li&gt;
+&lt;li&gt;fabric 1.1.0&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&#34;bitbucket-project:c618fab5154c76fcdb1f622089e4dd3f&#34;&gt;Bitbucket project&lt;/h1&gt;
+
+&lt;p&gt;To make things easier I have created a django bootstrap project
+directory with all of the file used in the blog post. It is located
+here, so feel free to clone and fork.&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://bitbucket.org/kencochrane/django-gunicorn-nginx-supervisord-bootstrap/&#34;&gt;https://bitbucket.org/kencochrane/django-gunicorn-nginx-supervisord-bootstrap/&lt;/a&gt;&lt;/p&gt;
+
+&lt;h1 id=&#34;login-to-server:c618fab5154c76fcdb1f622089e4dd3f&#34;&gt;Login to server&lt;/h1&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;ssh root@&amp;lt;RackSpaceIP&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h1 id=&#34;update-packages:c618fab5154c76fcdb1f622089e4dd3f&#34;&gt;Update packages&lt;/h1&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;yum -y update
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h1 id=&#34;install-packages:c618fab5154c76fcdb1f622089e4dd3f&#34;&gt;Install packages&lt;/h1&gt;
+
+&lt;p&gt;You might not need all of these right now, but I normally need these
+down the line, so doing them all now.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;yum -y install emacs readline-devel ncurses-devel libevent-devel glib2-devel libjpeg-devel freetype-devel bzip2 bzip2-devel bzip2-libs openssl-devel pcre pcre-devel gpg make gcc yum-utils unzip
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h1 id=&#34;add-a-django-user-as-a-system-user:c618fab5154c76fcdb1f622089e4dd3f&#34;&gt;Add a django user as a system user&lt;/h1&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;useradd -d /opt/django -m -r django
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h1 id=&#34;set-password-for-django-to-what-ever-you-want:c618fab5154c76fcdb1f622089e4dd3f&#34;&gt;Set password for django to what ever you want&lt;/h1&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;passwd django
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h1 id=&#34;setup-directories:c618fab5154c76fcdb1f622089e4dd3f&#34;&gt;Setup directories&lt;/h1&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;mkdir -p /opt/django
+mkdir -p /opt/django/apps
+mkdir -p /opt/django/logs
+mkdir -p /opt/django/logs/nginx
+mkdir -p /opt/django/logs/apps
+mkdir -p /opt/django/configs
+mkdir -p /opt/django/scripts
+mkdir -p /opt/django/htdocs
+mkdir -p /opt/django/tmp
+mkdir -p /opt/django/configs/nginx
+mkdir -p /opt/django/configs/supervisord
+mkdir -p /opt/django/apps/my_app
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h1 id=&#34;add-blank-html-page:c618fab5154c76fcdb1f622089e4dd3f&#34;&gt;Add blank html page&lt;/h1&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;echo &amp;quot;&amp;lt;html&amp;gt;&amp;lt;body&amp;gt;nothing here&amp;lt;/body&amp;gt;&amp;lt;/html&amp;gt; &amp;quot; &amp;gt; /opt/django/htdocs/index.html
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h1 id=&#34;install-zlib:c618fab5154c76fcdb1f622089e4dd3f&#34;&gt;Install Zlib&lt;/h1&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;# download from zlib.net
+mkdir -p /tmp/downloads
+cd /tmp/downloads
+wget http://www.zlib.net/zlib-1.2.5.tar.gz
+tar -xvzf zlib-1.2.5.tar.gz
+cd zlib-1.2.5
+./configure -s
+make install
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h1 id=&#34;install-python-2-6-6:c618fab5154c76fcdb1f622089e4dd3f&#34;&gt;Install python 2.6.6&lt;/h1&gt;
+
+&lt;p&gt;CentOS 5.5 doesn&amp;rsquo;t come with python2.6 pre installed so we need to do
+that on our own.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;mkdir -p /tmp/downloads
+cd /tmp/downloads
+wget http://www.python.org/ftp/python/2.6.6/Python-2.6.6.tgz
+tar -xvzf Python-2.6.6.tgz
+cd Python-2.6.6
+./configure --enable-shared
+make
+make altinstall
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h1 id=&#34;add-the-following-to-etc-profile:c618fab5154c76fcdb1f622089e4dd3f&#34;&gt;Add the following to /etc/profile&lt;/h1&gt;
+
+&lt;p&gt;We need to add the lib path to the LD_LIBRARY_PATH or else you will
+get an error saying it can&amp;rsquo;t find libpython2.6.so.1.0&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib/:/usr/local/lib64/
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h1 id=&#34;source-the-new-profile:c618fab5154c76fcdb1f622089e4dd3f&#34;&gt;Source the new profile&lt;/h1&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;source /etc/profile
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h1 id=&#34;install-distribute:c618fab5154c76fcdb1f622089e4dd3f&#34;&gt;Install distribute&lt;/h1&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;mkdir -p /tmp/downloads
+cd /tmp/downloads
+curl -O http://python-distribute.org/distribute_setup.py
+python2.6 distribute_setup.py
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h1 id=&#34;install-pip-virtualenv:c618fab5154c76fcdb1f622089e4dd3f&#34;&gt;Install Pip &amp;amp; virtualenv&lt;/h1&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;mkdir -p /tmp/downloads
+cd /tmp/downloads
+curl -O -k https://raw.github.com/pypa/pip/master/contrib/get-pip.py
+python2.6 get-pip.py
+pip install virtualenv
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h1 id=&#34;install-supervisor:c618fab5154c76fcdb1f622089e4dd3f&#34;&gt;Install supervisor&lt;/h1&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;pip install supervisor
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h1 id=&#34;install-mercurial:c618fab5154c76fcdb1f622089e4dd3f&#34;&gt;Install mercurial&lt;/h1&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;pip install mercurial
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h1 id=&#34;install-nginx:c618fab5154c76fcdb1f622089e4dd3f&#34;&gt;Install NGINX&lt;/h1&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;mkdir -p /tmp/downloads
+cd /tmp/downloads
+wget http://nginx.org/download/nginx-1.0.4.tar.gz
+tar -xzvf nginx-1.0.4.tar.gz
+cd nginx-1.0.4
+./configure --sbin-path=/usr/local/sbin --with-http_ssl_module --with-http_stub_status_module
+make
+/etc/init.d/nginx stop
+sleep 2
+sudo make install
+sudo chmod +x /usr/local/sbin/nginx
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;install-my-app:c618fab5154c76fcdb1f622089e4dd3f&#34;&gt;Install my app&lt;/h2&gt;
+
+&lt;h1 id=&#34;add-first-virtualenv:c618fab5154c76fcdb1f622089e4dd3f&#34;&gt;Add first virtualenv&lt;/h1&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;cd /opt/django/apps/my_app/
+virtualenv --distribute --no-site-packages v0.1
+
+# make this a post_create hook?
+touch /opt/django/apps/my_app/v0.1/.venv
+
+cd /opt/django/apps/my_app/v0.1/
+hg clone https://bitbucket.org/kencochrane/django-gunicorn-nginx-supervisord-bootstrap my_app
+
+ln -s /opt/django/apps/my_app/v0.1 /opt/django/apps/my_app/current
+
+ln -s /opt/django/apps/my_app/current/my_app/conf/nginx.conf /opt/django/configs/nginx/myapp.conf
+
+ln -s /opt/django/apps/my_app/current/my_app/conf/supervisord.conf /opt/django/configs/supervisord/myapp.conf
+
+# activate the ve
+source /opt/django/apps/my_app/current/bin/activate
+cd /opt/django/apps/my_app/current/my_app/
+./bootstrap.py
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h1 id=&#34;configure-nginx:c618fab5154c76fcdb1f622089e4dd3f&#34;&gt;Configure nginx&lt;/h1&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;# as root
+mkdir -p /etc/nginx
+ln -s /opt/django/apps/my_app/current/my_app/server/etc/nginx.conf /etc/nginx/nginx.conf
+ln -s /usr/local/nginx/conf/mime.types /etc/nginx/mime.types
+ln -s /opt/django/apps/my_app/current/my_app/server/init.d/nginx /etc/init.d/nginx
+chmod 755 /etc/init.d/nginx
+chkconfig --add nginx
+chkconfig nginx on
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h1 id=&#34;configure-supervisord:c618fab5154c76fcdb1f622089e4dd3f&#34;&gt;Configure Supervisord&lt;/h1&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;# as root
+ln -s /opt/django/apps/my_app/current/my_app/server/etc/supervisord.conf  /etc/supervisord.conf
+ln -s /opt/django/apps/my_app/current/my_app/server/init.d/supervisord /etc/init.d/supervisord
+chmod 755 /etc/init.d/supervisord
+chkconfig --add supervisord
+chkconfig supervisord on
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h1 id=&#34;firewall:c618fab5154c76fcdb1f622089e4dd3f&#34;&gt;Firewall&lt;/h1&gt;
+
+&lt;p&gt;We need to open up the firewall so that we are allowed connection, if
+you don&amp;rsquo;t know anything about this, check out these links.&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://cloudservers.rackspacecloud.com/index.php/Firewalls&#34;&gt;http://cloudservers.rackspacecloud.com/index.php/Firewalls&lt;/a&gt;
+&lt;a href=&#34;http://cloudservers.rackspacecloud.com/index.php/Introduction_to_iptables&#34;&gt;http://cloudservers.rackspacecloud.com/index.php/Introduction_to_iptables&lt;/a&gt;
+&lt;a href=&#34;http://cloudservers.rackspacecloud.com/index.php/Sample_iptables_ruleset&#34;&gt;http://cloudservers.rackspacecloud.com/index.php/Sample_iptables_ruleset&lt;/a&gt;&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;# Open http port 80
+iptables -I RH-Firewall-1-INPUT -p tcp --dport 80 -j ACCEPT
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h1 id=&#34;bashrc-file-changes:c618fab5154c76fcdb1f622089e4dd3f&#34;&gt;.bashrc file changes&lt;/h1&gt;
+
+&lt;p&gt;I can&amp;rsquo;t remember where I saw this little trick, if you know please let
+me know so that I can give them credit. If you put a file in your
+mercurial directory called .venv, when you cd into the directory this
+little bash hack will automatically activate your virtual environment
+for you. This allows you to have something similar to virtualenvwrapper
+in this custom setup.&lt;/p&gt;
+
+&lt;p&gt;Add this code to the .bashrc file&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;emacs /opt/django/.bashrc
+#
+# User specific aliases and functions
+has_virtualenv() {
+    if [ -e .venv ]; then
+        deactivate &amp;gt;/dev/null 2&amp;gt;&amp;amp;1
+        source bin/activate
+    fi
+}
+
+venv_cd () {
+    cd &amp;quot;$@&amp;quot; &amp;amp;&amp;amp; has_virtualenv
+}
+
+alias cd=&amp;quot;venv_cd&amp;quot;
+
+#end of changes
+
+# source the file to get new changes in active shell
+source /opt/django/.bashrc
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h1 id=&#34;change-permissions-of-the-django-home-directory-to-django:c618fab5154c76fcdb1f622089e4dd3f&#34;&gt;Change permissions of the django home directory to django&lt;/h1&gt;
+
+&lt;p&gt;This cleans up and left over root ownership&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;chown -R django:django /opt/django/*
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h1 id=&#34;switch-to-django-user:c618fab5154c76fcdb1f622089e4dd3f&#34;&gt;Switch to django user&lt;/h1&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;su - django
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h1 id=&#34;start-up-nginx:c618fab5154c76fcdb1f622089e4dd3f&#34;&gt;Start up nginx&lt;/h1&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;service nginx start
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h1 id=&#34;startup-supervisord:c618fab5154c76fcdb1f622089e4dd3f&#34;&gt;Startup supervisord&lt;/h1&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;service supervisord start
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h1 id=&#34;test-nginx-and-supervisord:c618fab5154c76fcdb1f622089e4dd3f&#34;&gt;Test Nginx and supervisord&lt;/h1&gt;
+
+&lt;p&gt;Check supervisord status&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;supervisorctl status
+my_app                           RUNNING    pid 13594, uptime 0:00:05
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;To check nginx go to the IP or domain name for your rackspace server in
+your browser and make sure it worked.&lt;/p&gt;
+
+&lt;h1 id=&#34;updating-the-application-using-fabric:c618fab5154c76fcdb1f622089e4dd3f&#34;&gt;Updating the application using fabric&lt;/h1&gt;
+
+&lt;p&gt;Inside of the bitbucket project directory there is a file called
+fabfile.py. This file will allow you to update the application from your
+machine whenever you want just by calling one command.&lt;/p&gt;
+
+&lt;p&gt;It will prompt you for your hostname and password for the django user.
+Then it will go out to the rackspace server and pull and update the app
+and restart the application in supervisord. It is very basic for right
+now, but should get you started if you want to do more advanced stuff.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;fab update_server
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h1 id=&#34;conclusion:c618fab5154c76fcdb1f622089e4dd3f&#34;&gt;Conclusion&lt;/h1&gt;
+
+&lt;p&gt;Now that we have everything setup, if you want to add a new application
+to our setup all we need to do is.&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;create a new directory under apps&lt;/li&gt;
+&lt;li&gt;create the virtualenv&lt;/li&gt;
+&lt;li&gt;run the bootstrap to install the software&lt;/li&gt;
+&lt;li&gt;make sure that the application has a supervisord and nginx
+configuration file&lt;/li&gt;
+&lt;li&gt;symlink those files to the correct locations in the config directory&lt;/li&gt;
+&lt;li&gt;run any python management commands you might need to run (syncdb,
+migrate, etc)&lt;/li&gt;
+&lt;li&gt;reload supervisord and nginx&lt;/li&gt;
+&lt;li&gt;you should be good to go.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;I hope this was helpful to someone besides myself, if it was helpful for
+you please let me know in the comments.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Upgrading MySQL 5.0.x to Percona MySQL 5.1.x RHEL5 or CENTOS 5</title>
+      <link>http://www.kencochrane.net/blog/2011/04/upgrading-mysql-50x-percona-mysql-51x-rhel5-or-cen/</link>
+      <pubDate>Thu, 14 Apr 2011 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.kencochrane.net/blog/2011/04/upgrading-mysql-50x-percona-mysql-51x-rhel5-or-cen/</guid>
+      <description>&lt;p&gt;Upgrade the stock MySQL 5.0.x build to the new stable MySQL 5.1.x
+Percona version. Here are my notes on upgrading on Red Hat Enterprise
+Linux 5 (RHEL5) or CentOS5.&lt;/p&gt;
+
+&lt;p&gt;First we need to stop mysql&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;service mysql stop;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;I&amp;rsquo;m assuming that you don&amp;rsquo;t have the percona repo installed on your
+machine, if not follow this link on how to set it up. &lt;a href=&#34;http://www.percona.com/docs/wiki/percona-server:release:start&#34;&gt;Setting up
+Percona RPM
+Repo&lt;/a&gt;&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;mkdir -p /tmp/downloads
+cd /tmp/downloads
+wget http://www.percona.com/redir/downloads/percona-release/percona-release-0.0-1.i386.rpm
+sudo rpm -Uhv percona-release-0.0-1.i386.rpm    
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Now we need to remove the old MySQL 5.0 binaries. (Don&amp;rsquo;t worry this will
+leave your data.)&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;yum remove -y mysql-server mysql mysql-devel mysql-test mysql-bench
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Now install the new Percona MySQL 5.1.x binaries. (depending on your
+connection this might take a few minutes)&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;yum install -y Percona-Server-devel-51 Percona-Server-shared-51 Percona-Server-test-51 Percona-Server-client-51 Percona-Server-server-51
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;During the install it will throw out some warnings, make sure you write
+those down, and make the changes that it recommends. Here are a few of
+mine.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;110208 16:44:52 [Warning] &#39;--log_slow_queries&#39; is deprecated and will be removed in a future release. Please use &#39;&#39;--slow_query_log&#39;/&#39;--slow_query_log_file&#39;&#39; instead.
+110208 16:44:52 [Warning] &#39;--log&#39; is deprecated and will be removed in a future release. Please use &#39;&#39;--general_log&#39;/&#39;--general_log_file&#39;&#39; instead.
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Assuming the install went well, now we need to upgrade the data to the
+new format. (replace &amp;lt;mysql admin user&amp;gt; with your mysql admin
+username, and enter password when prompted)&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;mysql_upgrade -u &amp;lt;mysql admin username&amp;gt; -p
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Now if your upgrade was anything like mine it had a bunch of errors like
+this.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;db_name.table_name
+error    : Table upgrade required. Please do &amp;quot;REPAIR TABLE table_name&amp;quot; or dump/reload to fix it!
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;When you try to repair the table you get this.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;db_name.table_name
+note     : The storage engine for the table doesn&#39;t support repair
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Thanks to Peter Zaitsev &lt;a href=&#34;http://www.mysqlperformanceblog.com/2010/05/14/mysql_upgrade-and-innodb-tables/&#34;&gt;mysql_upgrade and Innodb
+Tables&lt;/a&gt;
+we know that we can do the following to fix it.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode sql&#34;&gt;ALTER TABLE db_name.table_name ENGINE=INNODB;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;We just need to run this command for each table that threw an error and
+it should fix it. (If you have lots of data this might take a while, I
+had some tables that took over 2 hours)&lt;/p&gt;
+
+&lt;p&gt;Once you think that you have all of the tables fixed, you can run this
+command and it will check all of your tables and let you know if you are
+good or not. If you still have errors, repeat the steps above until all
+tables pass.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;mysqlcheck -A --check-upgrade
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Hopefully everything passed for you, and you now have a fully upgraded
+database. It is important to note that there is another option besides
+running the table alter. You could have dumped all of the data prior to
+the upgraded and then restored it once the database was upgraded. This
+process would most likely take a lot longer.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Upgrading Percona MySQL 5.0.x to Percona MySQL 5.1.x RHEL5 or CENTOS 5</title>
+      <link>http://www.kencochrane.net/blog/2011/02/upgrading-percona-mysql-50x-percona-mysql-51x-rhel/</link>
+      <pubDate>Tue, 15 Feb 2011 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.kencochrane.net/blog/2011/02/upgrading-percona-mysql-50x-percona-mysql-51x-rhel/</guid>
+      <description>&lt;p&gt;I have been using the Percona build of MySQL 5.0.x for a little while
+now, and I have been impressed. Now it is time to upgrade to the new
+stable MySQL 5.1.x version. Here are my notes on upgrading on Red Hat
+Enterprise Linux 5 (RHEL5) or CentOS5.&lt;/p&gt;
+
+&lt;p&gt;First we need to stop mysql&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;service mysql stop;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;I&amp;rsquo;m assuming that you have the percona repo installed on your machine,
+if not see follow this link on how to set it up. &lt;a href=&#34;http://www.percona.com/docs/wiki/percona-server:release:start&#34;&gt;Setting up Percona RPM
+Repo&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;Now we need to remove the old MySQL 5.0 binaries. (Don&amp;rsquo;t worry this will
+leave your data.)&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;yum remove -y Percona-SQL*
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Now install the new Percona MySQL 5.1.x binaries. (depending on your
+connection this might take a few minutes)&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;yum install -y Percona-Server-devel-51 Percona-Server-shared-51 Percona-Server-test-51 Percona-Server-client-51 Percona-Server-server-51
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;During the install it will throw out some warnings, make sure you write
+those down, and make the changes that it recommends. Here are a few of
+mine.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;110208 16:44:52 [Warning] &#39;--log_slow_queries&#39; is deprecated and will be removed in a future release. Please use &#39;&#39;--slow_query_log&#39;/&#39;--slow_query_log_file&#39;&#39; instead.
+110208 16:44:52 [Warning] &#39;--log&#39; is deprecated and will be removed in a future release. Please use &#39;&#39;--general_log&#39;/&#39;--general_log_file&#39;&#39; instead.
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Assuming the install went well, now we need to upgrade the data to the
+new format. (replace &amp;lt;mysql admin user&amp;gt; with your mysql admin
+username, and enter password when prompted)&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;mysql_upgrade -u &amp;lt;mysql admin username&amp;gt; -p
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Now if your upgrade was anything like mine it had a bunch of errors like
+this.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;db_name.table_name
+error    : Table upgrade required. Please do &amp;quot;REPAIR TABLE table_name&amp;quot; or dump/reload to fix it!
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;When you try to repair the table you get this.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;db_name.table_name
+note     : The storage engine for the table doesn&#39;t support repair
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Thanks to Peter Zaitsev &lt;a href=&#34;http://www.mysqlperformanceblog.com/2010/05/14/mysql_upgrade-and-innodb-tables/&#34;&gt;mysql_upgrade and Innodb
+Tables&lt;/a&gt;
+we know that we can do the following to fix it.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode sql&#34;&gt;ALTER TABLE db_name.table_name ENGINE=INNODB;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;We just need to run this command for each table that threw an error and
+it should fix it. (If you have lots of data this might take a while, I
+had some tables that took over 2 hours)&lt;/p&gt;
+
+&lt;p&gt;Once you think that you have all of the tables fixed, you can run this
+command and it will check all of your tables and let you know if you are
+good or not. If you still have errors, repeat the steps above until all
+tables pass.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;mysqlcheck -A --check-upgrade
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Hopefully everything passed for you, and you now have a fully upgraded
+database. It is important to note that there is another option besides
+running the table alter. You could have dumped all of the data prior to
+the upgraded and then restored it once the database was upgraded. This
+process would most likely take a lot longer.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Automated Install Script for memcached on RHEL5</title>
+      <link>http://www.kencochrane.net/blog/2010/05/automated-install-script-for-memcached-on-rhel5/</link>
+      <pubDate>Fri, 14 May 2010 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.kencochrane.net/blog/2010/05/automated-install-script-for-memcached-on-rhel5/</guid>
+      <description>&lt;p&gt;I created this script that will download memcached build,install and set
+it up to start up automatically on reboot. It also installs the init.d
+script to manage memcache so you can restart etc.&lt;/p&gt;
+
+&lt;p&gt;You can either copy and paste it into your shell prompt using a user
+that has install privileges (root,admin,etc) or you can copy into a .sh
+file and execute it.&lt;/p&gt;
+
+&lt;p&gt;The code for most of this was take from this blog post:
+&lt;a href=&#34;http://www.vbseo.com/blogs/danny-bembibre/daemon-scripts-memcached-44/&#34;&gt;http://www.vbseo.com/blogs/danny-bembibre/daemon-scripts-memcached-44/&lt;/a&gt;
+it doesn&amp;rsquo;t seem to be around anymore so I put it here for anyone else
+looking for this very helpful info.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;wget http://memcached.googlecode.com/files/memcached-1.4.5.tar.gz
+tar -xvzf memcached-1.4.5.tar.gz
+cd memcached-1.4.5
+./configure
+make
+make test
+make install
+
+touch /etc/memcached.conf
+cat &amp;lt;&amp;lt; EOF &amp;gt;&amp;gt; /etc/memcached.conf
+#Memory a user
+-m 64
+# default port
+-p 11211
+# user to run daemon nobody/apache/www-data
+-u nobody
+# only listen locally
+-l 127.0.0.1
+EOF
+
+touch /etc/init.d/memcached
+chmod +x /etc/init.d/memcached
+
+cat &amp;lt;&amp;lt; EOF &amp;gt;&amp;gt; /etc/init.d/memcached
+#!/bin/bash
+#
+# memcached    This shell script takes care of starting and stopping
+#              standalone memcached.
+#
+# chkconfig: - 80 12
+# description: memcached is a high-performance, distributed memory
+#              object caching system, generic in nature, but
+#              intended for use in speeding up dynamic web
+#              applications by alleviating database load.
+# processname: memcached
+# config: /etc/memcached.conf
+# Source function library.
+. /etc/rc.d/init.d/functions
+PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
+DAEMON=/usr/local/bin/memcached
+DAEMONBOOTSTRAP=/usr/local/bin/start-memcached
+DAEMONCONF=/etc/memcached.conf
+NAME=memcached
+DESC=memcached
+PIDFILE=/var/run/$NAME.pid
+[ -x $DAEMON ] || exit 0
+[ -x $DAEMONBOOTSTRAP ] || exit 0
+RETVAL=0
+start() {
+ echo -n $&amp;quot;Starting $DESC: &amp;quot;
+ daemon $DAEMONBOOTSTRAP $DAEMONCONF
+ RETVAL=$?
+ [ $RETVAL -eq 0 ] &amp;amp;&amp;amp; touch $PIDFILE
+ echo
+ return $RETVAL
+}
+stop() {
+ echo -n $&amp;quot;Shutting down $DESC: &amp;quot;
+ killproc $NAME
+ RETVAL=$?
+ echo
+ [ $RETVAL -eq 0 ] &amp;amp;&amp;amp; rm -f $PIDFILE
+ return $RETVAL
+}
+# See how we were called.
+case &amp;quot;$1&amp;quot; in
+ start)
+  start
+  ;;
+ stop)
+  stop
+  ;;
+ restart|reload)
+  stop
+  start
+  RETVAL=$?
+  ;;
+ status)
+  status $prog
+  RETVAL=$?
+  ;;
+ *)
+  echo $&amp;quot;Usage: $0 {start|stop|restart|status}&amp;quot;
+  exit 1
+esac
+exit $RETVAL
+EOF
+
+touch /usr/local/bin/start-memcached
+chmod +x /usr/local/bin/start-memcached
+
+cat &amp;lt;&amp;lt; EOF &amp;gt;&amp;gt; /usr/local/bin/start-memcached
+#!/usr/bin/perl -w
+# start-memcached
+# 2003/2004 - Jay Bonci &amp;lt;jaybonci@debian.org&amp;gt;
+# This script handles the parsing of the /etc/memcached.conf file
+# and was originally created for the Debian distribution.
+# Anyone may use this little script under the same terms as
+# memcached itself.
+use strict;
+if ($&amp;gt; != 0 and $&amp;lt; != 0) {
+ print STDERR &amp;quot;Only root wants to run start-memcached.\n&amp;quot;;
+ exit;
+}
+my $etcfile = shift || &amp;quot;/etc/memcached.conf&amp;quot;;
+my $params = [];
+my $etchandle;
+# This script assumes that memcached is located at /usr/bin/memcached, and
+# that the pidfile is writable at /var/run/memcached.pid
+my $memcached = &amp;quot;/usr/local/bin/memcached&amp;quot;;
+my $pidfile = &amp;quot;/var/run/memcached.pid&amp;quot;;
+# If we don&#39;t get a valid logfile parameter in the /etc/memcached.conf file,
+# we&#39;ll just throw away all of our in-daemon output. We need to re-tie it so
+# that non-bash shells will not hang on logout. Thanks to Michael Renner for
+# the tip
+my $fd_reopened = &amp;quot;/dev/null&amp;quot;;
+sub handle_logfile {
+ my ($logfile) = @_;
+ $fd_reopened = $logfile;
+}
+sub reopen_logfile {
+ my ($logfile) = @_;
+ open *STDERR, &amp;quot;&amp;gt;&amp;gt;$logfile&amp;quot;;
+ open *STDOUT, &amp;quot;&amp;gt;&amp;gt;$logfile&amp;quot;;
+ open *STDIN, &amp;quot;&amp;gt;&amp;gt;/dev/null&amp;quot;;
+ $fd_reopened = $logfile;
+}
+# This is set up in place here to support other non -[a-z] directives
+my $conf_directives = {
+ &amp;quot;logfile&amp;quot; =&amp;gt; \&amp;amp;handle_logfile
+};
+if (open $etchandle, $etcfile) {
+ foreach my $line (&amp;lt;$etchandle&amp;gt;) {
+  $line =~ s/\#.*//go;
+  $line = join &#39; &#39;, split &#39; &#39;, $line;
+  next unless $line;
+  next if $line =~ /^\-[dh]/o;
+  if ($line =~ /^[^\-]/o) {
+   my ($directive, $arg) = $line =~ /^(.*?)\s+(.*)/;
+   $conf_directives-&amp;gt;{$directive}-&amp;gt;($arg);
+   next;
+  }
+  push @$params, $line;
+ }
+}
+unshift @$params, &amp;quot;-u root&amp;quot; unless (grep $_ eq &#39;-u&#39;, @$params);
+$params = join &amp;quot; &amp;quot;, @$params;
+if (-e $pidfile) {
+ open PIDHANDLE, &amp;quot;$pidfile&amp;quot;;
+ my $localpid = &amp;lt;PIDHANDLE&amp;gt;;
+ close PIDHANDLE;
+ chomp $localpid;
+ if (-d &amp;quot;/proc/$localpid&amp;quot;) {
+  print STDERR &amp;quot;memcached is already running.\n&amp;quot;;
+  exit;
+ } else {
+  `rm -f $localpid`;
+ }
+}
+my $pid = fork();
+if ($pid == 0) {
+ reopen_logfile($fd_reopened);
+ exec &amp;quot;$memcached $params&amp;quot;;
+ exit(0);
+} elsif (open PIDHANDLE,&amp;quot;&amp;gt;$pidfile&amp;quot;) {
+ print PIDHANDLE $pid;
+ close PIDHANDLE;
+} else {
+ print STDERR &amp;quot;Can&#39;t write pidfile to $pidfile.\n&amp;quot;;
+}
+EOF
+
+/etc/init.d/memcached restart
+/sbin/chkconfig memcached on
+&lt;/code&gt;&lt;/pre&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Installing Mercurial 1.5.1 on Red Hat Enterprise Linux 5 (RHEL5) using Python 2.5</title>
+      <link>http://www.kencochrane.net/blog/2010/05/mercurial-1_5_1-on-rhel5-using-python2_5/</link>
+      <pubDate>Thu, 13 May 2010 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.kencochrane.net/blog/2010/05/mercurial-1_5_1-on-rhel5-using-python2_5/</guid>
+      <description>
+
+&lt;h1 id=&#34;installing-mercurial-1-5-1-on-red-hat-enterprise-linux-5-rhel5-using-python-2-5:85607c8aea43dfeeae281913edf67191&#34;&gt;Installing Mercurial 1.5.1 on Red Hat Enterprise Linux 5 (RHEL5) using Python 2.5&lt;/h1&gt;
+
+&lt;p&gt;My RHEL5 setup uses python2.5 which I compiled from source, since RHEL5
+only comes with python2.4.&lt;/p&gt;
+
+&lt;p&gt;Because I didn&amp;rsquo;t use the built in python 2.4 version I couldn&amp;rsquo;t do the
+simple&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;$ yum install mercurial
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Instead I need to build mercurial from source, which isn&amp;rsquo;t too bad. Just
+do the following.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;as Root&lt;/strong&gt;&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;$ wget http://mercurial.selenic.com/release/mercurial-1.5.1.tar.gz
+$ tar -xvzf mercurial-1.5.1.tar.gz
+$ cd mercurial-1.5.1
+$ make PYTHON=python2.5 install
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;If you get the following error:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;$ python2.5 setup.py build
+$ Couldn&#39;t import standard bz2 (incomplete Python install).
+     make:  [build] Error 1
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Then when you installed python 2.5 you didn&amp;rsquo;t have the bzip2 libs
+installed so it didn&amp;rsquo;t include them in the python2.5 install. No big
+deal all you need to do is install those libs and then recomplile python
+2.5&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;install bzip2 libs&lt;/strong&gt;&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;$ yum install bzip2 bzip2-devel bzip2-libs
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;strong&gt;Download 2.5.4 from python.org&lt;/strong&gt;&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;$ wget http://python.org/ftp/python/2.5.4/Python-2.5.4.tar.bz2
+$ tar -xvjf Python-2.5.4.tar.bz2
+$ cd Python-2.5.4
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;strong&gt;switch to root:&lt;/strong&gt;&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;$ ./configure
+$ make
+$ make altinstall
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Once complete (this will take a few minutes) rerun the steps above and
+then you should be good.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;go back to where you untared the mercurial bundle&lt;/strong&gt;&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;$ cd mercurial-1.5.1
+$ make PYTHON=python2.5 install
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Check to make sure you are running 1.5.1&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;$ hg --version
+     Mercurial Distributed SCM (version 1.5.1)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;That is all, now you are running Mercurial 1.5.1 on RHEL5 with
+python2.5!&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

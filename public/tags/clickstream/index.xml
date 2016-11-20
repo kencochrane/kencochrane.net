@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Clickstream on KenCochrane.net</title>
+    <link>http://www.kencochrane.net/tags/clickstream/</link>
+    <description>Recent content in Clickstream on KenCochrane.net</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Fri, 12 Aug 2011 00:00:00 +0000</lastBuildDate>
+    <atom:link href="http://www.kencochrane.net/tags/clickstream/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Introducing django-clickstream</title>
+      <link>http://www.kencochrane.net/blog/2011/08/django-clickstream/</link>
+      <pubDate>Fri, 12 Aug 2011 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.kencochrane.net/blog/2011/08/django-clickstream/</guid>
+      <description>
+
+&lt;p&gt;Track a visitors movements across your site.&lt;/p&gt;
+
+&lt;p&gt;Possible uses:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;See what they were doing before they got an error.&lt;/li&gt;
+&lt;li&gt;Use it for analytics and usability testing to see how people are
+moving around your site, and where you are losing people.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Inspired by OpenSymphony&amp;rsquo;s Java project of the same name.
+&lt;a href=&#34;http://code.google.com/p/clickstream/&#34;&gt;http://code.google.com/p/clickstream/&lt;/a&gt;&lt;/p&gt;
+
+&lt;h1 id=&#34;requirements:3f515b3e3e91ba27adbd5df675789901&#34;&gt;Requirements&lt;/h1&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Django 1.1 or newer&lt;/li&gt;
+&lt;li&gt;Django sessions need to be enabled&lt;/li&gt;
+&lt;li&gt;Django south 0.7 or newer for migrations&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&#34;settings:3f515b3e3e91ba27adbd5df675789901&#34;&gt;Settings&lt;/h2&gt;
+
+&lt;h3 id=&#34;custom-settings:3f515b3e3e91ba27adbd5df675789901&#34;&gt;Custom Settings&lt;/h3&gt;
+
+&lt;p&gt;Add the following properties to your settings file if you want to
+override the default settings.&lt;/p&gt;
+
+&lt;h3 id=&#34;clickstream-ignore-paths:3f515b3e3e91ba27adbd5df675789901&#34;&gt;CLICKSTREAM_IGNORE_PATHS&lt;/h3&gt;
+
+&lt;p&gt;Default = ()&lt;/p&gt;
+
+&lt;p&gt;Takes a list of regular expressions for paths that you want to ignore if
+it is picked up by these clicks won&amp;rsquo;t be tracked.&lt;/p&gt;
+
+&lt;p&gt;CLICKSTREAM_IGNORE_PATHS = (&amp;rsquo;\^/private/&amp;lsquo;, &amp;lsquo;\^/dont-track-me/&amp;lsquo;,
+&amp;lsquo;super-secret.txt&amp;rsquo;)&lt;/p&gt;
+
+&lt;h3 id=&#34;clickstream-ignore-anonymous:3f515b3e3e91ba27adbd5df675789901&#34;&gt;CLICKSTREAM_IGNORE_ANONYMOUS&lt;/h3&gt;
+
+&lt;p&gt;Default = False&lt;/p&gt;
+
+&lt;p&gt;If you only want to track people that are logged in, change to True&lt;/p&gt;
+
+&lt;p&gt;CLICKSTREAM_IGNORE_ANONYMOUS = False&lt;/p&gt;
+
+&lt;h3 id=&#34;clickstream-ignore-ip:3f515b3e3e91ba27adbd5df675789901&#34;&gt;CLICKSTREAM_IGNORE_IP&lt;/h3&gt;
+
+&lt;p&gt;Default = ()&lt;/p&gt;
+
+&lt;p&gt;A list of IP&amp;rsquo;s that you don&amp;rsquo;t want to track&lt;/p&gt;
+
+&lt;p&gt;CLICKSTREAM_IGNORE_IP = (&amp;lsquo;127.0.0.1&amp;rsquo;, &amp;lsquo;10.10.10.10, &amp;lsquo;8.8.8.8&amp;rsquo;)&lt;/p&gt;
+
+&lt;h3 id=&#34;middleware:3f515b3e3e91ba27adbd5df675789901&#34;&gt;Middleware&lt;/h3&gt;
+
+&lt;p&gt;Add &amp;lsquo;clickstream.middleware.ClickStreamMiddleware&amp;rsquo; to your
+MIDDLEWARE_CLASSES settings it needs to be after
+&amp;lsquo;django.contrib.sessions.middleware.SessionMiddleware&amp;rsquo; in the list.&lt;/p&gt;
+
+&lt;h3 id=&#34;app:3f515b3e3e91ba27adbd5df675789901&#34;&gt;App&lt;/h3&gt;
+
+&lt;p&gt;Add clickstream to INSTALLED_APPS&lt;/p&gt;
+
+&lt;h3 id=&#34;sync-tables-migrate:3f515b3e3e91ba27adbd5df675789901&#34;&gt;Sync Tables + Migrate&lt;/h3&gt;
+
+&lt;p&gt;Run &amp;lsquo;./manage.py syncdb&amp;rsquo; to load up the tables in your database.&lt;/p&gt;
+
+&lt;p&gt;Run &amp;lsquo;./manage.py migrate&amp;rsquo; to run the south migrations&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -1,0 +1,1479 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+    <title>AppHosted.com Django Hosting Service Review &middot; KenCochrane.net</title>
+    <meta name="generator" content="Hugo 0.15" />
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="author" content="Ken Cochrane">
+    
+      <meta name="description" content="">
+    
+    
+    <link rel="icon" href="http://www.kencochrane.net/favicon.ico">
+    <link rel="apple-touch-icon" href="http://www.kencochrane.net/apple-touch-icon.png" />
+    <link rel="stylesheet" href="http://www.kencochrane.net/css/style.css">
+    <link rel="stylesheet" href="http://www.kencochrane.net/css/font-awesome.min.css">
+    <link rel="stylesheet" href="http://www.kencochrane.net/css/monokai.css">
+    <link rel="stylesheet" href="http://www.kencochrane.net/fancybox/jquery.fancybox.css">
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400italic,400,600' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Source+Code+Pro' rel='stylesheet' type='text/css'>
+    <meta property="og:title" content="AppHosted.com Django Hosting Service Review" />
+<meta property="og:description" content="This post is the fourth in my series about the new Django hosting services that just recently hit the market. Previously I have reviewed ep.io , gondor.io , and dotCloud.com .This post reviews AppHosted.com , another similar service that is currently in beta. I was lucky enough to get a sneak peak of this service before it was released to the general public, and here are my notes and impressions for the short time I had to play with the new service." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="http://www.kencochrane.net/blog/2011/05/apphosted-com-django-hosting-review/" />
+
+
+<meta property="og:updated_time" content="2011-05-18T00:00:00&#43;00:00"/>
+
+
+
+
+
+
+
+
+
+
+    
+    
+<meta itemprop="name" content="AppHosted.com Django Hosting Service Review">
+<meta itemprop="description" content="This post is the fourth in my series about the new Django hosting services that just recently hit the market. Previously I have reviewed ep.io , gondor.io , and dotCloud.com .This post reviews AppHosted.com , another similar service that is currently in beta. I was lucky enough to get a sneak peak of this service before it was released to the general public, and here are my notes and impressions for the short time I had to play with the new service.">
+
+
+<meta itemprop="dateModified" content="2011-05-18T00:00:00&#43;00:00" />
+<meta itemprop="wordCount" content="2066">
+
+
+
+<meta itemprop="keywords" content="blog,apache,api,apphosted,aufs,aws,blog,cashstar,centos5,clickstream,defender,deployment,developers,digital-ocean,django,django-maine,djangocms,djangomaine,djangozoom,docker,dotcloud,epio,fabric,facebook,go,gondor,guidebook,gunicorn,heroku,hosting,install,job,jobs,kernel,linux,lxc,macosx,memcached,mercurial,mysql,newrelic,nginx,openshift,paas,pci,pelican,percona,python,rackspace,raspberrypi,raspbian,redis,requests,rhel5,s3,script,sentry,stackato,supervisor,supervisord,tutorial,ubuntu,upgrade,video,work," />
+
+    
+
+  <meta name="twitter:card" content="summary"/>
+
+
+
+<meta name="twitter:title" content="AppHosted.com Django Hosting Service Review"/>
+<meta name="twitter:description" content="This post is the fourth in my series about the new Django hosting services that just recently hit the market. Previously I have reviewed ep.io , gondor.io , and dotCloud.com .This post reviews AppHosted.com , another similar service that is currently in beta. I was lucky enough to get a sneak peak of this service before it was released to the general public, and here are my notes and impressions for the short time I had to play with the new service."/>
+<meta name="twitter:site" content="@kencochrane"/>
+
+
+</head>
+<body>
+<div class="container">
+
+
+<div id="container">
+	<header id="header">
+  <div id="header-main" class="header-inner">
+    <div class="outer">
+      <a href="http://www.kencochrane.net/" id="logo"><i class="logo" style="background-image: url('http://www.kencochrane.net/css/images/logo.png')"></i><span class="site-title">KenCochrane.net</span></a>
+      <nav id="main-nav">
+          
+          
+          <a class="main-nav-link" href="http://www.kencochrane.net/">Home</a>
+          
+          
+          
+          
+          
+          
+
+          
+
+          
+          
+          
+          
+          <a class="main-nav-link" href="http://www.kencochrane.net/tags/">Tags</a>
+          
+          
+          
+          <a class="main-nav-link" href="http://www.kencochrane.net/categories/">Categories</a>
+          
+          
+      </nav>
+        <nav id="sub-nav">
+          <div class="profile" id="profile-nav">
+            <a id="profile-anchor" href="javascript:;"><img class="avatar" src="http://www.kencochrane.net/img/kencochrane.jpeg"><i class="fa fa-caret-down"></i></a>
+          </div>
+        </nav>
+        <div id="search-form-wrap">
+          <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form">
+              <input type="search" name="q" results="0" class="search-form-input" placeholder="Search">
+              <button type="submit" class="search-form-submit">
+              </button>
+              <input type="hidden" name="q" value="site:http://www.kencochrane.net/">
+         </form>
+        </div>
+    </div>
+  </div>
+  <div id="main-nav-mobile" class="header-sub header-inner">
+    <table class="menu outer">
+      <tbody>
+          <tr>
+          
+          
+          <td><a class="main-nav-link" href="http://www.kencochrane.net/">Home</a></td>
+          
+          
+          
+          
+          
+          
+
+          
+
+          
+          
+          
+          
+          <td><a class="main-nav-link" href="http://www.kencochrane.net/tags/">Tags</a></td>
+          
+          
+          
+          <td><a class="main-nav-link" href="http://www.kencochrane.net/categories/">Categories</a></td>
+          
+          
+          <td>
+          <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form">
+          <input type="search" name="q" results="0" class="search-form-input" placeholder="Search">
+          <input type="hidden" name="q" value="site:http://www.kencochrane.net/">
+          </form>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</header>
+
+   	
+   	<div class="outer">
+	    <aside id="profile">
+  <div class="inner profile-inner">
+    <div class="base-info profile-block">
+      <img id="avatar" src="http://www.kencochrane.net/img/kencochrane.jpeg">
+      <h2 id="name">Ken Cochrane</h2>
+      <h3 id="title">Software developer living in Southern Maine</h3>
+      <span id="location"><i class="fa fa-map-marker"></i>Maine</span>
+      
+          <a id="follow" href="https://github.com/kencochrane">
+              Follow
+          </a>
+      
+    </div>
+    <div class="article-info profile-block">
+      <div class="article-info-block">
+        40
+        <span>Posts</span>
+      </div>
+      <div class="article-info-block">
+        
+          64
+          
+        <span>
+            Tags
+        </span>
+      </div>
+    </div>
+    <div class="contact-info profile-block">
+      <table class="contact-list">
+        <tr>
+          
+<td><a href="//github.com/kencochrane" target="_blank" title="GitHub"><i class="fa fa-github"></i></a></td>
+
+
+
+<td><a href="//bitbucket.com/kencochrane" target="_blank" title="Bitbucket"><i class="fa fa-bitbucket"></i></a></td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<td><a href="//linkedin.com/in/kencochrane" target="_blank" title="LinkedIn"><i class="fa fa-linkedin"></i></a></td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<td><a href="//twitter.com/kencochrane" target="_blank" title="Twitter"><i class="fa fa-twitter"></i></a></td>
+
+
+          <td><a href="" target="_blank" title="RSS"><i class="fa fa-rss"></i></a></td>
+        </tr>
+      </table>
+    </div>
+  </div>
+</aside>
+
+	    <section id="main">
+    <article id="page-undefined" class="article article-type-page" itemscope="" itemprop="blogPost">
+        <div class="article-inner">
+            
+
+            <header class="article-header">
+    <a href="http://www.kencochrane.net/blog/2011/05/apphosted-com-django-hosting-review/">
+    <h1 class="article-title" itemprop="name">
+        AppHosted.com Django Hosting Service Review
+    </h1>
+    </a>
+    <div class="article-meta">
+        <div class="article-date">
+            <i class="fa fa-calendar"></i>
+            <time datetime="2011-05-18 00:00:00 &#43;0000 UTC" itemprop="datePublished">2011-05-18</time>
+            &middot;
+            2066
+            words
+            &middot;
+            10
+            minute read
+        </div>
+
+        
+        
+            
+            
+            <div class="article-category">
+                <i class="fa fa-folder"></i>
+                
+                <a class="article-category-link" href="http://www.kencochrane.net/categories/blog">blog</a>
+                
+                
+            </div>
+            
+        
+
+        
+            
+            
+            <div class="article-category">
+                <i class="fa fa-tags"></i>
+                
+                <a class="article-category-link" href="http://www.kencochrane.net/tags/django">django</a>
+                &middot;
+                
+                <a class="article-category-link" href="http://www.kencochrane.net/tags/hosting">hosting</a>
+                &middot;
+                
+                <a class="article-category-link" href="http://www.kencochrane.net/tags/apphosted">apphosted</a>
+                &middot;
+                
+                <a class="article-category-link" href="http://www.kencochrane.net/tags/python">python</a>
+                &middot;
+                
+                <a class="article-category-link" href="http://www.kencochrane.net/tags/deployment">deployment</a>
+                &middot;
+                
+                <a class="article-category-link" href="http://www.kencochrane.net/tags/paas">paas</a>
+                
+                
+            </div>
+            
+        
+    </div>
+</header>
+
+            <div class="article-entry" itemprop="articleBody">
+                
+
+<p>This post is the fourth in my series about the new Django hosting
+services that just recently hit the market. Previously I have reviewed
+<a href="http://kencochrane.net/blog/2011/04/my-experiences-with-epio/">ep.io</a> ,
+<a href="http://kencochrane.net/blog/2011/04/my-day-gondorio/">gondor.io</a> , and
+<a href="http://kencochrane.net/blog/2011/04/deploying-my-django-application-to-dotcloud/">dotCloud.com</a>
+.This post reviews <a href="http://AppHosted.com">AppHosted.com</a> , another
+similar service that is currently in beta. I was lucky enough to get a
+sneak peak of this service before it was released to the general public,
+and here are my notes and impressions for the short time I had to play
+with the new service.</p>
+
+<h1 id="overview:fd2d20709a7d24937bf602503a235c47">Overview</h1>
+
+<p><a href="http://AppHosted.com">AppHosted.com</a> uses a similar concept as the
+other django hosting services, they provide you with a command line
+client called metro that you use to interact with the service. Like the
+other command line clients, it is pretty much just a nice wrapper around
+their API, so anything you can do with the metro client you can do with
+their API. The client is used to configure your service and push your
+files up into their servers. Once the application is created and your
+code has been uploaded to their server, you can use their web based
+control panel to configure or manage your application.</p>
+
+<p>So that we can compare apples to apples I will go through the process of
+installing my blog onto the service so that we can see how it works with
+apphosted compared to the other services. It will also hopefully provide
+a very simple how to guide on how to install your application onto
+AppHosted.com.</p>
+
+<h1 id="first-steps:fd2d20709a7d24937bf602503a235c47">First Steps</h1>
+
+<p>Like all new projects the first thing that I like to do is create a new
+project directory and a new virtual environment for the project.</p>
+
+<pre><code class="language-sourceCode bash"># move into my projects directory
+$ cd ~projects/
+
+# make my virtual environment apphosted
+$ mkvirtualenv apphosted
+
+# clone my blog
+$ hg clone https://bitbucket.org/kencochrane/kencochranenet kencochrane_apphosted
+
+# move into the new project directory
+$ cd kencochrane_apphosted
+</code></pre>
+
+<p>Now that I have a local working copy of my blog code and a new virtual
+environment I&rsquo;m ready to go.</p>
+
+<h1 id="command-line-interface:fd2d20709a7d24937bf602503a235c47">Command Line Interface</h1>
+
+<p>AppHosted has a command line client called Metro, it uses this client to
+configure and upload your application onto the apphosted servers. Metro
+only has three dependencies: httplib2, paramiko, and pycrypto, if you
+don&rsquo;t have them installed pip should handle that for you.</p>
+
+<pre><code class="language-sourceCode bash"># install the metro client
+$ pip install metroclient
+
+Downloading/unpacking metroclient
+Running setup.py egg_info for package metroclient
+Requirement already satisfied (use --upgrade to upgrade): httplib2 in /Users/ken/.virtualenvs/apphosted/lib/python2.6/site-packages (from metroclient)
+Requirement already satisfied (use --upgrade to upgrade): paramiko in /Library/Python/2.6/site-packages (from metroclient)
+Requirement already satisfied (use --upgrade to upgrade): pycrypto&gt;=1.9 in /Library/Python/2.6/site-packages (from paramiko-&gt;metroclient)
+Installing collected packages: metroclient
+Running setup.py install for metroclient
+changing mode of build/scripts-2.6/metro from 644 to 755
+changing mode of /Users/ken/.virtualenvs/apphosted/bin/metro to 755
+Successfully installed metroclient
+</code></pre>
+
+<h1 id="initial-data-django-admin-user:fd2d20709a7d24937bf602503a235c47">Initial Data &amp; Django admin user</h1>
+
+<p>At the moment Apphosted.com doesn&rsquo;t provide an easy way to create a
+django admin user, in order to create this user in your appHosted.com
+database you need to create it on a local database and then export that
+data into a fixture called initial_data.json.</p>
+
+<pre><code class="language-sourceCode bash"># locally I run this command to dump the data, so that I can load on app hosted.
+$ python manage.py dumpdata &gt; initial_data.json
+</code></pre>
+
+<p>There is another way to create the django admin user, which I&rsquo;ll
+describe a little later. This would also be the same way that you would
+import any application data that you need in order for your application
+to run correctly.</p>
+
+<h1 id="metro-client:fd2d20709a7d24937bf602503a235c47">Metro Client</h1>
+
+<p>One of the goals for appHosted.com was that they didn&rsquo;t want to require
+that you make lots of changes to your project directory structure in
+order to use their service. In order to do this they need to do a lot
+more work to figure out what it is you want to do, and if they can&rsquo;t
+figure it out, they will ask you some questions.</p>
+
+<p>Now that we have our project directory and our initial_data.json file
+all ready, lets go ahead and deploy the application. Activate the
+virtual environment and go into your project directory. Kick off the
+metro client and answer the questions that pop up.</p>
+
+<pre><code class="language-sourceCode bash"># run the metro client.
+$ metro
+
+Metro Application Manager 1.21
+Copyright (c) Lumentica,  http://www.lumentica.com
+
+Application directory (i.e. path to project): ./
+Application name: kencochraneblog
+Application version: 0.1
+Application description: Ken's AppHosted Blog
+Application modules (extra; comma-separated): South==0.7.3, django-activitysync==0.2.2, django-debug-toolbar==0.8.4, django-disqus==0.3.4, django-memcache-status==1.0.1, django-tagging==0.3.1, django-xmlrpc==0.1.2, feedparser==4.1, httplib2==0.6.0, oauth2==1.2.0, python-memcached==1.47, python-twitter==0.8.1, simplejson==2.1.2, wsgiref==0.1.2, yolk==0.4.1, docutils==0.6, Pygments==1.3.1
+WSGI module (optional):
+Paste config (optional):
+Fixtures (optional; comma-separated):
+Sync database and load fixtures? (y/n): y
+Use SSL? (y/n): n
+Force SSL: (y/n): n
+Build complete.
+Upload to AppHosted? (y/n): y
+AppHosted Username: kencochrane
+AppHosted Password:
+Deploying...
+:: Configuring application environment...
+:: Configuring application permissions...
+:: Configuring application server...
+:: Application deployed to server successfully...
+:: Application deployment complete...
+</code></pre>
+
+<p>What did this do for us? It takes our application, and uploads it to
+their server, and then it installs all of our dependencies that we
+listed above. Then it configures it according to our answers, and tries
+to start it up, if we told it to, it will sync our database and load our
+fixtures. It also takes all of this information and stores it in a file
+called metro.config, so that we don&rsquo;t need to type that in every time if
+nothing has changed.</p>
+
+<p>You might have noticed that I needed to manually enter in all of my
+dependencies when prompted, when I asked about this, I was told that if
+I didn&rsquo;t enter all of the dependencies it would scan the project for a
+pip style requirements.txt file, and use that to load all of your
+dependencies. I haven&rsquo;t had a chance to test that out yet, since I
+already entered my requirements by hand, and once you do it, you don&rsquo;t
+need to do it again.</p>
+
+<p>My blog uses south for migration management, and at the time of this
+writing there is a bug, and it isn&rsquo;t correctly kicking off the migrate
+command during the database sync process. They are aware of the issue
+and they are working on a fix, but there is a work around in the
+meantime. I&rsquo;ll describe the work around shortly.</p>
+
+<p>Once your application is deployed it will almost immediately be
+available at <a href="http://">http://</a>&lt;your-app-name&gt;.apphosted.com.</p>
+
+<h1 id="log-files:fd2d20709a7d24937bf602503a235c47">Log Files</h1>
+
+<p>In order to view the log files, you need to log into the web control
+panel and from there you can download the logs that you are interested
+in. At the moment they only support downloading the log files, which is
+a little inconvenient, it would be nice to have the ability to tail the
+logs, or see the last 50 or 100 lines in the control panel. I asked
+about this, and they agreed and said it is on their list of things to
+work on.</p>
+
+<h1 id="shell-access:fd2d20709a7d24937bf602503a235c47">Shell Access</h1>
+
+<p>Metro gives you the ability to shell into your application directory, so
+that you can kick off django management commands, and other cool things.
+One important thing to note is that when you login to the shell, it is a
+jailed shell, and you only have access to your own project, and with
+limited command access. This is done for security reasons. It is nice to
+know that your application runs in it&rsquo;s own jailed area, and no one
+else&rsquo;s applications can access your information.</p>
+
+<p>Setting up the shell access requires a few steps. Follow these
+directions to get the full details:
+<a href="http://docs.apphosted.com/apphosted/apphosted_shell.html">http://docs.apphosted.com/apphosted/apphosted_shell.html</a> , but
+basically it requires the following.</p>
+
+<ol>
+<li>create a ssh key if you don&rsquo;t already have one.</li>
+<li>Login to the web console and add your public key.</li>
+<li>In the web console browse over to your application
+Settings-&gt;Tools page and click on the “Update Public
+Keys” button. (Don&rsquo;t forget about this step, or you won&rsquo;t be able
+to login.</li>
+<li>Use the metro client to open the shell.</li>
+</ol>
+
+<p><em>Note</em>: It would be real cool if we didn&rsquo;t have to do step 3, why can&rsquo;t
+it automatically update the public keys for all apps? I&rsquo;m guessing it is
+a security reason. The first time, I didn&rsquo;t hit the update public keys
+button and I couldn&rsquo;t figure out why it wasn&rsquo;t working, and luckily one
+quick email to the support line, and they let me know what I did wrong,
+and I was up and running in no time.</p>
+
+<p>This is how you can kick off the shell, there are a bunch of command
+line args that you can pass as well, just do metro &ndash;help and it will
+show them all to you.</p>
+
+<pre><code class="language-sourceCode bash">$ metro -s
+</code></pre>
+
+<p><em>Note</em>: There is currently a bug that is preventing me from logging into
+the shell from my MacBook Pro OS X 10.6.7 using Python 2.6.1 . When I do
+it gives me this error. I have informed appHosted, and they said it
+looks like an issue with paramiko and python 2.6.1 on the Mac, not sure
+if it affects other python versions on other operating systems. They are
+working on the issue.</p>
+
+<pre><code class="language-sourceCode bash">$ metro -s
+Metro Application Manager 1.21
+Copyright (c) Lumentica,  http://www.lumentica.com
+
+Application name: kencochraneblog
+AppHosted Username: kencochrane
+AppHosted Password:
+Traceback (most recent call last):
+File &quot;/Users/ken/.virtualenvs/apphosted/bin/metro&quot;, line 75, in run_shell
+ssh.connect(host, username=app_name, port=port)
+File &quot;/Library/Python/2.6/site-packages/paramiko/client.py&quot;, line 278, in connect
+for (family, socktype, proto, canonname, sockaddr) in socket.getaddrinfo(hostname, port, socket.AF_UNSPEC, socket.SOCK_STREAM):
+gaierror: [Errno 8] nodename nor servname provided, or not known
+Error: [Errno 8] nodename nor servname provided, or not known
+</code></pre>
+
+<h1 id="work-arounds:fd2d20709a7d24937bf602503a235c47">Work Arounds</h1>
+
+<p>Now that you know how to shell into your application, you can also kick
+off django management commands. I mentioned earlier that there was
+another way to create the django admin user, well here is how you do it.
+Login to the metro shell and then kick off the createsuperuser django
+management command. Logging into the shell and finding things isn&rsquo;t easy
+do to the added security so to save you some trouble this is what I did.
+Python isn&rsquo;t in your path so you need to put the fully qualified path to
+the virtual env&rsquo;s python. Not sure if the jailed shell allows you to
+edit your .profile if so, it might be nice to configure this so that you
+don&rsquo;t always have to do the full path.</p>
+
+<pre><code class="language-sourceCode bash"># Create superuser (django admin)
+$ /ve/kencochraneblog/bin/python /app/kencochraneblog/mysite/manage.py createsuperuser
+
+# kicking off south migrations by hand.
+$ /ve/kencochraneblog/bin/python /app/kencochraneblog/mysite/manage.py migrate
+</code></pre>
+
+<p>My application&rsquo;s name is kencochraneblog, so make sure you replace my
+application name with yours, it should be something like this. replace
+app_name,django_project_dir and command with your variables.</p>
+
+<pre><code class="language-sourceCode bash">$ /ve/&lt;app_name&gt;/bin/python /app/&lt;app_name&gt;/&lt;django_project_dir&gt;/manage.py &lt;command&gt;
+</code></pre>
+
+<h1 id="background-tasks:fd2d20709a7d24937bf602503a235c47">Background Tasks</h1>
+
+<p>AppHosted also supports background tasks via celery, they don&rsquo;t have the
+documentation created yet, but it should be available soon. They are
+also planning on supporting a cron like service, not sure if it will be
+cron, or something similar, but it should do, what you need it to do.</p>
+
+<h1 id="api:fd2d20709a7d24937bf602503a235c47">API</h1>
+
+<p>AppHosted provides a pretty nice API that allows you to do anything that
+the metro client does. This will allow you to write your own automation
+and management scripts to interact with your application. If you
+practice continuous deployment, it will allow you to automatically
+deploy the latest version of code on a post commit hook, if all of your
+tests pass.</p>
+
+<h1 id="services:fd2d20709a7d24937bf602503a235c47">Services</h1>
+
+<p>Right now they only support memcache for caching, and PostgreSQL for
+databases, but they plan on adding more services as they move forward.</p>
+
+<h1 id="conclusion:fd2d20709a7d24937bf602503a235c47">Conclusion</h1>
+
+<p>I have been playing with AppHosted for a few weeks now, and I&rsquo;m pretty
+happy with what they have so far. They still have a few issues to work
+out and they are still a work in progress, but I have been seeing
+improvements all of the time, so it will only be a matter of time before
+they are ready for the general public. Every time I came across an
+issue, they were quick to reply to my emails and solve my issues, or
+tell me where I was going wrong. If you have any more questions I
+recommend checking out their documentation @
+<a href="http://docs.apphosted.com/index.html">http://docs.apphosted.com/index.html</a> . Check them out, and make sure
+you let me know what you think.</p>
+
+<p><em>UPDATE</em>:</p>
+
+<p>They are now open to the general public.</p>
+
+<h2 id="update:fd2d20709a7d24937bf602503a235c47">Update:</h2>
+
+<p>Read how this service stacks up against other services like it in my
+<a href="http://kencochrane.net/blog/2011/06/django-hosting-roundup-who-wins/">Django hosting
+roundup</a></p>
+
+<p>2/16/2012: Full disclosure. On Feb 16th 2012, I accepted a job with
+dotCloud a competitor to apphosted. I plan on keeping this blog post up
+to date and impartial. If you think there are any errors, please let me
+know in the comments.</p>
+
+            </div>
+            <footer class="article-footer">
+    <a data-url="http://www.kencochrane.net/blog/2011/05/apphosted-com-django-hosting-review/" data-id="fd2d20709a7d24937bf602503a235c47" class="article-share-link">
+        Share
+    </a>
+    
+    <a href="http://www.kencochrane.net/blog/2011/05/apphosted-com-django-hosting-review//#disqus_thread" class="article-comment-link">
+        Comments
+    </a>
+    
+</footer>
+
+        </div>
+
+        
+<nav id="article-nav">
+    
+    <a href="http://www.kencochrane.net/blog/2011/05/django-job-opening-cashstar-portland-me/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">
+          Older
+      </strong>
+      <div class="article-nav-title">Django Job Opening @ CashStar.com (Portland, ME)</div>
+    </a>
+    
+
+    
+    <a href="http://www.kencochrane.net/blog/2011/06/djangozoom-com-review/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">
+          Newer
+      </strong>
+      <div class="article-nav-title">DjangoZoom.com Review</div>
+    </a>
+    
+</nav>
+
+
+    </article>
+    <section id="comments">
+        <div id="disqus_thread">
+            <div id="disqus_thread"></div>
+<script type="text/javascript">
+    var disqus_shortname = 'kencochrane';
+    var disqus_identifier = 'http:\/\/www.kencochrane.net\/blog\/2011\/05\/apphosted-com-django-hosting-review\/';
+    var disqus_title = 'AppHosted.com Django Hosting Service Review';
+    var disqus_url = 'http:\/\/www.kencochrane.net\/blog\/2011\/05\/apphosted-com-django-hosting-review\/';
+
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+        </div>
+    </section>
+
+</section>
+
+	    <aside id="sidebar">
+    
+<div class="widget-wrap">
+    <h3 class="widget-title">
+        Recents
+    </h3>
+    <div class="widget">
+        <ul id="recent-post">
+            
+            <li>
+                <div class="item-thumbnail">
+                    <a href="http://www.kencochrane.net/blog/2015/02/introducing-django-defender/" class="thumbnail">
+                    
+                        <span class="thumbnail-image thumbnail-none"></span>
+                    
+                    </a>
+                </div>
+                <div class="item-inner">
+                    
+                    <p class="item-category">
+                        <a class="article-category-link" href="http://www.kencochrane.net/categories/blog">
+                        blog
+                        </a>
+                    </p>
+                    
+                    <p class="item-title"><a href="http://www.kencochrane.net/blog/2015/02/introducing-django-defender/" class="title">Introducing Django Defender</a></p>
+                    <p class="item-date">
+                        <time datetime="2015-02-15 00:00:00 &#43;0000 UTC" itemprop="datePublished">2015-02-15</time>
+                    </p>
+                </div>
+            </li>
+            
+            <li>
+                <div class="item-thumbnail">
+                    <a href="http://www.kencochrane.net/blog/2015/02/upload-video-to-facebook-from-s3-using-python/" class="thumbnail">
+                    
+                        <span class="thumbnail-image thumbnail-none"></span>
+                    
+                    </a>
+                </div>
+                <div class="item-inner">
+                    
+                    <p class="item-category">
+                        <a class="article-category-link" href="http://www.kencochrane.net/categories/blog">
+                        blog
+                        </a>
+                    </p>
+                    
+                    <p class="item-title"><a href="http://www.kencochrane.net/blog/2015/02/upload-video-to-facebook-from-s3-using-python/" class="title">Uploading a Video to Facebook from AWS S3 using python</a></p>
+                    <p class="item-date">
+                        <time datetime="2015-02-14 00:00:00 &#43;0000 UTC" itemprop="datePublished">2015-02-14</time>
+                    </p>
+                </div>
+            </li>
+            
+            <li>
+                <div class="item-thumbnail">
+                    <a href="http://www.kencochrane.net/blog/2013/08/the-docker-guidebook/" class="thumbnail">
+                    
+                        <span class="thumbnail-image thumbnail-none"></span>
+                    
+                    </a>
+                </div>
+                <div class="item-inner">
+                    
+                    <p class="item-category">
+                        <a class="article-category-link" href="http://www.kencochrane.net/categories/blog">
+                        blog
+                        </a>
+                    </p>
+                    
+                    <p class="item-title"><a href="http://www.kencochrane.net/blog/2013/08/the-docker-guidebook/" class="title">The Docker Guidebook</a></p>
+                    <p class="item-date">
+                        <time datetime="2013-08-23 00:00:00 &#43;0000 UTC" itemprop="datePublished">2013-08-23</time>
+                    </p>
+                </div>
+            </li>
+            
+            <li>
+                <div class="item-thumbnail">
+                    <a href="http://www.kencochrane.net/blog/2013/06/running-docker-on-digital-ocean/" class="thumbnail">
+                    
+                        <span class="thumbnail-image thumbnail-none"></span>
+                    
+                    </a>
+                </div>
+                <div class="item-inner">
+                    
+                    <p class="item-category">
+                        <a class="article-category-link" href="http://www.kencochrane.net/categories/blog">
+                        blog
+                        </a>
+                    </p>
+                    
+                    <p class="item-title"><a href="http://www.kencochrane.net/blog/2013/06/running-docker-on-digital-ocean/" class="title">Running Docker on Digital Ocean with Ubuntu</a></p>
+                    <p class="item-date">
+                        <time datetime="2013-06-07 00:00:00 &#43;0000 UTC" itemprop="datePublished">2013-06-07</time>
+                    </p>
+                </div>
+            </li>
+            
+            <li>
+                <div class="item-thumbnail">
+                    <a href="http://www.kencochrane.net/blog/2013/05/running-docker-on-a-raspberrypi/" class="thumbnail">
+                    
+                        <span class="thumbnail-image thumbnail-none"></span>
+                    
+                    </a>
+                </div>
+                <div class="item-inner">
+                    
+                    <p class="item-category">
+                        <a class="article-category-link" href="http://www.kencochrane.net/categories/blog">
+                        blog
+                        </a>
+                    </p>
+                    
+                    <p class="item-title"><a href="http://www.kencochrane.net/blog/2013/05/running-docker-on-a-raspberrypi/" class="title">Getting Docker up and running on a RaspberryPi</a></p>
+                    <p class="item-date">
+                        <time datetime="2013-05-17 00:00:00 &#43;0000 UTC" itemprop="datePublished">2013-05-17</time>
+                    </p>
+                </div>
+            </li>
+            
+        </ul>
+    </div>
+</div>
+
+
+    
+
+
+<div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+        <ul class="category-list">
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/categories/blog">
+                    blog
+                </a>
+                <span class="category-list-count">39</span>
+            </li>
+            
+        </ul>
+    </div>
+</div>
+
+
+
+    
+
+
+<div class="widget-wrap">
+    <h3 class="widget-title">
+        Tags
+    </h3>
+    <div class="widget">
+        <ul class="category-list">
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/apache">
+                    apache
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/api">
+                    api
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/apphosted">
+                    apphosted
+                </a>
+                <span class="category-list-count">2</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/aufs">
+                    aufs
+                </a>
+                <span class="category-list-count">3</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/aws">
+                    aws
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/blog">
+                    blog
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/cashstar">
+                    cashstar
+                </a>
+                <span class="category-list-count">2</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/centos5">
+                    centos5
+                </a>
+                <span class="category-list-count">3</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/clickstream">
+                    clickstream
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/defender">
+                    defender
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/deployment">
+                    deployment
+                </a>
+                <span class="category-list-count">8</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/developers">
+                    developers
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/digital-ocean">
+                    digital-ocean
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/django">
+                    django
+                </a>
+                <span class="category-list-count">23</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/django-maine">
+                    django-maine
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/djangocms">
+                    djangocms
+                </a>
+                <span class="category-list-count">4</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/djangomaine">
+                    djangomaine
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/djangozoom">
+                    djangozoom
+                </a>
+                <span class="category-list-count">2</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/docker">
+                    docker
+                </a>
+                <span class="category-list-count">4</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/dotcloud">
+                    dotcloud
+                </a>
+                <span class="category-list-count">6</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/epio">
+                    epio
+                </a>
+                <span class="category-list-count">2</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/fabric">
+                    fabric
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/facebook">
+                    facebook
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/go">
+                    go
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/gondor">
+                    gondor
+                </a>
+                <span class="category-list-count">2</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/guidebook">
+                    guidebook
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/gunicorn">
+                    gunicorn
+                </a>
+                <span class="category-list-count">2</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/heroku">
+                    heroku
+                </a>
+                <span class="category-list-count">3</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/hosting">
+                    hosting
+                </a>
+                <span class="category-list-count">14</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/install">
+                    install
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/job">
+                    job
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/jobs">
+                    jobs
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/kernel">
+                    kernel
+                </a>
+                <span class="category-list-count">4</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/linux">
+                    linux
+                </a>
+                <span class="category-list-count">6</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/lxc">
+                    lxc
+                </a>
+                <span class="category-list-count">3</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/macosx">
+                    macosx
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/memcached">
+                    memcached
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/mercurial">
+                    mercurial
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/mysql">
+                    mysql
+                </a>
+                <span class="category-list-count">2</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/newrelic">
+                    newrelic
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/nginx">
+                    nginx
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/openshift">
+                    openshift
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/paas">
+                    paas
+                </a>
+                <span class="category-list-count">13</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/pci">
+                    pci
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/pelican">
+                    pelican
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/percona">
+                    percona
+                </a>
+                <span class="category-list-count">2</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/python">
+                    python
+                </a>
+                <span class="category-list-count">26</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/rackspace">
+                    rackspace
+                </a>
+                <span class="category-list-count">2</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/raspberrypi">
+                    raspberrypi
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/raspbian">
+                    raspbian
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/redis">
+                    redis
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/requests">
+                    requests
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/rhel5">
+                    rhel5
+                </a>
+                <span class="category-list-count">4</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/s3">
+                    s3
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/script">
+                    script
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/sentry">
+                    sentry
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/stackato">
+                    stackato
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/supervisor">
+                    supervisor
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/supervisord">
+                    supervisord
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/tutorial">
+                    tutorial
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/ubuntu">
+                    ubuntu
+                </a>
+                <span class="category-list-count">3</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/upgrade">
+                    upgrade
+                </a>
+                <span class="category-list-count">2</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/video">
+                    video
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/work">
+                    work
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+        </ul>
+    </div>
+</div>
+
+
+
+    
+
+
+<div class="widget-wrap">
+    <h3 class="widget-title">
+        Tag cloud
+    </h3>
+    <div class="widget tagcloud">
+        
+        <a href="http://www.kencochrane.net/tags/apache" style="font-size: 12px;">apache</a>
+        
+        <a href="http://www.kencochrane.net/tags/api" style="font-size: 12px;">api</a>
+        
+        <a href="http://www.kencochrane.net/tags/apphosted" style="font-size: 12px;">apphosted</a>
+        
+        <a href="http://www.kencochrane.net/tags/aufs" style="font-size: 12px;">aufs</a>
+        
+        <a href="http://www.kencochrane.net/tags/aws" style="font-size: 12px;">aws</a>
+        
+        <a href="http://www.kencochrane.net/tags/blog" style="font-size: 12px;">blog</a>
+        
+        <a href="http://www.kencochrane.net/tags/cashstar" style="font-size: 12px;">cashstar</a>
+        
+        <a href="http://www.kencochrane.net/tags/centos5" style="font-size: 12px;">centos5</a>
+        
+        <a href="http://www.kencochrane.net/tags/clickstream" style="font-size: 12px;">clickstream</a>
+        
+        <a href="http://www.kencochrane.net/tags/defender" style="font-size: 12px;">defender</a>
+        
+        <a href="http://www.kencochrane.net/tags/deployment" style="font-size: 12px;">deployment</a>
+        
+        <a href="http://www.kencochrane.net/tags/developers" style="font-size: 12px;">developers</a>
+        
+        <a href="http://www.kencochrane.net/tags/digital-ocean" style="font-size: 12px;">digital-ocean</a>
+        
+        <a href="http://www.kencochrane.net/tags/django" style="font-size: 12px;">django</a>
+        
+        <a href="http://www.kencochrane.net/tags/django-maine" style="font-size: 12px;">django-maine</a>
+        
+        <a href="http://www.kencochrane.net/tags/djangocms" style="font-size: 12px;">djangocms</a>
+        
+        <a href="http://www.kencochrane.net/tags/djangomaine" style="font-size: 12px;">djangomaine</a>
+        
+        <a href="http://www.kencochrane.net/tags/djangozoom" style="font-size: 12px;">djangozoom</a>
+        
+        <a href="http://www.kencochrane.net/tags/docker" style="font-size: 12px;">docker</a>
+        
+        <a href="http://www.kencochrane.net/tags/dotcloud" style="font-size: 12px;">dotcloud</a>
+        
+        <a href="http://www.kencochrane.net/tags/epio" style="font-size: 12px;">epio</a>
+        
+        <a href="http://www.kencochrane.net/tags/fabric" style="font-size: 12px;">fabric</a>
+        
+        <a href="http://www.kencochrane.net/tags/facebook" style="font-size: 12px;">facebook</a>
+        
+        <a href="http://www.kencochrane.net/tags/go" style="font-size: 12px;">go</a>
+        
+        <a href="http://www.kencochrane.net/tags/gondor" style="font-size: 12px;">gondor</a>
+        
+        <a href="http://www.kencochrane.net/tags/guidebook" style="font-size: 12px;">guidebook</a>
+        
+        <a href="http://www.kencochrane.net/tags/gunicorn" style="font-size: 12px;">gunicorn</a>
+        
+        <a href="http://www.kencochrane.net/tags/heroku" style="font-size: 12px;">heroku</a>
+        
+        <a href="http://www.kencochrane.net/tags/hosting" style="font-size: 12px;">hosting</a>
+        
+        <a href="http://www.kencochrane.net/tags/install" style="font-size: 12px;">install</a>
+        
+        <a href="http://www.kencochrane.net/tags/job" style="font-size: 12px;">job</a>
+        
+        <a href="http://www.kencochrane.net/tags/jobs" style="font-size: 12px;">jobs</a>
+        
+        <a href="http://www.kencochrane.net/tags/kernel" style="font-size: 12px;">kernel</a>
+        
+        <a href="http://www.kencochrane.net/tags/linux" style="font-size: 12px;">linux</a>
+        
+        <a href="http://www.kencochrane.net/tags/lxc" style="font-size: 12px;">lxc</a>
+        
+        <a href="http://www.kencochrane.net/tags/macosx" style="font-size: 12px;">macosx</a>
+        
+        <a href="http://www.kencochrane.net/tags/memcached" style="font-size: 12px;">memcached</a>
+        
+        <a href="http://www.kencochrane.net/tags/mercurial" style="font-size: 12px;">mercurial</a>
+        
+        <a href="http://www.kencochrane.net/tags/mysql" style="font-size: 12px;">mysql</a>
+        
+        <a href="http://www.kencochrane.net/tags/newrelic" style="font-size: 12px;">newrelic</a>
+        
+        <a href="http://www.kencochrane.net/tags/nginx" style="font-size: 12px;">nginx</a>
+        
+        <a href="http://www.kencochrane.net/tags/openshift" style="font-size: 12px;">openshift</a>
+        
+        <a href="http://www.kencochrane.net/tags/paas" style="font-size: 12px;">paas</a>
+        
+        <a href="http://www.kencochrane.net/tags/pci" style="font-size: 12px;">pci</a>
+        
+        <a href="http://www.kencochrane.net/tags/pelican" style="font-size: 12px;">pelican</a>
+        
+        <a href="http://www.kencochrane.net/tags/percona" style="font-size: 12px;">percona</a>
+        
+        <a href="http://www.kencochrane.net/tags/python" style="font-size: 12px;">python</a>
+        
+        <a href="http://www.kencochrane.net/tags/rackspace" style="font-size: 12px;">rackspace</a>
+        
+        <a href="http://www.kencochrane.net/tags/raspberrypi" style="font-size: 12px;">raspberrypi</a>
+        
+        <a href="http://www.kencochrane.net/tags/raspbian" style="font-size: 12px;">raspbian</a>
+        
+        <a href="http://www.kencochrane.net/tags/redis" style="font-size: 12px;">redis</a>
+        
+        <a href="http://www.kencochrane.net/tags/requests" style="font-size: 12px;">requests</a>
+        
+        <a href="http://www.kencochrane.net/tags/rhel5" style="font-size: 12px;">rhel5</a>
+        
+        <a href="http://www.kencochrane.net/tags/s3" style="font-size: 12px;">s3</a>
+        
+        <a href="http://www.kencochrane.net/tags/script" style="font-size: 12px;">script</a>
+        
+        <a href="http://www.kencochrane.net/tags/sentry" style="font-size: 12px;">sentry</a>
+        
+        <a href="http://www.kencochrane.net/tags/stackato" style="font-size: 12px;">stackato</a>
+        
+        <a href="http://www.kencochrane.net/tags/supervisor" style="font-size: 12px;">supervisor</a>
+        
+        <a href="http://www.kencochrane.net/tags/supervisord" style="font-size: 12px;">supervisord</a>
+        
+        <a href="http://www.kencochrane.net/tags/tutorial" style="font-size: 12px;">tutorial</a>
+        
+        <a href="http://www.kencochrane.net/tags/ubuntu" style="font-size: 12px;">ubuntu</a>
+        
+        <a href="http://www.kencochrane.net/tags/upgrade" style="font-size: 12px;">upgrade</a>
+        
+        <a href="http://www.kencochrane.net/tags/video" style="font-size: 12px;">video</a>
+        
+        <a href="http://www.kencochrane.net/tags/work" style="font-size: 12px;">work</a>
+        
+    </div>
+</div>
+
+
+
+
+    <div id="toTop" class="fa fa-chevron-up"></div>
+</aside>
+
+	</div>
+</div>
+
+<footer id="footer">
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2016
+      Powered by <a href="//gohugo.io">Hugo</a>. Theme by <a href="http://github.com/ppoffice">PPOffice</a>.
+    </div>
+  </div>
+</footer>
+
+
+<script>
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-67696-11', 'auto');
+ga('send', 'pageview');
+</script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+<script src="http://www.kencochrane.net/fancybox/jquery.fancybox.pack.js"></script>
+<script src="http://www.kencochrane.net/js/script.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.8.0/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+<!-- MathJax -->
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  tex2jax: {
+    inlineMath: [['$','$'], ['\\(','\\)']]}
+  });
+</script>
+<script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+</body>
+</html>

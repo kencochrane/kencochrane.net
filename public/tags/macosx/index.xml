@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Macosx on KenCochrane.net</title>
+    <link>http://www.kencochrane.net/tags/macosx/</link>
+    <description>Recent content in Macosx on KenCochrane.net</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sat, 16 Apr 2011 00:00:00 +0000</lastBuildDate>
+    <atom:link href="http://www.kencochrane.net/tags/macosx/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Restart Apache in Mac OS X</title>
+      <link>http://www.kencochrane.net/blog/2011/04/restart-apache-mac-os-x/</link>
+      <pubDate>Sat, 16 Apr 2011 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.kencochrane.net/blog/2011/04/restart-apache-mac-os-x/</guid>
+      <description>&lt;p&gt;I always seem to forget this, so I&amp;rsquo;m going to post it here for easy
+reference.&lt;/p&gt;
+
+&lt;p&gt;To restart the Apache web server service you can run the following
+command in a Mac OS X Terminal window:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sourceCode bash&#34;&gt;sudo /usr/sbin/apachectl restart
+&lt;/code&gt;&lt;/pre&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Djangomaine on KenCochrane.net</title>
+    <link>http://www.kencochrane.net/tags/djangomaine/</link>
+    <description>Recent content in Djangomaine on KenCochrane.net</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Tue, 19 Feb 2013 00:00:00 +0000</lastBuildDate>
+    <atom:link href="http://www.kencochrane.net/tags/djangomaine/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Intro to Python and Django Presentation</title>
+      <link>http://www.kencochrane.net/blog/2013/02/intro-to-python-and-django-presentation/</link>
+      <pubDate>Tue, 19 Feb 2013 00:00:00 +0000</pubDate>
+      
+      <guid>http://www.kencochrane.net/blog/2013/02/intro-to-python-and-django-presentation/</guid>
+      <description>
+
+&lt;p&gt;I recently gave a talk at a &lt;a href=&#34;http://www.DjangoMaine.com&#34;&gt;DjangoMaine&lt;/a&gt;
+meetup introducing folks to &lt;a href=&#34;http://python.org&#34;&gt;Python&lt;/a&gt; and
+&lt;a href=&#34;http://www.djangoproject.com&#34;&gt;Django&lt;/a&gt;. There wasn&amp;rsquo;t enough time to go
+over everything, so I tried to pick and choose the parts that I felt
+where important to go over, in order to have a good overview of what
+Python and Django is all about.&lt;/p&gt;
+
+&lt;p&gt;I hope this was useful to the folks that attended. If so, it would be
+really helpful to know what parts you would like to know more about.
+Then we can have some follow up talks doing a deeper dive into those
+select topics.&lt;/p&gt;
+
+&lt;h1 id=&#34;future-tutorials:4fc2b1faefdeda1197ff24a2851972b4&#34;&gt;Future Tutorials&lt;/h1&gt;
+
+&lt;p&gt;Also, if there is a demand, I&amp;rsquo;m willing to do a half or whole day Python
+and Django tutorial, where we would be able to take the time needed to
+go into all the different topics, so that you would have a good
+understanding of each one, when you left. Ideally I would probably break
+up the sessions into beginner, intermediate, and advanced so that people
+can move to the different levels as they get more familiar and
+comfortable with Django.&lt;/p&gt;
+
+&lt;p&gt;I would also like to offer a talk to local high schools. If we have
+enough kids that are interested, I&amp;rsquo;d be willing to go to your high
+school and give a talk and introduce these topics to the kids.&lt;/p&gt;
+
+&lt;p&gt;If you are interested in learning more about Django, please let me know.
+I don&amp;rsquo;t want to waste my time doing all the work preparing for a
+tutorial, if there isn&amp;rsquo;t enough demand.&lt;/p&gt;
+
+&lt;h1 id=&#34;slides:4fc2b1faefdeda1197ff24a2851972b4&#34;&gt;Slides&lt;/h1&gt;
+
+&lt;p&gt;We didn&amp;rsquo;t record the talk, but you can find my slides below.&lt;/p&gt;
+
+&lt;h1 id=&#34;download:4fc2b1faefdeda1197ff24a2851972b4&#34;&gt;Download&lt;/h1&gt;
+
+&lt;p&gt;The slides are also available to download in pdf form: &lt;a href=&#34;https://speakerd.s3.amazonaws.com/presentations/21c679705ccf0130a3061231381a97d7/intro-to-python-django_v2.pdf&#34;&gt;Intro to Python
+and Django Presentation
+slides&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;If you have any questions, or comments, feel free to contact me via the
+comments below, or on Twitter (@KenCochrane)&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

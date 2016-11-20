@@ -1,0 +1,3664 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+    <title>The Docker Guidebook &middot; KenCochrane.net</title>
+    <meta name="generator" content="Hugo 0.15" />
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="author" content="Ken Cochrane">
+    
+      <meta name="description" content="">
+    
+    
+    <link rel="icon" href="http://www.kencochrane.net/favicon.ico">
+    <link rel="apple-touch-icon" href="http://www.kencochrane.net/apple-touch-icon.png" />
+    <link rel="stylesheet" href="http://www.kencochrane.net/css/style.css">
+    <link rel="stylesheet" href="http://www.kencochrane.net/css/font-awesome.min.css">
+    <link rel="stylesheet" href="http://www.kencochrane.net/css/monokai.css">
+    <link rel="stylesheet" href="http://www.kencochrane.net/fancybox/jquery.fancybox.css">
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400italic,400,600' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Source+Code+Pro' rel='stylesheet' type='text/css'>
+    <meta property="og:title" content="The Docker Guidebook" />
+<meta property="og:description" content="Introduction The goal of this tutorial is to introduce you to Docker, show you what it can do, and how to get it up and running on your system, and how to use it to make your life better. This guide is open source and available on github.com. If you would like to add to it or fix something, please fork it and submit a pull request. Table of Contents What is Docker?" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="http://www.kencochrane.net/blog/2013/08/the-docker-guidebook/" />
+
+
+<meta property="og:updated_time" content="2013-08-23T00:00:00&#43;00:00"/>
+
+
+
+
+
+
+
+
+
+
+    
+    
+<meta itemprop="name" content="The Docker Guidebook">
+<meta itemprop="description" content="Introduction The goal of this tutorial is to introduce you to Docker, show you what it can do, and how to get it up and running on your system, and how to use it to make your life better. This guide is open source and available on github.com. If you would like to add to it or fix something, please fork it and submit a pull request. Table of Contents What is Docker?">
+
+
+<meta itemprop="dateModified" content="2013-08-23T00:00:00&#43;00:00" />
+<meta itemprop="wordCount" content="9065">
+
+
+
+<meta itemprop="keywords" content="blog,apache,api,apphosted,aufs,aws,blog,cashstar,centos5,clickstream,defender,deployment,developers,digital-ocean,django,django-maine,djangocms,djangomaine,djangozoom,docker,dotcloud,epio,fabric,facebook,go,gondor,guidebook,gunicorn,heroku,hosting,install,job,jobs,kernel,linux,lxc,macosx,memcached,mercurial,mysql,newrelic,nginx,openshift,paas,pci,pelican,percona,python,rackspace,raspberrypi,raspbian,redis,requests,rhel5,s3,script,sentry,stackato,supervisor,supervisord,tutorial,ubuntu,upgrade,video,work," />
+
+    
+
+  <meta name="twitter:card" content="summary"/>
+
+
+
+<meta name="twitter:title" content="The Docker Guidebook"/>
+<meta name="twitter:description" content="Introduction The goal of this tutorial is to introduce you to Docker, show you what it can do, and how to get it up and running on your system, and how to use it to make your life better. This guide is open source and available on github.com. If you would like to add to it or fix something, please fork it and submit a pull request. Table of Contents What is Docker?"/>
+<meta name="twitter:site" content="@kencochrane"/>
+
+
+</head>
+<body>
+<div class="container">
+
+
+<div id="container">
+	<header id="header">
+  <div id="header-main" class="header-inner">
+    <div class="outer">
+      <a href="http://www.kencochrane.net/" id="logo"><i class="logo" style="background-image: url('http://www.kencochrane.net/css/images/logo.png')"></i><span class="site-title">KenCochrane.net</span></a>
+      <nav id="main-nav">
+          
+          
+          <a class="main-nav-link" href="http://www.kencochrane.net/">Home</a>
+          
+          
+          
+          
+          
+          
+
+          
+
+          
+          
+          
+          
+          <a class="main-nav-link" href="http://www.kencochrane.net/tags/">Tags</a>
+          
+          
+          
+          <a class="main-nav-link" href="http://www.kencochrane.net/categories/">Categories</a>
+          
+          
+      </nav>
+        <nav id="sub-nav">
+          <div class="profile" id="profile-nav">
+            <a id="profile-anchor" href="javascript:;"><img class="avatar" src="http://www.kencochrane.net/img/kencochrane.jpeg"><i class="fa fa-caret-down"></i></a>
+          </div>
+        </nav>
+        <div id="search-form-wrap">
+          <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form">
+              <input type="search" name="q" results="0" class="search-form-input" placeholder="Search">
+              <button type="submit" class="search-form-submit">
+              </button>
+              <input type="hidden" name="q" value="site:http://www.kencochrane.net/">
+         </form>
+        </div>
+    </div>
+  </div>
+  <div id="main-nav-mobile" class="header-sub header-inner">
+    <table class="menu outer">
+      <tbody>
+          <tr>
+          
+          
+          <td><a class="main-nav-link" href="http://www.kencochrane.net/">Home</a></td>
+          
+          
+          
+          
+          
+          
+
+          
+
+          
+          
+          
+          
+          <td><a class="main-nav-link" href="http://www.kencochrane.net/tags/">Tags</a></td>
+          
+          
+          
+          <td><a class="main-nav-link" href="http://www.kencochrane.net/categories/">Categories</a></td>
+          
+          
+          <td>
+          <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form">
+          <input type="search" name="q" results="0" class="search-form-input" placeholder="Search">
+          <input type="hidden" name="q" value="site:http://www.kencochrane.net/">
+          </form>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</header>
+
+   	
+   	<div class="outer">
+	    <aside id="profile">
+  <div class="inner profile-inner">
+    <div class="base-info profile-block">
+      <img id="avatar" src="http://www.kencochrane.net/img/kencochrane.jpeg">
+      <h2 id="name">Ken Cochrane</h2>
+      <h3 id="title">Software developer living in Southern Maine</h3>
+      <span id="location"><i class="fa fa-map-marker"></i>Maine</span>
+      
+          <a id="follow" href="https://github.com/kencochrane">
+              Follow
+          </a>
+      
+    </div>
+    <div class="article-info profile-block">
+      <div class="article-info-block">
+        40
+        <span>Posts</span>
+      </div>
+      <div class="article-info-block">
+        
+          64
+          
+        <span>
+            Tags
+        </span>
+      </div>
+    </div>
+    <div class="contact-info profile-block">
+      <table class="contact-list">
+        <tr>
+          
+<td><a href="//github.com/kencochrane" target="_blank" title="GitHub"><i class="fa fa-github"></i></a></td>
+
+
+
+<td><a href="//bitbucket.com/kencochrane" target="_blank" title="Bitbucket"><i class="fa fa-bitbucket"></i></a></td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<td><a href="//linkedin.com/in/kencochrane" target="_blank" title="LinkedIn"><i class="fa fa-linkedin"></i></a></td>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<td><a href="//twitter.com/kencochrane" target="_blank" title="Twitter"><i class="fa fa-twitter"></i></a></td>
+
+
+          <td><a href="" target="_blank" title="RSS"><i class="fa fa-rss"></i></a></td>
+        </tr>
+      </table>
+    </div>
+  </div>
+</aside>
+
+	    <section id="main">
+    <article id="page-undefined" class="article article-type-page" itemscope="" itemprop="blogPost">
+        <div class="article-inner">
+            
+
+            <header class="article-header">
+    <a href="http://www.kencochrane.net/blog/2013/08/the-docker-guidebook/">
+    <h1 class="article-title" itemprop="name">
+        The Docker Guidebook
+    </h1>
+    </a>
+    <div class="article-meta">
+        <div class="article-date">
+            <i class="fa fa-calendar"></i>
+            <time datetime="2013-08-23 00:00:00 &#43;0000 UTC" itemprop="datePublished">2013-08-23</time>
+            &middot;
+            9065
+            words
+            &middot;
+            43
+            minute read
+        </div>
+
+        
+        
+            
+            
+            <div class="article-category">
+                <i class="fa fa-folder"></i>
+                
+                <a class="article-category-link" href="http://www.kencochrane.net/categories/blog">blog</a>
+                
+                
+            </div>
+            
+        
+
+        
+            
+            
+            <div class="article-category">
+                <i class="fa fa-tags"></i>
+                
+                <a class="article-category-link" href="http://www.kencochrane.net/tags/docker">docker</a>
+                &middot;
+                
+                <a class="article-category-link" href="http://www.kencochrane.net/tags/tutorial">tutorial</a>
+                &middot;
+                
+                <a class="article-category-link" href="http://www.kencochrane.net/tags/guidebook">guidebook</a>
+                
+                
+            </div>
+            
+        
+    </div>
+</header>
+
+            <div class="article-entry" itemprop="articleBody">
+                
+
+<p><img src="/docker_logo.png" alt="image" /></p>
+
+<h1 id="introduction:7906d5806871be907588a3a390328f7d">Introduction</h1>
+
+<p>The goal of this tutorial is to introduce you to
+<a href="http://docker.io">Docker</a>, show you what it can do, and how to get it
+up and running on your system, and how to use it to make your life
+better.</p>
+
+<p>This guide is open source and available on
+<a href="https://github.com/kencochrane/docker-guidebook">github.com</a>. If you
+would like to add to it or fix something, please <a href="https://github.com/kencochrane/docker-guidebook">fork
+it</a> and submit a pull
+request.</p>
+
+<blockquote>
+<p><strong>Table of Contents</strong></p>
+</blockquote>
+
+<h1 id="what-is-docker:7906d5806871be907588a3a390328f7d">What is Docker?</h1>
+
+<p>Docker is a tool created by the folks at <a href="http://dotcloud.com">dotCloud</a>
+to make using LinuX Containers (<a href="http://lxc.sourceforge.net/">LXC</a>)
+easier to use. Linux Containers are basically light weight Virtual
+Machines (<a href="http://en.wikipedia.org/wiki/Virtual_machine">VM</a>). A linux
+container runs Unix processes with strong guarantees of isolation across
+servers. Your software runs repeatably everywhere because its Container
+includes all of its dependencies.</p>
+
+<p>If you still don&rsquo;t understand what Docker is, and what it can do for
+you, don&rsquo;t worry, keep reading and it will become clear soon enough.</p>
+
+<h2 id="how-are-docker-s-containers-different-from-virtual-machines:7906d5806871be907588a3a390328f7d">How are Docker&rsquo;s Containers Different from Virtual Machines?</h2>
+
+<p>Docker, which uses LinuX Containers (LXC) run in the same kernel as it&rsquo;s
+host. This allows it to share a lot of the host&rsquo;s resources. It also
+uses <a href="http://aufs.sourceforge.net">AuFS</a> for the file system. It also
+manages the networking for you as well.</p>
+
+<p>AuFS is a layered file system, so you can have a read only part, and a
+write part, and it merges those together. So you could have the common
+parts of the file system as read only, which are shared amongst all of
+your containers, and then give each container it&rsquo;s own mount for
+writing.</p>
+
+<p>So let&rsquo;s say you have a container image that is 1GB in size. If you
+wanted to use a Full VM, you would need to have 1GB times x number of
+VMs you want. With LXC and AuFS you can share the bulk of the 1GB and if
+you have 1000 containers you still might only have a little over 1GB of
+space for the containers OS, assuming they are all running the same OS
+image.</p>
+
+<p>A full virtualized system gets it&rsquo;s own set of resources allocated to
+it, and does minimal sharing. You get more isolation, but it is much
+heavier (requires more resources).</p>
+
+<p>With LXC you get less isolation, but they are more lightweight and
+require less resources. So you could easily run 1000&rsquo;s on a host, and it
+doesn&rsquo;t even blink. Try doing that with Xen, and unless you have a
+really big host, I don&rsquo;t think it is possible.</p>
+
+<p>A full virtualized system usually takes minutes to start, LXC containers
+take seconds, and most times less then a second.</p>
+
+<p>There are pros and cons for each type of virtualized system. If you want
+full isolation with guaranteed resources then a full VM is the way to
+go. If you just want to isolate processes from each other and want to
+run a ton of them on a reasonably sized host, then LXC might be the way
+to go.</p>
+
+<p>For more information check out these set of blog posts which do a good
+job of explaining now LXC works:
+<a href="http://blog.dotcloud.com/under-the-hood-linux-kernels-on-dotcloud-part">http://blog.dotcloud.com/under-the-hood-linux-kernels-on-dotcloud-part</a></p>
+
+<h1 id="installing-docker:7906d5806871be907588a3a390328f7d">Installing Docker</h1>
+
+<p>Before you can install Docker you need to decide how you want to install
+it. There are three ways to install it, you can install from source,
+download a compiled binary, or install via your systems package manager.</p>
+
+<p>For detailed instructions on how to install Docker on your system for
+each of the following steps, check out the official Docker documentation
+<a href="http://docs.docker.io/en/latest/installation/">http://docs.docker.io/en/latest/installation/</a></p>
+
+<h2 id="requirements:7906d5806871be907588a3a390328f7d">Requirements</h2>
+
+<p>In order for Docker to run correctly on your server, you need to have a
+few things. For more details on the kernel requirements see this page:
+see <a href="http://docs.docker.io/en/latest/installation/kernel/">http://docs.docker.io/en/latest/installation/kernel/</a></p>
+
+<ul>
+<li>Kernel version greater then 3.8 and Cgroups and namespaces must
+be enabled.</li>
+<li>AUFS : AUFS is included in the kernels built by the Debian and
+Ubuntu distributions, but not built into the standard kernel, so if
+you are using another distribution you will need to add it to
+your kernel.</li>
+<li>LXC : This is most likely already installed on your system and
+kernel, you might just need to install a system package or two. See
+the install instructions for your distribution to get a list
+of packages.</li>
+</ul>
+
+<h3 id="kernel-version:7906d5806871be907588a3a390328f7d">Kernel version</h3>
+
+<p>The reason why Docker needs to run in a kernel version of 3.8 or greater
+is because there are some kernel bugs that are in the older versions
+that cause problems in some cases. Some people have ran Docker fine on
+lower kernels, so if you can&rsquo;t run on 3.8, do so at your own risk. There
+is talk about an effort to back port the bug fixes to the older kernel
+trees, so that in the future they will be available on the older kernel
+versions. For more information about this see.
+<a href="https://github.com/dotcloud/docker/pull/1062">https://github.com/dotcloud/docker/pull/1062</a></p>
+
+<h3 id="aufs:7906d5806871be907588a3a390328f7d">AUFS</h3>
+
+<p>Currently AUFS is the standard file system for Docker, but there is an
+effort underway to make the filesystem more pluggable, so that we can
+use different file systems with Docker. AUFS will most likely not be
+available in future Ubuntu releases, and UnionFS doesn&rsquo;t look like it
+will be getting added to the kernel anytime soon, so we can&rsquo;t add that
+as a replacement. The current replacement looks like
+<a href="https://github.com/dotcloud/docker/issues/443">BTRFS</a>.</p>
+
+<h2 id="package-manager:7906d5806871be907588a3a390328f7d">Package Manager</h2>
+
+<p>The most common way to install Docker is via your server&rsquo;s package
+manager. On Ubuntu that is as simple as running the following command
+<code>sudo apt-get install lxc-docker</code>. This is an easy way to install
+docker, and keep it up to date.</p>
+
+<p>The package will also install an init script so that the docker daemon
+will start up automatically.</p>
+
+<p>If you are installing on a production server, this is the recommended
+way to install.</p>
+
+<h3 id="upgrading:7906d5806871be907588a3a390328f7d">Upgrading:</h3>
+
+<p>To upgrade you would upgrade the same way you upgrade any other package
+for your system. On Ubuntu you would run &lsquo;sudo apt-get upgrade&rsquo;</p>
+
+<h2 id="binaries:7906d5806871be907588a3a390328f7d">Binaries</h2>
+
+<p>If a docker package isn&rsquo;t available for your package manager, you can
+download the binaries directly. When a new version of docker is released
+the binaries are uploaded to <a href="http://get.docker.io">http://get.docker.io</a>, so that you can
+download directly from there. Here is an example on how to download the
+latest docker release.</p>
+
+<pre><code>wget http://get.docker.io/builds/Linux/x86_64/docker-latest.tgz
+tar -xf docker-latest.tgz
+</code></pre>
+
+<p>This just downloads the docker binary, to get it to run you would still
+need to put the binary in a good location, and create an init script so
+that it will start on system reboots.</p>
+
+<h3 id="init-script-examples:7906d5806871be907588a3a390328f7d">Init script examples:</h3>
+
+<ul>
+<li>Debian init:
+<a href="https://github.com/dotcloud/docker/blob/master/packaging/debian/lxc-docker.init">https://github.com/dotcloud/docker/blob/master/packaging/debian/lxc-docker.init</a></li>
+<li>Ubuntu Upstart:
+<a href="https://github.com/dotcloud/docker/blob/master/packaging/ubuntu/docker.upstart">https://github.com/dotcloud/docker/blob/master/packaging/ubuntu/docker.upstart</a></li>
+</ul>
+
+<h3 id="upgrading-1:7906d5806871be907588a3a390328f7d">Upgrading:</h3>
+
+<p>To upgrade you would need to download the latest version, make a backup
+of the current docker binary, replace the current one with the new one,
+and restart your daemon. The init script should be able to stay the
+same.</p>
+
+<h3 id="more-information:7906d5806871be907588a3a390328f7d">More information:</h3>
+
+<p><a href="http://docs.docker.io/en/latest/installation/binaries/">http://docs.docker.io/en/latest/installation/binaries/</a></p>
+
+<h2 id="from-source:7906d5806871be907588a3a390328f7d">From Source</h2>
+
+<p>Installing from a package manager or from a binary is fine if you want
+to only install released versions. But if you want to be on the cutting
+edge and install some features that are either on a feature branch, or
+something that isn&rsquo;t released yet, you will need to compile from source.</p>
+
+<p>Compiling from source is a little more complicated because you will need
+to have GO 1.1 and all other dependences install on your system, but it
+isn&rsquo;t too bad.</p>
+
+<p>Here is what you need to do to get it up and running on Ubuntu:</p>
+
+<pre><code>sudo apt-get install python-software-properties
+sudo add-apt-repository ppa:gophers/go
+sudo apt-get update
+sudo apt-get -y install lxc xz-utils curl golang-stable git aufs-tools
+
+export GOPATH=~/go/
+export PATH=$GOPATH/bin:$PATH
+
+mkdir -p $GOPATH/src/github.com/dotcloud
+cd $GOPATH/src/github.com/dotcloud
+git clone git://github.com/dotcloud/docker.git
+cd docker
+
+go get -v github.com/dotcloud/docker/...
+go install -v github.com/dotcloud/docker/...
+</code></pre>
+
+<p>Then run the docker daemon:</p>
+
+<pre><code>sudo $GOPATH/bin/docker -d
+</code></pre>
+
+<p>If you make any changes to the code, run the <code>go install</code> command
+(above) to recompile docker. Feel free to change the git clone command
+above to your own fork, to make pull request&rsquo;s easier.</p>
+
+<p>Docker requires Go 1.1, if you have an older version it will not compile
+correctly.</p>
+
+<h1 id="docker-daemon:7906d5806871be907588a3a390328f7d">Docker Daemon</h1>
+
+<p>The Docker daemon needs to be running on your system to control the
+containers. The daemon needs to be run as Root so that it can have
+access to everything it needs.</p>
+
+<h2 id="starting-the-daemon:7906d5806871be907588a3a390328f7d">Starting the daemon</h2>
+
+<p>There are two ways to start the daemon, you can start it using an init
+script so that it starts on system boot, and manually starting the
+daemon and sending to the background. The init script is the preferred
+way of doing this. If you install Docker via a package manager you
+already have the init script on your system.</p>
+
+<p>To start it manually you need to use a command like this.</p>
+
+<pre><code>sudo &lt;path to&gt;/docker -d &amp;
+</code></pre>
+
+<p>When Docker starts, it will listen on 127.0.0.1:4243 to allow only local
+connections but you can set it to 0.0.0.0:4243 or a specific host ip to
+give access to everybody.</p>
+
+<p>To change the host and port that docker listens to you will need to use
+the <code>-H</code> flag when starting docker.</p>
+
+<p><code>-H</code> accepts host and port assignment in the following format:
+tcp://[host][:port] or unix://path For example:</p>
+
+<ul>
+<li>tcp://host -&gt; tcp connection on host:4243</li>
+<li>tcp://host:port -&gt; tcp connection on host:port</li>
+<li>tcp://:port -&gt; tcp connection on 127.0.0.1:port</li>
+<li>unix://path/to/socket -&gt; unix socket located at path/to/socket</li>
+</ul>
+
+<p>When you do this, you need to also let the docker client know what
+daemon you want to connect too. To do that you have to also pass in the
+-H flag to with the ip:port of the daemon to connect too.</p>
+
+<pre><code># Run docker in daemon mode on port 5555
+sudo &lt;path to&gt;/docker -H 0.0.0.0:5555 &amp;
+
+# Download a base image using the daemon on port 5555
+docker -H :5555 pull base
+</code></pre>
+
+<p>You can use multiple -H, for example, if you want to listen on both tcp
+and a unix socket</p>
+
+<pre><code># Run docker in daemon mode on 127.0.0.1:4243 and unix socket unix:///var/run/docker.sock
+sudo &lt;path to&gt;/docker -H tcp://127.0.0.1:4243 -H unix:///var/run/docker.sock
+
+# Download a base image (no need to put the -H since it is listen on default port :4243)
+docker pull base
+
+# OR (pull via the unix socket)
+docker -H unix:///var/run/docker.sock pull base
+</code></pre>
+
+<h2 id="configuration:7906d5806871be907588a3a390328f7d">Configuration</h2>
+
+<p>Currently if you want to configure the docker daemon, you can either
+pass in command switches to the docker daemon on startup, or you can set
+ENV variables that the docker daemon will pick up. I have proposed a
+better approach for configuring docker, the idea is to use a
+<code>docker.conf</code> file so that it is easier to set and is more obvious.
+Details can be found here:
+<a href="https://github.com/dotcloud/docker/issues/937">https://github.com/dotcloud/docker/issues/937</a></p>
+
+<p>There are two ENV variables that you can set today, there maybe more
+added in the future.</p>
+
+<h3 id="debug:7906d5806871be907588a3a390328f7d">DEBUG</h3>
+
+<p>This tells the Docker daemon that you want more debug information in
+your logs.</p>
+
+<p>defaults to DEBUG=0, set to DEBUG=1 to enable.</p>
+
+<h3 id="docker-index-url:7906d5806871be907588a3a390328f7d">DOCKER_INDEX_URL</h3>
+
+<p>This tells Docker which Docker index to use. You will most likely not
+use this setting, it is mostly used for Docker developer when they want
+to try things out with the test index before they release the code.</p>
+
+<p>defaults to DOCKER_INDEX_URL=<a href="https://index.docker.io">https://index.docker.io</a></p>
+
+<h3 id="example:7906d5806871be907588a3a390328f7d">Example</h3>
+
+<p>This is how you would set it if it was in an init file:</p>
+
+<pre><code># /etc/init/docker.conf
+env LC_ALL=&quot;en_US.UTF-8&quot;
+env DOCKER_INDEX_URL=&quot;https://index.docker.io&quot;
+env DEBUG=1
+exec /usr/local/bin/docker -d
+</code></pre>
+
+<h2 id="logs:7906d5806871be907588a3a390328f7d">Logs</h2>
+
+<p>There is no official Docker log file right now, I have opened an issue
+and requested one: <a href="https://github.com/dotcloud/docker/issues/936">https://github.com/dotcloud/docker/issues/936</a> but
+in the meantime if you are using upstart you can use
+<code>/var/log/upstart/docker.log</code> which has some information, but not as
+much as I would like.</p>
+
+<h1 id="testing-docker-install:7906d5806871be907588a3a390328f7d">Testing Docker install</h1>
+
+<p>Now that you have Docker running, you can start to issue some Docker
+commands to see how things are working. The very first commands that I
+always run are <code>Docker version</code> and <code>Docker info</code>. These tell me quickly
+if I have everything working correctly. :</p>
+
+<pre><code>$ docker version
+Client version: 0.4.8
+Server version: 0.4.8
+Go version: go1.1
+
+$ docker info
+Containers: 0
+Images: 0
+WARNING: No memory limit support
+WARNING: No swap limit support
+</code></pre>
+
+<p>Notice that I have two warnings for my docker info. If you use Debian or
+Ubuntu kernels, and want to enable memory and swap accounting, you must
+add the following command-line parameters to your kernel:</p>
+
+<pre><code>cgroup_enable=memory swapaccount=1
+</code></pre>
+
+<p>On Debian or Ubuntu systems, if you use the default GRUB bootloader, you
+can add those parameters by editing <code>/etc/default/grub</code> and extending
+GRUB_CMDLINE_LINUX. Look for the following line:</p>
+
+<pre><code>GRUB_CMDLINE_LINUX=&quot;&quot;
+</code></pre>
+
+<p>And replace it by the following one:</p>
+
+<pre><code>GRUB_CMDLINE_LINUX=&quot;cgroup_enable=memory swapaccount=1&quot;
+</code></pre>
+
+<p>Then run <code>update-grub</code>, and reboot the server.</p>
+
+<h1 id="terminology:7906d5806871be907588a3a390328f7d">Terminology</h1>
+
+<p>There are going to be some terms that you hear throughout this tutorial,
+to make sure you understand what we are talking about, I&rsquo;ll explain a
+few of them here.</p>
+
+<h2 id="image:7906d5806871be907588a3a390328f7d">Image</h2>
+
+<p>An image is a read only layer used to build a container. They do not
+change.</p>
+
+<h2 id="container:7906d5806871be907588a3a390328f7d">Container</h2>
+
+<p>Is basically a self contained runtime environment that is built using
+one or more images. You can commit your changes to a container and
+create an image.</p>
+
+<h2 id="index-registry:7906d5806871be907588a3a390328f7d">index / registry</h2>
+
+<p>These are public or private servers where people can upload their
+repositories so they can easily share what they made.</p>
+
+<h2 id="repository:7906d5806871be907588a3a390328f7d">Repository</h2>
+
+<p>A repository is a group of images located in the docker registry. There
+are two types of repositories, Top level and user repositories. Top
+level repositories don&rsquo;t have a &lsquo;/&rsquo; in the name and they are usually
+reserved for base images. These Top level repositories is what most
+people build their repositories on top of. They are controlled by the
+maintainers of Docker. User repositories are repositories that anyone
+can upload into the registry and share with other people.</p>
+
+<h1 id="getting-help-with-docker:7906d5806871be907588a3a390328f7d">Getting Help with Docker</h1>
+
+<p>If you have a question or problem when using Docker, there are a number
+of different ways to help you. Here is a list of the ways, pick the one
+that works best for you.</p>
+
+<ul>
+<li>IRC: #docker on freenode, There are a bunch (250+) people normally
+in this channel, come on in, and ask your question, we are very
+friendly and we don&rsquo;t bite. Also newbie questions are welcome.</li>
+<li>Email: There is a google group called docker-club. Join the list,
+and ask any questions you might have.
+<a href="https://groups.google.com/d/forum/docker-club">https://groups.google.com/d/forum/docker-club</a></li>
+<li>Twitter: <a href="http://twitter.com/getdocker/">http://twitter.com/getdocker/</a> Follow along, if you aren&rsquo;t
+already, lots of great info posted every day.</li>
+<li>StackOverflow: We love Stack Overflow, if you also enjoy it, feel
+free to post a question using the docker tag, and one of the many
+Docker fans will get back to you quickly. If you love getting
+points, feel free to answer questions as well.</li>
+<li>Bugs and feature requests: If you have a bug or feature request,
+submit them to GitHub. <a href="http://www.github.com/dotcloud/docker">http://www.github.com/dotcloud/docker</a></li>
+</ul>
+
+<h1 id="part-1-getting-started:7906d5806871be907588a3a390328f7d">Part 1. Getting Started</h1>
+
+<p>Now that we have the boring stuff out of the way lets start playing with
+Docker. The very first example we are going to do is a very simple one,
+we will spin up a container and print <code>hello world</code> to the screen. :</p>
+
+<pre><code>#run a simple echo command, that will echo hello world back to the console over standard out.
+$ docker run base /bin/echo hello world
+hello world
+</code></pre>
+
+<p>If this was your first docker command you will notice that it will need
+to download the base image first. It only needs to do this once, and it
+caches it locally so you don&rsquo;t need to do this again. We could have
+broken these out into two commands <code>docker pull base</code> and then the
+docker run command, but I was lazy and put them together, and Docker is
+smart enough to know what I want to do, and do it for me.</p>
+
+<p>Now you might be wondering what is Docker doing here exactly. It doesn&rsquo;t
+look like much because we picked such a simple example, but here is what
+is happening.</p>
+
+<ol>
+<li>Generated a new LXC container</li>
+<li>Created a new file system</li>
+<li>Mounted a read/write layer</li>
+<li>Allocated network interface</li>
+<li>Setup IP</li>
+<li>Setup NATing</li>
+<li>Executed the process in the container</li>
+<li>Captured it&rsquo;s output</li>
+<li>Printed to screen</li>
+<li>Stopped the container</li>
+</ol>
+
+<p>All in under a second!</p>
+
+<p>If we run the <code>docker images</code> command we should see the base image in
+our list. :</p>
+
+<pre><code>$ docker images
+REPOSITORY          TAG                 ID                  CREATED             SIZE
+base                latest              b750fe79269d        3 months ago        24.65 kB (virtual 180.1 MB)
+base                ubuntu-12.10        b750fe79269d        3 months ago        24.65 kB (virtual 180.1 MB)
+base                ubuntu-quantal      b750fe79269d        3 months ago        24.65 kB (virtual 180.1 MB)
+base                ubuntu-quantl       b750fe79269d        3 months ago        24.65 kB (virtual 180.1 MB)
+</code></pre>
+
+<p>Notice how you see the same image more then once, that is because there
+are more then one tag for the same image.</p>
+
+<p>If we want to see the container we just ran we can run the <code>docker ps</code>
+command. Since it isn&rsquo;t running anymore we need to use the <code>-a</code> flag to
+show us all of the image:</p>
+
+<pre><code>$ docker ps -a
+ID                  IMAGE               COMMAND                CREATED             STATUS              PORTS
+861361e27501        base:latest         /bin/echo hello world  1 minutes ago       Exit 0
+</code></pre>
+
+<p>Lets do something a little more complicated. We are going to do the same
+thing, but instead of having the container exit right after we start, we
+want it to keep running in the background, and print hello world every
+second:</p>
+
+<pre><code>$ CONTAINER_ID=$(docker run -d base /bin/sh -c &quot;while true; do echo hello world; sleep 1; done&quot;)
+$ echo $CONTAINER_ID
+f684fc88aec3
+
+$ docker ps
+ID                  IMAGE               COMMAND                CREATED             STATUS              PORTS
+f684fc88aec3        base:latest         /bin/sh -c while tru   33 seconds ago      Up 33 seconds
+</code></pre>
+
+<p>There we go, now lets see what the container is doing by looking at the
+logs for the container:</p>
+
+<pre><code>$ docker logs f684fc88aec3
+hello world
+hello world
+hello world
+hello world
+hello world
+.. (trimmed)
+</code></pre>
+
+<p>Now lets attach to the container and see the results in realtime:</p>
+
+<pre><code>$ docker attach f684fc88aec3
+hello world
+hello world
+hello world
+</code></pre>
+
+<p>Ok, enough fun for this container, lets stop it.</p>
+
+<blockquote>
+<p>\$ docker stop f684fc88aec3 f684fc88aec3</p>
+
+<p>\$ docker ps ID IMAGE COMMAND CREATED STATUS PORTS</p>
+</blockquote>
+
+<p>Another thing we could have done to look at the container was inspect
+the container, we can do this while it is running or after it stopped:</p>
+
+<pre><code>$ docker inspect f684fc88aec3
+[{
+    &quot;ID&quot;: &quot;f684fc88aec3bf5b74df2fe03da1fe7cebf07a89d308b6ac7e8a6f14d9c9a3dd&quot;,
+    &quot;Created&quot;: &quot;2013-07-05T21:23:31.27766521Z&quot;,
+    &quot;Path&quot;: &quot;/bin/sh&quot;,
+    &quot;Args&quot;: [
+        &quot;-c&quot;,
+        &quot;while true; do echo hello world; sleep 1; done&quot;
+    ],
+    &quot;Config&quot;: {
+        &quot;Hostname&quot;: &quot;f684fc88aec3&quot;,
+        &quot;User&quot;: &quot;&quot;,
+        &quot;Memory&quot;: 0,
+        &quot;MemorySwap&quot;: 0,
+        &quot;CpuShares&quot;: 0,
+        &quot;AttachStdin&quot;: false,
+        &quot;AttachStdout&quot;: false,
+        &quot;AttachStderr&quot;: false,
+        &quot;PortSpecs&quot;: null,
+        &quot;Tty&quot;: false,
+        &quot;OpenStdin&quot;: false,
+        &quot;StdinOnce&quot;: false,
+        &quot;Env&quot;: null,
+        &quot;Cmd&quot;: [
+            &quot;/bin/sh&quot;,
+            &quot;-c&quot;,
+            &quot;while true; do echo hello world; sleep 1; done&quot;
+        ],
+        &quot;Dns&quot;: null,
+        &quot;Image&quot;: &quot;base&quot;,
+        &quot;Volumes&quot;: {},
+        &quot;VolumesFrom&quot;: &quot;&quot;,
+        &quot;Entrypoint&quot;: []
+    },
+    &quot;State&quot;: {
+        &quot;Running&quot;: false,
+        &quot;Pid&quot;: 0,
+        &quot;ExitCode&quot;: 137,
+        &quot;StartedAt&quot;: &quot;2013-07-05T21:23:31.298200635Z&quot;,
+        &quot;Ghost&quot;: false
+    },
+    &quot;Image&quot;: &quot;b750fe79269d2ec9a3c593ef05b4332b1d1a02a62b4accb2c21d589ff2f5f2dc&quot;,
+    &quot;NetworkSettings&quot;: {
+        &quot;IPAddress&quot;: &quot;&quot;,
+        &quot;IPPrefixLen&quot;: 0,
+        &quot;Gateway&quot;: &quot;&quot;,
+        &quot;Bridge&quot;: &quot;&quot;,
+        &quot;PortMapping&quot;: null
+    },
+    &quot;SysInitPath&quot;: &quot;/usr/bin/docker&quot;,
+    &quot;ResolvConfPath&quot;: &quot;/etc/resolv.conf&quot;,
+    &quot;Volumes&quot;: {},
+    &quot;VolumesRW&quot;: {}
+}]
+</code></pre>
+
+<p>There is a lot of information there, you might not need it now, but you
+may need it in the future, so it is nice to have it available.</p>
+
+<p>Now that you know the basics go to part 2, and learn how to build an
+image.</p>
+
+<h1 id="part-2-building-an-image:7906d5806871be907588a3a390328f7d">Part 2. Building an image</h1>
+
+<p>Our goal for this part is to create our own Redis server container. The
+first thing we will need to do is decide which image we want to build
+on. I usually pick the ubuntu image, but sometimes it is nice to start
+from something a little higher so that I don&rsquo;t have to recreate steps,
+and I can build on the shoulders of others.</p>
+
+<p>We are going to run /bin/bash with the <code>-i</code> and the <code>-t</code> flags. <code>-i</code>
+tells Docker to keep stdin open even if not attached, and <code>-t</code> is to
+allocate a pseudo-tty. Once we run the command, we will be connected
+into the container, and all commands at this point are running from
+inside the container. :</p>
+
+<pre><code>$ docker run -i -t ubuntu /bin/bash
+root@dda8bfc22397:/# hostname
+dda8bfc22397
+root@dda8bfc22397:/# ps aux
+USER       PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
+root         1  0.0  0.0  18060  1940 ?        S    21:40   0:00 /bin/bash
+root        11  0.0  0.0  15532  1136 ?        R+   21:41   0:00 ps aux
+</code></pre>
+
+<p>OK, it looks like we are in, and things are working well, now lets get
+to work.</p>
+
+<p>We are going to update apt and then install redis:</p>
+
+<pre><code>$ apt-get update
+$ apt-get install redis-server
+$ps aux
+USER       PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
+root         1  0.0  0.0  18060  1944 ?        S    22:21   0:00 /bin/bash
+redis      116  0.0  0.0  36628  1656 ?        Ssl  22:22   0:00 /usr/bin/redis-server /etc/redis/redis.conf
+root       125  0.0  0.0  15532  1140 ?        R+   22:23   0:00 ps aux
+$ exit
+</code></pre>
+
+<p>Now we have a container with redis installed. Less see what we did to
+the container:</p>
+
+<pre><code>$ docker diff dda8bfc22397
+A /.bash_history
+C /dev
+A /dev/kmsg
+C /etc
+C /etc/bash_completion.d
+A /etc/bash_completion.d/redis-cli
+C /etc/default
+A /etc/default/redis-server
+.. (trimmed)
+</code></pre>
+
+<p>It should show you what files have changed &copy; and which ones were added
+(A). Lets save our work so we can reuse this in the future. To do this
+we need to <code>docker commit</code> the container to create an image. In order to
+commit changes you need your container_id. If you don&rsquo;t remember it
+don&rsquo;tw worry you can get it from <code>docker ps -a</code>:</p>
+
+<pre><code>$ docker ps -a  # grab the container id (this will be the first one in the list)
+$ docker commit &lt;container_id&gt; &lt;your username&gt;/redis
+82ebf04d9385
+</code></pre>
+
+<p>It returns an image id. if we run <code>docker images</code> we should see it
+listed:</p>
+
+<pre><code>$ docker images
+REPOSITORY          TAG                 ID                  CREATED              SIZE
+base                latest              b750fe79269d        3 months ago         24.65 kB (virtual 180.1 MB)
+base                ubuntu-12.10        b750fe79269d        3 months ago         24.65 kB (virtual 180.1 MB)
+base                ubuntu-quantal      b750fe79269d        3 months ago         24.65 kB (virtual 180.1 MB)
+base                ubuntu-quantl       b750fe79269d        3 months ago         24.65 kB (virtual 180.1 MB)
+kencochrane/redis   latest              82ebf04d9385        About a minute ago   98.46 MB (virtual 278.6 MB)
+</code></pre>
+
+<p>Lets run our new image and see if it works:</p>
+
+<pre><code>$ docker run -d -p 6379 kencochrane/redis /usr/bin/redis-server
+4cbaae2f67d0
+</code></pre>
+
+<p>The <code>-d</code> tell docker to run it in the background, just like our Hello
+World daemon from the last part. <code>-p 6379</code> says to use 6379 as the port
+for this container.</p>
+
+<p>Test 1 Connect to the container with the redis-cli. :</p>
+
+<pre><code>$ docker ps  # grab the new container id
+$ docker inspect &lt;container_id&gt; | grep IPAddress   # grab the ipaddress of the container
+&quot;IPAddress&quot;: &quot;172.16.42.5&quot;,
+redis-cli -h 172.16.42.5 -p 6379
+redis 10.0.3.32:6379&gt; set docker awesome
+OK
+redis 10.0.3.32:6379&gt; get docker
+&quot;awesome&quot;
+redis 10.0.3.32:6379&gt; exit
+</code></pre>
+
+<p>Connect to the public IP with the redis-cli. :</p>
+
+<pre><code>$ docker ps  # grab the new container id
+$ docker port &lt;container_id&gt; 6379  # grab the external port
+49153
+ip addr show   # grab the host ip address
+redis-cli -h &lt;host ipaddress&gt; -p 49153
+redis 192.168.0.1:49153&gt; set docker awesome
+OK
+redis 192.168.0.1:49153&gt; get docker
+&quot;awesome&quot;
+redis 192.168.0.1:49153&gt; exit
+</code></pre>
+
+<p>We just proved that it is working as it should, we can now stop the
+container using <code>docker stop</code>. You have now created your first Docker
+image. Continue on to the next part to learn how to use that image on
+another host, and share it with the world.</p>
+
+<h1 id="part-3-docker-index-registry:7906d5806871be907588a3a390328f7d">Part 3: Docker Index/registry</h1>
+
+<p>When you create an image it is only available on that server. In the
+past, if you wanted to use the same image on another server, you would
+need to recreate the image, which isn&rsquo;t ideal because there is no way to
+guarantee that the two images are the same. To make moving images
+around, and sharing them easier, the Docker team created the <a href="https://index.docker.io">Docker
+index</a>.</p>
+
+<p>The Docker Index is a public Registry where people can upload their
+custom images and share them with others. This is also where the base
+images are located and where you pull from when doing a <code>docker pull</code>.
+There are two parts to the Docker Index. There is a web component that
+makes it easier for you to mange your images and account with a
+graphical interface. There is also the API which is what the Docker
+client uses to interact with the index. This allows you to do some of
+the tasks from the command line or the web UI.</p>
+
+<p>The Docker Registry is server that stores all of the images and
+repositories. The Index just has the metadata about the images,
+repositories and the user accounts, but all of the images and
+repositories are stored in the Docker Registry.</p>
+
+<h2 id="creating-an-account-on-the-docker-index:7906d5806871be907588a3a390328f7d">Creating an Account on the Docker Index</h2>
+
+<p>There are two ways to create an account on the Docker Index. Either way
+requires that you enter a valid email address and that the email address
+is confirmed before you can activate the account. So make sure you enter
+a valid email address, and then check you email after registering so
+that you can click the confirmation link and confirm the account.</p>
+
+<h3 id="command-line:7906d5806871be907588a3a390328f7d">Command Line</h3>
+
+<p>If you want to register for an account from the command line you can use
+the <code>docker login</code> command. The Docker login command will either
+register an account for you, or if you already have an account it will
+log you into the Index.</p>
+
+<p>When you register via the command line, it will register you and login
+you in a the same time. Remember to click on the activation link in the
+confirmation email, or else your account isn&rsquo;t fully active. :</p>
+
+<pre><code>$ docker login
+Username (): myusername
+Password:
+Email (): myusername@example.com
+Login Succeeded
+</code></pre>
+
+<h3 id="web-site:7906d5806871be907588a3a390328f7d">Web site</h3>
+
+<p>If you prefer to register from a web browser, then go to
+<a href="https://index.docker.io/account/signup/">https://index.docker.io/account/signup/</a> and then fill out the form,
+and then click on the activation link sent in the confirmation email.</p>
+
+<p>Once you are activated, you will still need to login to the Docker Index
+from your Docker client on your server, so that you can link the two. :</p>
+
+<pre><code>$ docker login
+Username (): myusername
+Password:
+Email (): myusername@example.com
+Login Succeeded
+</code></pre>
+
+<h3 id="credentials:7906d5806871be907588a3a390328f7d">Credentials</h3>
+
+<p>When you login to the Docker Index from the Docker client, it will store
+your login information, so you don&rsquo;t have to enter it again. Depending
+on what Docker client version you are using it will either be located at
+<code>~/.dockercfg</code> or <code>/var/lib/docker/.dockercfg</code>. If you are having issues
+logging in you, can delete this file, and it will re-prompt you for your
+username and password the next time you login. Running Docker login
+should do the same thing, so do that first, and use this for a last
+resort.</p>
+
+<h2 id="search:7906d5806871be907588a3a390328f7d">Search</h2>
+
+<p>There are a lot of Docker images in the Index, with more getting added
+everyday. Before you go ahead and create your own, you should see if
+someone has already created what you wanted. The best way to find images
+is via the <code>docker search</code> command on the command line, or via the
+Docker Index website. :</p>
+
+<pre><code>$ docker search memcache
+Found 5 results matching your query (&quot;memcache&quot;)
+NAME                     DESCRIPTION
+ehazlett/memcached       Memcached 1.4.15.  Specify the following e...
+jbarbier/memcached       memcached
+checkraiser/memcached
+arcus/memcached
+bacongobbler/memcached
+</code></pre>
+
+<h2 id="pulling:7906d5806871be907588a3a390328f7d">Pulling</h2>
+
+<p>When you found an image that you want to pull down and try out, you
+would use the <code>docker pull</code> command. It will then connect to the Docker
+Index find the repository that you want, and it will let the Docker
+client know where in the Docker Registry it can download it. :</p>
+
+<pre><code>$ docker pull jbarbier/memcached
+</code></pre>
+
+<h2 id="pushing:7906d5806871be907588a3a390328f7d">Pushing</h2>
+
+<p>If you have a repository that you want to share with someone then you
+would need to push it into the Docker Index/Registry using the
+<code>docker push</code> command. When you do a push, it will contact the Docker
+Index, and make sure you are logged in, have permission to push, and
+that the same repository doesn&rsquo;t already exist. If everything looks
+good, it will then return a special authorization token that the Docker
+client will use when push up the repository to the Docker Registry.</p>
+
+<p>Since the Docker Register doesn&rsquo;t have any concept of authorization, or
+user accounts, it relies on Authorization tokens to manage permissions.
+The nice thing about this, is that Docker hides this all from you, and
+you don&rsquo;t even need to worry about it, it will just work assuming you
+have permission to push.</p>
+
+<p>Let&rsquo;s push the repository that we created in the last part, so that
+others can use it. :</p>
+
+<pre><code>$ docker push kencochrane/redis
+</code></pre>
+
+<p>Now that it is up on the registry we can use it on any Docker host, and
+we just need to do a <code>Docker pull</code> to get it on the host, and I&rsquo;ll know
+it is going to be the same every time.</p>
+
+<h2 id="repository-description:7906d5806871be907588a3a390328f7d">Repository Description</h2>
+
+<p>If you want to add a description to your repository so that it lets
+people know what it does, you can login to the website and edit the
+description there. There are two descriptions, a short one, which is
+what shows up in search results, and is plain text. There is also a full
+description which allows MarkDown and is used to give more detailed
+information.</p>
+
+<h2 id="deleting-a-repository:7906d5806871be907588a3a390328f7d">Deleting a Repository</h2>
+
+<p>If you made a mistake and need to delete a repository, you can do this
+by logging into the Docker Index website, and clicking on the repository
+settings and clicking the delete button. Make sure this is what you want
+to do, because there is no turning back once you do this.</p>
+
+<h1 id="part-4-docker-buildfiles:7906d5806871be907588a3a390328f7d">Part 4: Docker Buildfiles</h1>
+
+<p>TODO:</p>
+
+<ul>
+<li>Go over what a Docker Buildfile is, and how to make their own.</li>
+<li>With examples</li>
+</ul>
+
+<h1 id="part-5-advanced-usage:7906d5806871be907588a3a390328f7d">Part 5: Advanced Usage</h1>
+
+<p>TODO:</p>
+
+<ul>
+<li><p>docker run</p>
+
+<dl>
+<dd>-   limiting memory, cpu
+
+<ul>
+<li>detached vs attached</li>
+<li>volume/bind mounting</li>
+</ul></dd>
+</dl></li>
+
+<li><p>More?</p></li>
+</ul>
+
+<h1 id="part-6-using-a-private-registry:7906d5806871be907588a3a390328f7d">Part 6: Using a Private Registry</h1>
+
+<p>One of the things that makes Docker so useful is how easy it is to pull
+ready-to-use images from a central location, Docker&rsquo;s Central Registry.
+It is just as easy to push your own image (or collection of tagged
+images as a repository) to the same public registry so that everyone can
+benefit from your newly Dockerized service.</p>
+
+<p>But sometimes you can&rsquo;t share your repository with the world because it
+contains proprietary code or confidential information. Today we are
+introducing an easy way to share repositories on your own registry so
+that you can control access to them and still share them among multiple
+Docker daemons. You can decide if your registry is public or private.</p>
+
+<p>You&rsquo;ll need the <a href="http://docs.docker.io/en/latest/installation/upgrading/">latest version of
+Docker</a>
+(&gt;=0.5.0) to use this new feature, and you must run this version as
+both the daemon and the client. You&rsquo;ll also need the <a href="https://github.com/dotcloud/docker-registry">Docker registry
+code</a>.</p>
+
+<h2 id="using-push-and-pull-with-a-private-registry:7906d5806871be907588a3a390328f7d">Using Push and Pull with a Private Registry</h2>
+
+<p>You&rsquo;ve already seen how to push and pull from the Central Registry. To
+push to or pull from your <em>own</em> registry, you just need to add the
+registry&rsquo;s location to the repository name. It will look like
+<code>my.registry.address:port/repositoryname.</code></p>
+
+<p>Let&rsquo;s say I want to push the repository &ldquo;ubuntu&rdquo; to my local registry,
+which runs on my local machine, on the port 5000: :</p>
+
+<pre><code># First, make sure you have the &quot;ubuntu&quot; repository:
+docker pull ubuntu
+
+# Then, find the image id that corresponds to the ubuntu repository
+docker images | grep ubuntu | grep latest
+ubuntu  latest  8dbd9e392a96  12 weeks ago  263 MB (virtual 263 MB)
+
+# Almost there!
+# Tag to create a repository with the full registry location.
+# The location becomes a permanent part of the repository name.
+docker tag 8dbd9e392a96 localhost.localdomain:5000/ubuntu
+
+# Finally, push the new repository to its home location.
+docker push localhost.localdomain:5000/ubuntu
+</code></pre>
+
+<p>Obviously, the push will fail if no registry server answer locally on
+the port 5000. We&rsquo;ll briefly show how to start your own registry server
+in the next subsection.</p>
+
+<blockquote>
+<p><strong>note</strong></p>
+
+<p>The punctuation in the repository name is important! Docker looks for
+either a &ldquo;.&rdquo; (domain separator) or &ldquo;:&rdquo; (port separator) to learn that
+the first part of the repository name is a location and not a user
+name. If you just had localhost without either <code>.localdomain</code> or
+<code>:5000</code> (either one would do) then Docker would believe that localhost
+is a username, as in <code>localhost/ubuntu</code> or <code>samalba/hipache</code>. It would
+then try to push to the default Central Registry. Having a dot or
+colon in the first part tells Docker that this name contains a
+hostname and that it should push to your specified location instead.</p>
+</blockquote>
+
+<h2 id="installing-your-own-registry:7906d5806871be907588a3a390328f7d">Installing Your Own Registry</h2>
+
+<p>Docker-Registry is a an Open Source Python application available on
+Github: <a href="https://github.com/dotcloud/docker-registry">https://github.com/dotcloud/docker-registry</a></p>
+
+<p>You can use the Docker-Registry to provide a private or public registry
+service for Docker repositories. Since it is your host, you can control
+access to it by putting it on a private network or otherwise protecting
+its service port. You&rsquo;ll want to choose the DNS name of the host
+carefully, since that name will become a permanent part of each
+repository&rsquo;s name (e.g. <code>my.registry.name/myrepository</code>).</p>
+
+<p>You can test out the Docker-Registry first on your local machine
+(presuming you have a Python environment set up). :</p>
+
+<pre><code>git clone https://github.com/dotcloud/docker-registry.git
+cd docker-registry
+cp config_sample.yml config.yml
+pip install -r requirements.txt
+gunicorn --access-logfile - --log-level debug --debug \
+    -b 0.0.0.0:5000 -w 1 wsgi:application
+</code></pre>
+
+<p>That sets up the Docker-Registry to listen on all your network
+interfaces on port 5000. You&rsquo;re using the <code>dev</code> flavor configuration by
+default, which uses local storage for the repositories. The
+configuration file (<code>config.yml</code>) also allows you to specify other
+flavors, like production, and to use other storage backends, like S3.</p>
+
+<p>There is currently no authentication built into the Docker-Registry, so
+if you want to keep this private, you&rsquo;ll need to keep the host on a
+private network. We&rsquo;d recommend running a production Docker-Registry
+behind an Nginx server which sipplies chunked transfer encoding.</p>
+
+<h1 id="part-7-automating-docker:7906d5806871be907588a3a390328f7d">Part 7: Automating Docker</h1>
+
+<p>Running docker commands on the command line are a good way to start, but
+if you need to automate what you are doing, it isn&rsquo;t ideal. To make this
+better Docker provides a REST based remote API. The remote API allows
+you to do everything that the command line does. In fact the command
+line is just a client for the REST API.</p>
+
+<h2 id="remote-api:7906d5806871be907588a3a390328f7d">Remote API</h2>
+
+<p>Docker provides a remote API for the docker daemon so that you can
+control it programmatically, for documentation on how it works check out
+the <a href="http://docs.docker.io/en/latest/api/docker_remote_api/">Docker Remote API
+Docs</a></p>
+
+<h2 id="docker-web-ui-s:7906d5806871be907588a3a390328f7d">Docker Web UI&rsquo;s</h2>
+
+<p>Docker is a completly command line experience, which is fine for
+hackers, but some people prefer a more graphical experience, and for
+those folks I would recommend checking out these projects that people
+have started.</p>
+
+<h3 id="dockland:7906d5806871be907588a3a390328f7d">Dockland</h3>
+
+<p>A ruby based Docker web UI</p>
+
+<p>Code: <a href="https://github.com/dynport/dockland">https://github.com/dynport/dockland</a></p>
+
+<h3 id="shipyard:7906d5806871be907588a3a390328f7d">Shipyard</h3>
+
+<p>A python/django based Docker web UI</p>
+
+<p>Code: <a href="https://github.com/ehazlett/shipyard">https://github.com/ehazlett/shipyard</a></p>
+
+<h3 id="dockerui:7906d5806871be907588a3a390328f7d">DockerUI</h3>
+
+<p>An Angular.js based Docker web UI</p>
+
+<p>Code: <a href="https://github.com/crosbymichael/dockerui">https://github.com/crosbymichael/dockerui</a></p>
+
+<h2 id="docker-libraries:7906d5806871be907588a3a390328f7d">Docker Libraries</h2>
+
+<p>If you want to write some code to interact with Docker, there is most
+likely already a binding for your programming language. Check out the
+link in the documentation to find what is available. If there isn&rsquo;t one
+available for your language of choice, feel free to create your own, and
+let us know so we can update the documentation.</p>
+
+<p><a href="http://docs.docker.io/en/latest/api/docker_remote_api/#id15">Docker Library list in the Docker
+Docs</a></p>
+
+<h1 id="what-can-i-do-to-help:7906d5806871be907588a3a390328f7d">What can I do to help?</h1>
+
+<p>If you are a big fan of Docker, and want to know how to help out, then
+look at the list below, and see if any of them are things that you can
+do.</p>
+
+<ul>
+<li>Contribute to Docker, it could be as small as a bug fix,
+documentation update, or a new feature. Look through the <a href="https://github.com/dotcloud/docker/issues?state=open">docker
+issues</a>, and
+see if anything tickles your fancy.</li>
+<li>Tweet about how much you love Docker</li>
+<li>Write a blog post about how you use Docker, and how others can do
+what you have done.</li>
+<li>Talk at a conference or meetup. This is a good way to introduce
+docker to a new set of potential Docker lovers.</li>
+<li>Create a product that uses Docker, and let everyone know how Docker
+made your life easier.</li>
+<li>Make a video showing how you use Docker, and upload
+to YouTube/Vimeo.</li>
+
+<li><p>Answer questions on</p>
+
+<dl>
+<dd>-   Stack Overflow
+
+<ul>
+<li>IRC</li>
+<li>Mailing list</li>
+</ul></dd>
+</dl></li>
+
+<li><p>Attend the Docker hack days and meet other Docker users, and let us
+know how we can make Docker even better.</p></li>
+
+<li><p>Get a Docker sticker, and display it proudly.</p></li>
+
+<li><p>Wear your Docker shirt around town all day.</p></li>
+</ul>
+
+<h1 id="tips-and-tricks:7906d5806871be907588a3a390328f7d">Tips and Tricks</h1>
+
+<p>This section includes some helpful tips and tricks that will make using
+Docker even more easier and fun.</p>
+
+<h2 id="remove-all-docker-images:7906d5806871be907588a3a390328f7d">Remove all Docker images</h2>
+
+<pre><code>$ docker rmi `docker images -a -q`
+</code></pre>
+
+<h2 id="remove-all-docker-containers:7906d5806871be907588a3a390328f7d">Remove all Docker containers</h2>
+
+<pre><code>$ docker rm `docker ps -a -q`
+</code></pre>
+
+<h1 id="docker-commands:7906d5806871be907588a3a390328f7d">Docker Commands</h1>
+
+<p>Here is a list of all of the current Docker commands, the different
+parameters they might have, as well as an example or two on how to use
+them.</p>
+
+<h2 id="attach:7906d5806871be907588a3a390328f7d">attach</h2>
+
+<p>Attach to a running container. To disconnect press Ctrl+P, Ctrl+Q.</p>
+
+<h3 id="parameters:7906d5806871be907588a3a390328f7d">Parameters</h3>
+
+<ul>
+<li>CONTAINER_ID: The ID for the container you want to attach too.</li>
+</ul>
+
+<h3 id="usage:7906d5806871be907588a3a390328f7d">Usage</h3>
+
+<pre><code>docker attach CONTAINER_ID
+</code></pre>
+
+<h3 id="example-1:7906d5806871be907588a3a390328f7d">Example</h3>
+
+<pre><code>docker attach afs232ybh2123d
+# To disconnect press Ctrl+P, Ctrl+Q.
+</code></pre>
+
+<h2 id="build:7906d5806871be907588a3a390328f7d">build</h2>
+
+<p>Build a container from a Dockerfile</p>
+
+<h3 id="parameters-1:7906d5806871be907588a3a390328f7d">Parameters</h3>
+
+<ul>
+<li>PATH: Build a new container image from the source code at PATH</li>
+<li>URL: When a single Dockerfile is given as URL, then no context
+is set. When a git repository is set as URL, the repository is used
+as context</li>
+
+<li><p>OPTIONS:</p>
+
+<dl>
+<dd>-   -t=&ldquo;&rdquo; : Tag to be applied to the resulting image in case
+    of success.</dd>
+</dl></li>
+</ul>
+
+<h3 id="usage-1:7906d5806871be907588a3a390328f7d">Usage</h3>
+
+<pre><code>docker build [OPTIONS] PATH | URL | -
+</code></pre>
+
+<h3 id="examples:7906d5806871be907588a3a390328f7d">Examples</h3>
+
+<h4 id="read-the-dockerfile-from-the-current-directory:7906d5806871be907588a3a390328f7d">Read the Dockerfile from the current directory</h4>
+
+<pre><code>docker build .
+</code></pre>
+
+<p>This will read the Dockerfile from the current directory. It will also
+send any other files and directories found in the current directory to
+the docker daemon. The contents of this directory would be used by ADD
+commands found within the Dockerfile. This will send a lot of data to
+the docker daemon if the current directory contains a lot of data. If
+the absolute path is provided instead of ‘.’, only the files and
+directories required by the ADD commands from the Dockerfile will be
+added to the context and transferred to the docker daemon.</p>
+
+<h4 id="read-a-dockerfile-from-standard-in-stdin-without-context:7906d5806871be907588a3a390328f7d">Read a Dockerfile from standard in (stdin) without context</h4>
+
+<pre><code>docker build - &lt; Dockerfile
+</code></pre>
+
+<p>This will read a Dockerfile from Stdin without context. Due to the lack
+of a context, no contents of any local directory will be sent to the
+docker daemon. ADD doesn’t work when running in this mode due to the
+absence of the context, thus having no source files to copy to the
+container.</p>
+
+<h4 id="build-from-a-git-repo:7906d5806871be907588a3a390328f7d">Build from a git repo</h4>
+
+<pre><code>docker build github.com/creack/docker-firefox
+</code></pre>
+
+<p>This will clone the github repository and use it as context. The
+Dockerfile at the root of the repository is used as Dockerfile. Note
+that you can specify an arbitrary git repository by using the ‘<a href="git://">git://</a>’
+schema.</p>
+
+<h2 id="commit:7906d5806871be907588a3a390328f7d">commit</h2>
+
+<p>Save your containers state to a container image, so the state can be
+re-used.</p>
+
+<p>When you commit your container only the differences between the image
+the container was created from and the current state of the container
+will be stored (as a diff). See which images you already have using
+docker images</p>
+
+<p>In order to commit to the repository it is required to have committed
+your container to an image with your namespace.</p>
+
+<h3 id="parameters-2:7906d5806871be907588a3a390328f7d">Parameters</h3>
+
+<ul>
+<li>CONTAINER_ID: The container ID for the container you want to commit</li>
+<li>REPOSITORY: The name for your image that you will save to the
+repository &lt;your username&gt;/&lt;image name&gt;</li>
+<li>TAG: The tag you want to give to the commit.</li>
+
+<li><p>OPTIONS:</p>
+
+<dl>
+<dd>-   -m=&ldquo;&rdquo;: Commit message
+
+<ul>
+<li>-author=&ldquo;&rdquo;: Author (eg. &ldquo;John Hannibal Smith
+&lt;<a href="mailto:hannibal@a-team.com">hannibal@a-team.com</a>&gt;&ldquo;</li>
+<li>-run=&ldquo;&rdquo;: Config automatically applied when the image is run.
+&ldquo;+`(ex: {&ldquo;Cmd&rdquo;: [&ldquo;cat&rdquo;, &ldquo;/world&rdquo;],
+&ldquo;PortSpecs&rdquo;: [&ldquo;22&rdquo;]}&lsquo;)</li>
+</ul></dd>
+</dl></li>
+</ul>
+
+<h3 id="usage-2:7906d5806871be907588a3a390328f7d">Usage</h3>
+
+<pre><code>docker commit [OPTIONS] CONTAINER_ID [REPOSITORY [TAG]]
+</code></pre>
+
+<h3 id="examples-1:7906d5806871be907588a3a390328f7d">Examples</h3>
+
+<h4 id="basic-commit:7906d5806871be907588a3a390328f7d">basic commit</h4>
+
+<p>This will commit a container with a message and author. :</p>
+
+<pre><code>docker commit -m=&quot;My commit message&quot; -author=&quot;Joe smith&quot; a1bcbabsdhb323h2b
+</code></pre>
+
+<h4 id="commit-with-repository:7906d5806871be907588a3a390328f7d">commit with repository</h4>
+
+<p>Same as basic commit, but with a repository name :</p>
+
+<pre><code>docker commit -m=&quot;My commit message&quot; -author=&quot;Joe smith&quot; a1bcbabsdhb323h2b joesmith/myrepo
+</code></pre>
+
+<h4 id="commit-with-tag:7906d5806871be907588a3a390328f7d">commit with tag</h4>
+
+<p>Same as basic commit, but with a repository name and tag :</p>
+
+<pre><code>docker commit -m=&quot;My commit message&quot; -author=&quot;Joe smith&quot; a1bcbabsdhb323h2b joesmith/myrepo mytag
+</code></pre>
+
+<h4 id="full-example:7906d5806871be907588a3a390328f7d">Full example</h4>
+
+<p>An example with all parameters and options. :</p>
+
+<pre><code>docker commit -m=&quot;My commit message&quot; -author=&quot;Joe smith&quot; -run='{&quot;Hostname&quot;: &quot;&quot;, &quot;User&quot;: &quot;&quot;,&quot;CpuShares&quot;: 0,&quot;Memory&quot;: 0,&quot;MemorySwap&quot;: 0,&quot;PortSpecs&quot;: [&quot;22&quot;, &quot;80&quot;, &quot;443&quot;],&quot;Tty&quot;: true,&quot;OpenStdin&quot;: true,&quot;StdinOnce&quot;: true,&quot;Env&quot;: [&quot;FOO=BAR&quot;, &quot;FOO2=BAR2&quot;],&quot;Cmd&quot;: [&quot;cat&quot;, &quot;-e&quot;, &quot;/etc/resolv.conf&quot;],&quot;Dns&quot;: [&quot;8.8.8.8&quot;, &quot;8.8.4.4&quot;]}' a1bcbabsdhb323h2b joesmith/myrepo mytag
+</code></pre>
+
+<h2 id="diff:7906d5806871be907588a3a390328f7d">diff</h2>
+
+<p>Inspect changes on a container’s filesystem</p>
+
+<h3 id="parameters-3:7906d5806871be907588a3a390328f7d">Parameters</h3>
+
+<ul>
+<li>CONTAINER_ID: The ID for the container you want to create a diff
+for</li>
+</ul>
+
+<h3 id="usage-3:7906d5806871be907588a3a390328f7d">Usage</h3>
+
+<pre><code>docker diff CONTAINER_ID
+</code></pre>
+
+<h3 id="examples-2:7906d5806871be907588a3a390328f7d">Examples</h3>
+
+<pre><code>docker diff a1bcbabsdhb323h2b
+</code></pre>
+
+<h2 id="export:7906d5806871be907588a3a390328f7d">export</h2>
+
+<p>Stream the contents of a container as a tar archive</p>
+
+<h3 id="parameters-4:7906d5806871be907588a3a390328f7d">Parameters</h3>
+
+<ul>
+<li>CONTAINER_ID: The ID for the container you want to export.</li>
+</ul>
+
+<h3 id="usage-4:7906d5806871be907588a3a390328f7d">Usage</h3>
+
+<pre><code>docker export CONTAINER_ID
+</code></pre>
+
+<h3 id="examples-3:7906d5806871be907588a3a390328f7d">Examples</h3>
+
+<pre><code>docker export a1bcbabsdhb323h2b &gt; myfile.tar
+</code></pre>
+
+<h2 id="history:7906d5806871be907588a3a390328f7d">history</h2>
+
+<p>Show the history of an image</p>
+
+<h3 id="parameters-5:7906d5806871be907588a3a390328f7d">Parameters</h3>
+
+<ul>
+<li>IMAGE: The name of the image you want to see the history for</li>
+</ul>
+
+<h3 id="usage-5:7906d5806871be907588a3a390328f7d">Usage</h3>
+
+<pre><code>docker history IMAGE
+</code></pre>
+
+<h3 id="examples-4:7906d5806871be907588a3a390328f7d">Examples</h3>
+
+<pre><code>docker history joesmith/myimage
+</code></pre>
+
+<h2 id="images:7906d5806871be907588a3a390328f7d">images</h2>
+
+<p>List the images managed by Docker</p>
+
+<h3 id="parameters-6:7906d5806871be907588a3a390328f7d">Parameters</h3>
+
+<ul>
+<li>NAME: A filter to limit results to only images matching the NAME</li>
+
+<li><p>OPTIONS:</p>
+
+<dl>
+<dd>-   -a=false: show all images
+
+<ul>
+<li>-q=false: only show numeric IDs</li>
+<li>-viz=false: output in graphviz format</li>
+</ul></dd>
+</dl></li>
+</ul>
+
+<h3 id="usage-6:7906d5806871be907588a3a390328f7d">Usage</h3>
+
+<pre><code>docker images [OPTIONS] [NAME]
+</code></pre>
+
+<h3 id="examples-5:7906d5806871be907588a3a390328f7d">Examples</h3>
+
+<h4 id="show-images:7906d5806871be907588a3a390328f7d">Show images</h4>
+
+<pre><code>docker images
+</code></pre>
+
+<h4 id="show-images-with-name-ubuntu:7906d5806871be907588a3a390328f7d">Show images with name ubuntu</h4>
+
+<pre><code>docker images ubuntu
+</code></pre>
+
+<h4 id="show-all-images:7906d5806871be907588a3a390328f7d">Show all images</h4>
+
+<pre><code>docker images -a
+</code></pre>
+
+<h4 id="show-only-image-id-s:7906d5806871be907588a3a390328f7d">Show only image ID&rsquo;s</h4>
+
+<pre><code>docker images -q
+</code></pre>
+
+<h4 id="displaying-images-visually:7906d5806871be907588a3a390328f7d">Displaying images visually</h4>
+
+<pre><code>docker images -viz | dot -Tpng -o docker.png
+</code></pre>
+
+<h2 id="import:7906d5806871be907588a3a390328f7d">import</h2>
+
+<p>Create a new filesystem image from the contents of a tarball</p>
+
+<h3 id="parameters-7:7906d5806871be907588a3a390328f7d">Parameters</h3>
+
+<ul>
+<li>URL: At this time, the URL must start with http and point to a
+single file archive (.tar, .tar.gz, .bzip) containing a
+root filesystem. If you would like to import from a local directory
+or archive, you can use the - parameter to take the data from
+standard in.</li>
+<li>TAG: name of the tag you want to assign repo after import</li>
+<li>REPOSITORY: the repository to import into.</li>
+</ul>
+
+<h3 id="usage-7:7906d5806871be907588a3a390328f7d">Usage</h3>
+
+<pre><code>docker import URL |- [REPOSITORY [TAG]]
+</code></pre>
+
+<h3 id="examples-6:7906d5806871be907588a3a390328f7d">Examples</h3>
+
+<h4 id="import-from-a-remote-location:7906d5806871be907588a3a390328f7d">Import from a remote location</h4>
+
+<pre><code>$ docker import http://example.com/exampleimage.tgz exampleimagerepo
+</code></pre>
+
+<h4 id="import-from-a-local-file:7906d5806871be907588a3a390328f7d">Import from a local file</h4>
+
+<p>Import to docker via pipe and standard in:</p>
+
+<pre><code>$ cat exampleimage.tgz | docker import - exampleimagelocal
+</code></pre>
+
+<h4 id="import-from-a-local-directory:7906d5806871be907588a3a390328f7d">Import from a local directory</h4>
+
+<p>Note the sudo in this example – you must preserve the ownership of the
+files (especially root ownership) during the archiving with tar. If you
+are not root (or sudo) when you tar, then the ownerships might not get
+preserved. :</p>
+
+<pre><code>$ sudo tar -c . | docker import - exampleimagedir
+</code></pre>
+
+<h2 id="info:7906d5806871be907588a3a390328f7d">info</h2>
+
+<p>Display system-wide information.</p>
+
+<h3 id="parameters-8:7906d5806871be907588a3a390328f7d">Parameters</h3>
+
+<p>None</p>
+
+<h3 id="usage-8:7906d5806871be907588a3a390328f7d">Usage</h3>
+
+<pre><code>$ docker info
+</code></pre>
+
+<h3 id="examples-7:7906d5806871be907588a3a390328f7d">Examples</h3>
+
+<pre><code>$ docker info
+Containers: 30
+Images: 25
+Debug mode (server): true
+Debug mode (client): false
+Fds: 8
+Goroutines: 10
+</code></pre>
+
+<h2 id="inspect:7906d5806871be907588a3a390328f7d">inspect</h2>
+
+<p>Return low-level information on a container/image. The command will take
+1 or more container or image ids and return all of the information
+relating to those ids.</p>
+
+<h3 id="parameters-9:7906d5806871be907588a3a390328f7d">Parameters</h3>
+
+<ul>
+<li>CONTAINER: The ID for the container you want to export.</li>
+<li>IMAGE: The image name for the images you want information for.</li>
+</ul>
+
+<h3 id="usage-9:7906d5806871be907588a3a390328f7d">Usage</h3>
+
+<pre><code>$ docker inspect CONTAINER|IMAGE [CONTAINER|IMAGE...]
+</code></pre>
+
+<h3 id="examples-8:7906d5806871be907588a3a390328f7d">Examples</h3>
+
+<h4 id="container-inspect:7906d5806871be907588a3a390328f7d">Container inspect</h4>
+
+<p>Inspect one container :</p>
+
+<pre><code>$ docker inspect a5e78640ece4
+[{
+    &quot;ID&quot;: &quot;a5e78640ece4b64657b86780ebfeacf614c402cf3b30bb2226f9f8abd48a46ff&quot;,
+    &quot;Created&quot;: &quot;2013-07-05T22:43:36.281232878Z&quot;,
+    &quot;Path&quot;: &quot;sh&quot;,
+    &quot;Args&quot;: [],
+    &quot;Config&quot;: {
+        &quot;Hostname&quot;: &quot;a5e78640ece4&quot;,
+        &quot;User&quot;: &quot;&quot;,
+        &quot;Memory&quot;: 0,
+        &quot;MemorySwap&quot;: 0,
+        &quot;CpuShares&quot;: 0,
+        &quot;AttachStdin&quot;: true,
+        &quot;AttachStdout&quot;: true,
+        &quot;AttachStderr&quot;: true,
+        &quot;PortSpecs&quot;: null,
+        &quot;Tty&quot;: true,
+        &quot;OpenStdin&quot;: true,
+        &quot;StdinOnce&quot;: true,
+        &quot;Env&quot;: null,
+        &quot;Cmd&quot;: [
+            &quot;sh&quot;
+        ],
+        &quot;Dns&quot;: null,
+        &quot;Image&quot;: &quot;joffrey/busybox&quot;,
+        &quot;Volumes&quot;: {},
+        &quot;VolumesFrom&quot;: &quot;&quot;,
+        &quot;Entrypoint&quot;: []
+    },
+    &quot;State&quot;: {
+        &quot;Running&quot;: false,
+        &quot;Pid&quot;: 0,
+        &quot;ExitCode&quot;: 0,
+        &quot;StartedAt&quot;: &quot;2013-07-05T22:43:36.286163881Z&quot;,
+        &quot;Ghost&quot;: false
+    },
+    &quot;Image&quot;: &quot;e74096c5172b34732c9769db5f23805cf786dffe25f25da66ebf7c0fc30d0e0b&quot;,
+    &quot;NetworkSettings&quot;: {
+        &quot;IPAddress&quot;: &quot;&quot;,
+        &quot;IPPrefixLen&quot;: 0,
+        &quot;Gateway&quot;: &quot;&quot;,
+        &quot;Bridge&quot;: &quot;&quot;,
+        &quot;PortMapping&quot;: null
+    },
+    &quot;SysInitPath&quot;: &quot;/usr/bin/docker&quot;,
+    &quot;ResolvConfPath&quot;: &quot;/etc/resolv.conf&quot;,
+    &quot;Volumes&quot;: {},
+    &quot;VolumesRW&quot;: {}
+}]
+</code></pre>
+
+<h4 id="inspect-more-then-one-container:7906d5806871be907588a3a390328f7d">Inspect more then one container</h4>
+
+<p>Inspect 2 containers :</p>
+
+<pre><code>$ docker inspect a5e78640ece4 0775b219a48a
+[{
+    &quot;ID&quot;: &quot;a5e78640ece4b64657b86780ebfeacf614c402cf3b30bb2226f9f8abd48a46ff&quot;,
+    &quot;Created&quot;: &quot;2013-07-05T22:43:36.281232878Z&quot;,
+    &quot;Path&quot;: &quot;sh&quot;,
+    &quot;Args&quot;: [],
+    &quot;Config&quot;: {
+        &quot;Hostname&quot;: &quot;a5e78640ece4&quot;,
+        &quot;User&quot;: &quot;&quot;,
+        &quot;Memory&quot;: 0,
+        &quot;MemorySwap&quot;: 0,
+        &quot;CpuShares&quot;: 0,
+        &quot;AttachStdin&quot;: true,
+        &quot;AttachStdout&quot;: true,
+        &quot;AttachStderr&quot;: true,
+        &quot;PortSpecs&quot;: null,
+        &quot;Tty&quot;: true,
+        &quot;OpenStdin&quot;: true,
+        &quot;StdinOnce&quot;: true,
+        &quot;Env&quot;: null,
+        &quot;Cmd&quot;: [
+            &quot;sh&quot;
+        ],
+        &quot;Dns&quot;: null,
+        &quot;Image&quot;: &quot;joffrey/busybox&quot;,
+        &quot;Volumes&quot;: {},
+        &quot;VolumesFrom&quot;: &quot;&quot;,
+        &quot;Entrypoint&quot;: []
+    },
+    &quot;State&quot;: {
+        &quot;Running&quot;: false,
+        &quot;Pid&quot;: 0,
+        &quot;ExitCode&quot;: 0,
+        &quot;StartedAt&quot;: &quot;2013-07-05T22:43:36.286163881Z&quot;,
+        &quot;Ghost&quot;: false
+    },
+    &quot;Image&quot;: &quot;e74096c5172b34732c9769db5f23805cf786dffe25f25da66ebf7c0fc30d0e0b&quot;,
+    &quot;NetworkSettings&quot;: {
+        &quot;IPAddress&quot;: &quot;&quot;,
+        &quot;IPPrefixLen&quot;: 0,
+        &quot;Gateway&quot;: &quot;&quot;,
+        &quot;Bridge&quot;: &quot;&quot;,
+        &quot;PortMapping&quot;: null
+    },
+    &quot;SysInitPath&quot;: &quot;/usr/bin/docker&quot;,
+    &quot;ResolvConfPath&quot;: &quot;/etc/resolv.conf&quot;,
+    &quot;Volumes&quot;: {},
+    &quot;VolumesRW&quot;: {}
+},{
+    &quot;ID&quot;: &quot;0775b219a48ab9bbebe841a0388f9909e996140f941585e318dbe64289392534&quot;,
+    &quot;Created&quot;: &quot;2013-07-05T22:40:47.219244957Z&quot;,
+    &quot;Path&quot;: &quot;sh&quot;,
+    &quot;Args&quot;: [],
+    &quot;Config&quot;: {
+        &quot;Hostname&quot;: &quot;0775b219a48a&quot;,
+        &quot;User&quot;: &quot;&quot;,
+        &quot;Memory&quot;: 0,
+        &quot;MemorySwap&quot;: 0,
+        &quot;CpuShares&quot;: 0,
+        &quot;AttachStdin&quot;: true,
+        &quot;AttachStdout&quot;: true,
+        &quot;AttachStderr&quot;: true,
+        &quot;PortSpecs&quot;: null,
+        &quot;Tty&quot;: true,
+        &quot;OpenStdin&quot;: true,
+        &quot;StdinOnce&quot;: true,
+        &quot;Env&quot;: null,
+        &quot;Cmd&quot;: [
+            &quot;sh&quot;
+        ],
+        &quot;Dns&quot;: null,
+        &quot;Image&quot;: &quot;joffrey/busybox&quot;,
+        &quot;Volumes&quot;: {},
+        &quot;VolumesFrom&quot;: &quot;&quot;,
+        &quot;Entrypoint&quot;: []
+    },
+    &quot;State&quot;: {
+        &quot;Running&quot;: false,
+        &quot;Pid&quot;: 0,
+        &quot;ExitCode&quot;: 127,
+        &quot;StartedAt&quot;: &quot;2013-07-05T22:40:47.224570459Z&quot;,
+        &quot;Ghost&quot;: false
+    },
+    &quot;Image&quot;: &quot;e74096c5172b34732c9769db5f23805cf786dffe25f25da66ebf7c0fc30d0e0b&quot;,
+    &quot;NetworkSettings&quot;: {
+        &quot;IPAddress&quot;: &quot;&quot;,
+        &quot;IPPrefixLen&quot;: 0,
+        &quot;Gateway&quot;: &quot;&quot;,
+        &quot;Bridge&quot;: &quot;&quot;,
+        &quot;PortMapping&quot;: null
+    },
+    &quot;SysInitPath&quot;: &quot;/usr/bin/docker&quot;,
+    &quot;ResolvConfPath&quot;: &quot;/etc/resolv.conf&quot;,
+    &quot;Volumes&quot;: {},
+    &quot;VolumesRW&quot;: {}
+}]
+</code></pre>
+
+<h4 id="image-inspect:7906d5806871be907588a3a390328f7d">Image inspect</h4>
+
+<p>Inspect an Image:</p>
+
+<pre><code>$ docker inspect bced7ad27b98
+[{
+    &quot;id&quot;: &quot;bced7ad27b98ea990fae3a7479632419109c7a14412365af379a26393ca0492b&quot;,
+    &quot;parent&quot;: &quot;c7fe644d47bc05b6990fafec2f4b61fa0c9f7b248af6e754cbcd9c9507af36b1&quot;,
+    &quot;created&quot;: &quot;2013-06-28T16:45:01.056208611Z&quot;,
+    &quot;container&quot;: &quot;2deff3a37f8b5e1ce6e23ce420be07609df3813429909e2cfe5426c46f0a9552&quot;,
+    &quot;container_config&quot;: {
+        &quot;Hostname&quot;: &quot;2deff3a37f8b&quot;,
+        &quot;User&quot;: &quot;&quot;,
+        &quot;Memory&quot;: 0,
+        &quot;MemorySwap&quot;: 0,
+        &quot;CpuShares&quot;: 0,
+        &quot;AttachStdin&quot;: false,
+        &quot;AttachStdout&quot;: false,
+        &quot;AttachStderr&quot;: false,
+        &quot;PortSpecs&quot;: null,
+        &quot;Tty&quot;: false,
+        &quot;OpenStdin&quot;: false,
+        &quot;StdinOnce&quot;: false,
+        &quot;Env&quot;: null,
+        &quot;Cmd&quot;: [
+            &quot;/bin/sh&quot;,
+            &quot;-c&quot;,
+            &quot;apt-get install -y curl&quot;
+        ],
+        &quot;Dns&quot;: null,
+        &quot;Image&quot;: &quot;c7fe644d47bc&quot;,
+        &quot;Volumes&quot;: null,
+        &quot;VolumesFrom&quot;: &quot;&quot;,
+        &quot;Entrypoint&quot;: null
+    },
+    &quot;docker_version&quot;: &quot;0.4.6&quot;,
+    &quot;author&quot;: &quot;Ken \&quot;ken@example.com\&quot;&quot;,
+    &quot;config&quot;: {
+        &quot;Hostname&quot;: &quot;&quot;,
+        &quot;User&quot;: &quot;&quot;,
+        &quot;Memory&quot;: 0,
+        &quot;MemorySwap&quot;: 0,
+        &quot;CpuShares&quot;: 0,
+        &quot;AttachStdin&quot;: false,
+        &quot;AttachStdout&quot;: false,
+        &quot;AttachStderr&quot;: false,
+        &quot;PortSpecs&quot;: null,
+        &quot;Tty&quot;: false,
+        &quot;OpenStdin&quot;: false,
+        &quot;StdinOnce&quot;: false,
+        &quot;Env&quot;: null,
+        &quot;Cmd&quot;: null,
+        &quot;Dns&quot;: null,
+        &quot;Image&quot;: &quot;&quot;,
+        &quot;Volumes&quot;: null,
+        &quot;VolumesFrom&quot;: &quot;&quot;,
+        &quot;Entrypoint&quot;: null
+    },
+    &quot;architecture&quot;: &quot;x86_64&quot;,
+    &quot;Size&quot;: 4096
+}]
+</code></pre>
+
+<h4 id="multiple-image-inspect:7906d5806871be907588a3a390328f7d">Multiple Image inspect</h4>
+
+<p>Inspect more then one image at a time:</p>
+
+<pre><code>$  docker inspect bced7ad27b98 e74096c5172b
+[{
+    &quot;id&quot;: &quot;bced7ad27b98ea990fae3a7479632419109c7a14412365af379a26393ca0492b&quot;,
+    &quot;parent&quot;: &quot;c7fe644d47bc05b6990fafec2f4b61fa0c9f7b248af6e754cbcd9c9507af36b1&quot;,
+    &quot;created&quot;: &quot;2013-06-28T16:45:01.056208611Z&quot;,
+    &quot;container&quot;: &quot;2deff3a37f8b5e1ce6e23ce420be07609df3813429909e2cfe5426c46f0a9552&quot;,
+    &quot;container_config&quot;: {
+        &quot;Hostname&quot;: &quot;2deff3a37f8b&quot;,
+        &quot;User&quot;: &quot;&quot;,
+        &quot;Memory&quot;: 0,
+        &quot;MemorySwap&quot;: 0,
+        &quot;CpuShares&quot;: 0,
+        &quot;AttachStdin&quot;: false,
+        &quot;AttachStdout&quot;: false,
+        &quot;AttachStderr&quot;: false,
+        &quot;PortSpecs&quot;: null,
+        &quot;Tty&quot;: false,
+        &quot;OpenStdin&quot;: false,
+        &quot;StdinOnce&quot;: false,
+        &quot;Env&quot;: null,
+        &quot;Cmd&quot;: [
+            &quot;/bin/sh&quot;,
+            &quot;-c&quot;,
+            &quot;apt-get install -y curl&quot;
+        ],
+        &quot;Dns&quot;: null,
+        &quot;Image&quot;: &quot;c7fe644d47bc&quot;,
+        &quot;Volumes&quot;: null,
+        &quot;VolumesFrom&quot;: &quot;&quot;,
+        &quot;Entrypoint&quot;: null
+    },
+    &quot;docker_version&quot;: &quot;0.4.6&quot;,
+    &quot;author&quot;: &quot;Ken \&quot;ken@example.com\&quot;&quot;,
+    &quot;config&quot;: {
+        &quot;Hostname&quot;: &quot;&quot;,
+        &quot;User&quot;: &quot;&quot;,
+        &quot;Memory&quot;: 0,
+        &quot;MemorySwap&quot;: 0,
+        &quot;CpuShares&quot;: 0,
+        &quot;AttachStdin&quot;: false,
+        &quot;AttachStdout&quot;: false,
+        &quot;AttachStderr&quot;: false,
+        &quot;PortSpecs&quot;: null,
+        &quot;Tty&quot;: false,
+        &quot;OpenStdin&quot;: false,
+        &quot;StdinOnce&quot;: false,
+        &quot;Env&quot;: null,
+        &quot;Cmd&quot;: null,
+        &quot;Dns&quot;: null,
+        &quot;Image&quot;: &quot;&quot;,
+        &quot;Volumes&quot;: null,
+        &quot;VolumesFrom&quot;: &quot;&quot;,
+        &quot;Entrypoint&quot;: null
+    },
+    &quot;architecture&quot;: &quot;x86_64&quot;,
+    &quot;Size&quot;: 4096
+},{
+    &quot;id&quot;: &quot;e74096c5172b34732c9769db5f23805cf786dffe25f25da66ebf7c0fc30d0e0b&quot;,
+    &quot;parent&quot;: &quot;e9aa60c60128cad1&quot;,
+    &quot;created&quot;: &quot;2013-05-09T09:45:26.287021-07:00&quot;,
+    &quot;container&quot;: &quot;73f9f76d46cc07b3a6aa4e96c85dbabbfc4d1345697f263d5cd1741b5b05d6f2&quot;,
+    &quot;container_config&quot;: {
+        &quot;Hostname&quot;: &quot;73f9f76d46cc&quot;,
+        &quot;User&quot;: &quot;&quot;,
+        &quot;Memory&quot;: 0,
+        &quot;MemorySwap&quot;: 0,
+        &quot;CpuShares&quot;: 0,
+        &quot;AttachStdin&quot;: false,
+        &quot;AttachStdout&quot;: true,
+        &quot;AttachStderr&quot;: true,
+        &quot;PortSpecs&quot;: null,
+        &quot;Tty&quot;: false,
+        &quot;OpenStdin&quot;: false,
+        &quot;StdinOnce&quot;: false,
+        &quot;Env&quot;: null,
+        &quot;Cmd&quot;: [
+            &quot;ls&quot;
+        ],
+        &quot;Dns&quot;: null,
+        &quot;Image&quot;: &quot;busybox&quot;,
+        &quot;Volumes&quot;: {},
+        &quot;VolumesFrom&quot;: &quot;&quot;,
+        &quot;Entrypoint&quot;: null
+    },
+    &quot;docker_version&quot;: &quot;0.3.0&quot;,
+    &quot;Size&quot;: 16391
+}]
+</code></pre>
+
+<h4 id="container-and-image-inspect:7906d5806871be907588a3a390328f7d">Container and Image inspect</h4>
+
+<p>Inspect a container and an image at the same time:</p>
+
+<pre><code>$ docker inspect bced7ad27b98 a5e78640ece4
+[{
+    &quot;id&quot;: &quot;bced7ad27b98ea990fae3a7479632419109c7a14412365af379a26393ca0492b&quot;,
+    &quot;parent&quot;: &quot;c7fe644d47bc05b6990fafec2f4b61fa0c9f7b248af6e754cbcd9c9507af36b1&quot;,
+    &quot;created&quot;: &quot;2013-06-28T16:45:01.056208611Z&quot;,
+    &quot;container&quot;: &quot;2deff3a37f8b5e1ce6e23ce420be07609df3813429909e2cfe5426c46f0a9552&quot;,
+    &quot;container_config&quot;: {
+        &quot;Hostname&quot;: &quot;2deff3a37f8b&quot;,
+        &quot;User&quot;: &quot;&quot;,
+        &quot;Memory&quot;: 0,
+        &quot;MemorySwap&quot;: 0,
+        &quot;CpuShares&quot;: 0,
+        &quot;AttachStdin&quot;: false,
+        &quot;AttachStdout&quot;: false,
+        &quot;AttachStderr&quot;: false,
+        &quot;PortSpecs&quot;: null,
+        &quot;Tty&quot;: false,
+        &quot;OpenStdin&quot;: false,
+        &quot;StdinOnce&quot;: false,
+        &quot;Env&quot;: null,
+        &quot;Cmd&quot;: [
+            &quot;/bin/sh&quot;,
+            &quot;-c&quot;,
+            &quot;apt-get install -y curl&quot;
+        ],
+        &quot;Dns&quot;: null,
+        &quot;Image&quot;: &quot;c7fe644d47bc&quot;,
+        &quot;Volumes&quot;: null,
+        &quot;VolumesFrom&quot;: &quot;&quot;,
+        &quot;Entrypoint&quot;: null
+    },
+    &quot;docker_version&quot;: &quot;0.4.6&quot;,
+    &quot;author&quot;: &quot;Ken \&quot;ken@dotcloud.com\&quot;&quot;,
+    &quot;config&quot;: {
+        &quot;Hostname&quot;: &quot;&quot;,
+        &quot;User&quot;: &quot;&quot;,
+        &quot;Memory&quot;: 0,
+        &quot;MemorySwap&quot;: 0,
+        &quot;CpuShares&quot;: 0,
+        &quot;AttachStdin&quot;: false,
+        &quot;AttachStdout&quot;: false,
+        &quot;AttachStderr&quot;: false,
+        &quot;PortSpecs&quot;: null,
+        &quot;Tty&quot;: false,
+        &quot;OpenStdin&quot;: false,
+        &quot;StdinOnce&quot;: false,
+        &quot;Env&quot;: null,
+        &quot;Cmd&quot;: null,
+        &quot;Dns&quot;: null,
+        &quot;Image&quot;: &quot;&quot;,
+        &quot;Volumes&quot;: null,
+        &quot;VolumesFrom&quot;: &quot;&quot;,
+        &quot;Entrypoint&quot;: null
+    },
+    &quot;architecture&quot;: &quot;x86_64&quot;,
+    &quot;Size&quot;: 4096
+},{
+    &quot;ID&quot;: &quot;a5e78640ece4b64657b86780ebfeacf614c402cf3b30bb2226f9f8abd48a46ff&quot;,
+    &quot;Created&quot;: &quot;2013-07-05T22:43:36.281232878Z&quot;,
+    &quot;Path&quot;: &quot;sh&quot;,
+    &quot;Args&quot;: [],
+    &quot;Config&quot;: {
+        &quot;Hostname&quot;: &quot;a5e78640ece4&quot;,
+        &quot;User&quot;: &quot;&quot;,
+        &quot;Memory&quot;: 0,
+        &quot;MemorySwap&quot;: 0,
+        &quot;CpuShares&quot;: 0,
+        &quot;AttachStdin&quot;: true,
+        &quot;AttachStdout&quot;: true,
+        &quot;AttachStderr&quot;: true,
+        &quot;PortSpecs&quot;: null,
+        &quot;Tty&quot;: true,
+        &quot;OpenStdin&quot;: true,
+        &quot;StdinOnce&quot;: true,
+        &quot;Env&quot;: null,
+        &quot;Cmd&quot;: [
+            &quot;sh&quot;
+        ],
+        &quot;Dns&quot;: null,
+        &quot;Image&quot;: &quot;joffrey/busybox&quot;,
+        &quot;Volumes&quot;: {},
+        &quot;VolumesFrom&quot;: &quot;&quot;,
+        &quot;Entrypoint&quot;: []
+    },
+    &quot;State&quot;: {
+        &quot;Running&quot;: false,
+        &quot;Pid&quot;: 0,
+        &quot;ExitCode&quot;: 0,
+        &quot;StartedAt&quot;: &quot;2013-07-05T22:43:36.286163881Z&quot;,
+        &quot;Ghost&quot;: false
+    },
+    &quot;Image&quot;: &quot;e74096c5172b34732c9769db5f23805cf786dffe25f25da66ebf7c0fc30d0e0b&quot;,
+    &quot;NetworkSettings&quot;: {
+        &quot;IPAddress&quot;: &quot;&quot;,
+        &quot;IPPrefixLen&quot;: 0,
+        &quot;Gateway&quot;: &quot;&quot;,
+        &quot;Bridge&quot;: &quot;&quot;,
+        &quot;PortMapping&quot;: null
+    },
+    &quot;SysInitPath&quot;: &quot;/usr/bin/docker&quot;,
+    &quot;ResolvConfPath&quot;: &quot;/etc/resolv.conf&quot;,
+    &quot;Volumes&quot;: {},
+    &quot;VolumesRW&quot;: {}
+}]
+</code></pre>
+
+<h2 id="kill:7906d5806871be907588a3a390328f7d">kill</h2>
+
+<p>Kill a running container(s). If the container won&rsquo;t stop, you can brute
+force it with the kill command.</p>
+
+<h3 id="parameters-10:7906d5806871be907588a3a390328f7d">Parameters</h3>
+
+<ul>
+<li>CONTAINER: The container id for the container you want to kill, can
+be one or a list separated by spaces.</li>
+</ul>
+
+<h3 id="usage-10:7906d5806871be907588a3a390328f7d">Usage</h3>
+
+<pre><code>$ docker kill CONTAINER [CONTAINER...]
+</code></pre>
+
+<h3 id="examples-9:7906d5806871be907588a3a390328f7d">Examples</h3>
+
+<h4 id="kill-one-container:7906d5806871be907588a3a390328f7d">Kill one container</h4>
+
+<pre><code>$ docker kill a5e78640ece4
+a5e78640ece4
+</code></pre>
+
+<h4 id="kill-more-then-one-container:7906d5806871be907588a3a390328f7d">Kill more then one container</h4>
+
+<pre><code>$ docker kill a5e78640ece4 0775b219a48a
+a5e78640ece4
+0775b219a48a
+</code></pre>
+
+<h2 id="login:7906d5806871be907588a3a390328f7d">login</h2>
+
+<p>Register or Login to the docker registry server. If you have an account
+it will log you in, and cache the credentials, if you don&rsquo;t have an
+account it will create one for you, and automatically log you in. You
+can pass in the username, email and password as command line parameters
+to easily script out the login process.</p>
+
+<h3 id="parameters-11:7906d5806871be907588a3a390328f7d">Parameters</h3>
+
+<ul>
+<li><p>OPTIONS:</p>
+
+<dl>
+<dd>-   e: email
+
+<ul>
+<li>p: password</li>
+<li>u: username</li>
+</ul></dd>
+</dl></li>
+</ul>
+
+<h3 id="usage-11:7906d5806871be907588a3a390328f7d">Usage</h3>
+
+<pre><code>$ docker login [OPTIONS]
+</code></pre>
+
+<h3 id="examples-10:7906d5806871be907588a3a390328f7d">Examples</h3>
+
+<h4 id="login-with-prompts:7906d5806871be907588a3a390328f7d">Login with prompts</h4>
+
+<pre><code>$ docker login
+Username (): myusername
+Password:
+Email (): myusername@example.com
+Login Succeeded
+</code></pre>
+
+<h4 id="login-with-parameters:7906d5806871be907588a3a390328f7d">Login with parameters</h4>
+
+<pre><code>$ docker login -u myusername -p mypassword -e myusername@example.com
+Login Succeeded
+</code></pre>
+
+<h2 id="logs-1:7906d5806871be907588a3a390328f7d">logs</h2>
+
+<p>Fetch the logs of a container</p>
+
+<h3 id="parameters-12:7906d5806871be907588a3a390328f7d">Parameters</h3>
+
+<ul>
+<li>CONTAINER: The Container ID for the Container you want to get the
+logs for.</li>
+</ul>
+
+<h3 id="usage-12:7906d5806871be907588a3a390328f7d">Usage</h3>
+
+<pre><code>$ docker logs CONTAINER
+</code></pre>
+
+<h3 id="examples-11:7906d5806871be907588a3a390328f7d">Examples</h3>
+
+<pre><code>$ docker logs a5e78640ece4
+some logs from my container
+some logs from my container
+some logs from my container
+...
+</code></pre>
+
+<h2 id="port:7906d5806871be907588a3a390328f7d">port</h2>
+
+<p>Lookup the public-facing port which is NAT-ed to PRIVATE_PORT</p>
+
+<h3 id="parameters-13:7906d5806871be907588a3a390328f7d">Parameters</h3>
+
+<ul>
+<li>CONTAINER: The Container ID for the container you want to find the
+port for</li>
+<li>PRIVATE_PORT: The private port, you want to find the matching
+Public port for</li>
+</ul>
+
+<h3 id="usage-13:7906d5806871be907588a3a390328f7d">Usage</h3>
+
+<pre><code>$ docker port CONTAINER PRIVATE_PORT
+</code></pre>
+
+<h3 id="examples-12:7906d5806871be907588a3a390328f7d">Examples</h3>
+
+<pre><code>$ docker port 335c587d6ad1 6379
+49153
+</code></pre>
+
+<h2 id="ps:7906d5806871be907588a3a390328f7d">ps</h2>
+
+<p>List containers</p>
+
+<h3 id="parameters-14:7906d5806871be907588a3a390328f7d">Parameters</h3>
+
+<ul>
+<li><p>OPTIONS:</p>
+
+<dl>
+<dd>-   -a=false: Show all containers. Only running containers are
+    shown by default.
+
+<ul>
+<li>-notrunc=false: Don&rsquo;t truncate output</li>
+<li>-q=false: Only display numeric IDs</li>
+</ul></dd>
+</dl></li>
+</ul>
+
+<h3 id="usage-14:7906d5806871be907588a3a390328f7d">Usage</h3>
+
+<pre><code>docker ps [OPTIONS]
+</code></pre>
+
+<h3 id="examples-13:7906d5806871be907588a3a390328f7d">Examples</h3>
+
+<h4 id="show-running-containers:7906d5806871be907588a3a390328f7d">Show running containers</h4>
+
+<pre><code>$ docker ps
+ID                  IMAGE                    COMMAND                CREATED             STATUS              PORTS
+335c587d6ad1        joffrey/busybox:latest   /bin/sh -c while tru   3 minutes ago       Up 3 minutes        49153-&gt;6379
+</code></pre>
+
+<h4 id="show-all-containers:7906d5806871be907588a3a390328f7d">Show all containers</h4>
+
+<pre><code>$ docker ps -a
+ID                  IMAGE                    COMMAND                CREATED             STATUS              PORTS
+335c587d6ad1        joffrey/busybox:latest   /bin/sh -c while tru   3 minutes ago       Up 3 minutes        49153-&gt;6379
+1347dbb9d32f        joffrey/busybox:latest   /bin/sh -c while tru   4 minutes ago       Exit 137
+db2db67170ba        joffrey/busybox:latest   /bin/echo hi           5 minutes ago       Exit 0
+a5e78640ece4        joffrey/busybox:latest   sh                     6 days ago          Exit 0
+0775b219a48a        joffrey/busybox:latest   sh                     6 days ago          Exit 127
+1668f16b3ef4        joffrey/busybox:latest   bash                   6 days ago          Exit 127
+... trimed
+</code></pre>
+
+<h4 id="show-all-containers-full-output:7906d5806871be907588a3a390328f7d">show all containers full output</h4>
+
+<pre><code>$ docker ps -a -notrunc
+ID                                                                 IMAGE                    COMMAND                                                         CREATED             STATUS              PORTS
+335c587d6ad121519e1489b837e80a5efb748669c86a8bdd485867759fb3c9a7   joffrey/busybox:latest   /bin/sh -c while true; do echo hello world; sleep 1; done   4 minutes ago       Up 4 minutes        49153-&gt;6379
+1347dbb9d32fcafe922a58e6b01c56d04d35fbd3f3226e3789c30310222eceee   joffrey/busybox:latest   /bin/sh -c while true; do echo hello world; sleep 1; done   5 minutes ago       Exit 137
+db2db67170ba9e1df14cadcaa6f172ad743b387eea3a9c454001279649463cdb   joffrey/busybox:latest   /bin/echo hi                                                6 minutes ago       Exit 0
+... Trimmed
+</code></pre>
+
+<h4 id="show-only-container-ids:7906d5806871be907588a3a390328f7d">show only container ids</h4>
+
+<pre><code>$ docker ps -q -a
+335c587d6ad1
+1347dbb9d32f
+db2db67170ba
+a5e78640ece4
+0775b219a48a
+... trimmed
+</code></pre>
+
+<h2 id="pull:7906d5806871be907588a3a390328f7d">pull</h2>
+
+<p>Pull an image or a repository from the docker registry server. By
+default it will always pull down the latest version, but you can also
+pull by tag.</p>
+
+<h3 id="parameters-15:7906d5806871be907588a3a390328f7d">Parameters</h3>
+
+<ul>
+<li>NAME: the name of the repository to pull from registry</li>
+
+<li><p>OPTIONS:</p>
+
+<dl>
+<dd>-   -t: Tag, if you want to pull down a tagged version of
+    the repository.</dd>
+</dl></li>
+</ul>
+
+<h3 id="usage-15:7906d5806871be907588a3a390328f7d">Usage</h3>
+
+<pre><code>$ docker pull NAME
+</code></pre>
+
+<h3 id="examples-14:7906d5806871be907588a3a390328f7d">Examples</h3>
+
+<h4 id="pull-library-repository:7906d5806871be907588a3a390328f7d">Pull library repository</h4>
+
+<pre><code>$ docker pull base
+</code></pre>
+
+<h4 id="pull-user-repository:7906d5806871be907588a3a390328f7d">Pull User repository</h4>
+
+<pre><code>$ docker pull samalba/hipache
+</code></pre>
+
+<h4 id="pull-repository-by-tag:7906d5806871be907588a3a390328f7d">Pull repository by tag</h4>
+
+<p>replace latest with the tag name you want to pull. :</p>
+
+<pre><code>$ docker pull samalba/hipache:latest
+</code></pre>
+
+<p>or use the command line flag -t</p>
+
+<pre><code>$ docker pull -t latest samalba/hipache
+</code></pre>
+
+<h2 id="push:7906d5806871be907588a3a390328f7d">push</h2>
+
+<p>Push an image or a repository to the docker registry server</p>
+
+<h3 id="parameters-16:7906d5806871be907588a3a390328f7d">Parameters</h3>
+
+<ul>
+<li>NAME: the name of the repository to push to the registry</li>
+</ul>
+
+<h3 id="usage-16:7906d5806871be907588a3a390328f7d">Usage</h3>
+
+<pre><code>$ docker push NAME
+</code></pre>
+
+<h3 id="examples-15:7906d5806871be907588a3a390328f7d">Examples</h3>
+
+<pre><code>$ docker push kencochrane/testrepo
+</code></pre>
+
+<h2 id="restart:7906d5806871be907588a3a390328f7d">restart</h2>
+
+<p>Restart one or more running containers</p>
+
+<h3 id="parameters-17:7906d5806871be907588a3a390328f7d">Parameters</h3>
+
+<ul>
+<li>CONTAINER: The Container ID for the container you want to restart</li>
+
+<li><p>OPTIONS:</p>
+
+<dl>
+<dd>-   t: Number of seconds to try to stop for before killing
+    the container. Once killed it will then be restarted</dd>
+</dl></li>
+</ul>
+
+<h3 id="usage-17:7906d5806871be907588a3a390328f7d">Usage</h3>
+
+<pre><code>$ docker restart [OPTIONS] CONTAINER [CONTAINER ...]
+</code></pre>
+
+<h3 id="examples-16:7906d5806871be907588a3a390328f7d">Examples</h3>
+
+<h4 id="restart-container:7906d5806871be907588a3a390328f7d">restart container</h4>
+
+<pre><code>$ docker restart 335c587d6ad1
+335c587d6ad1
+</code></pre>
+
+<h4 id="restart-multiple-containers:7906d5806871be907588a3a390328f7d">restart multiple containers</h4>
+
+<pre><code>$ docker restart 335c587d6ad1 1347dbb9d32f
+335c587d6ad1
+1347dbb9d32f
+</code></pre>
+
+<h4 id="restart-container-with-15-second-timeout:7906d5806871be907588a3a390328f7d">restart container with 15 second timeout</h4>
+
+<pre><code>$ docker restart -t 15 335c587d6ad1
+335c587d6ad1
+</code></pre>
+
+<h2 id="rm:7906d5806871be907588a3a390328f7d">rm</h2>
+
+<p>Remove a container</p>
+
+<h3 id="parameters-18:7906d5806871be907588a3a390328f7d">Parameters</h3>
+
+<ul>
+<li>CONTAINER: The Container ID for the container you want to remove</li>
+
+<li><p>OPTIONS:</p>
+
+<dl>
+<dd>-   v: Remove the volumes associated to the container</dd>
+</dl></li>
+</ul>
+
+<h3 id="usage-18:7906d5806871be907588a3a390328f7d">Usage</h3>
+
+<pre><code>$ docker rm [OPTIONS] CONTAINER
+</code></pre>
+
+<h3 id="examples-17:7906d5806871be907588a3a390328f7d">Examples</h3>
+
+<h4 id="remove-container:7906d5806871be907588a3a390328f7d">Remove container</h4>
+
+<pre><code>$ docker rm 335c587d6ad1
+</code></pre>
+
+<h4 id="remove-container-and-volume:7906d5806871be907588a3a390328f7d">Remove container and volume</h4>
+
+<pre><code>$ docker rm -v 335c587d6ad1
+</code></pre>
+
+<h2 id="rmi:7906d5806871be907588a3a390328f7d">rmi</h2>
+
+<p>Remove one or more images</p>
+
+<h3 id="parameters-19:7906d5806871be907588a3a390328f7d">Parameters</h3>
+
+<ul>
+<li>IMAGE: The ID for the image you want to remove</li>
+</ul>
+
+<h3 id="usage-19:7906d5806871be907588a3a390328f7d">Usage</h3>
+
+<pre><code>$ docker rmi IMAGE [IMAGE...]
+</code></pre>
+
+<h3 id="examples-18:7906d5806871be907588a3a390328f7d">Examples</h3>
+
+<h4 id="remove-one-image:7906d5806871be907588a3a390328f7d">Remove one image</h4>
+
+<pre><code>$ docker rmi bced7ad27b98
+</code></pre>
+
+<h4 id="remove-more-then-one-image:7906d5806871be907588a3a390328f7d">Remove more then one image</h4>
+
+<pre><code>$ docker rmi bced7ad27b98 e74096c5172b
+</code></pre>
+
+<h2 id="run:7906d5806871be907588a3a390328f7d">run</h2>
+
+<p>Run a command in a new container</p>
+
+<h3 id="parameters-20:7906d5806871be907588a3a390328f7d">Parameters</h3>
+
+<p>IMAGE: The name of the image you want to create a container from
+OPTIONS:</p>
+
+<blockquote>
+<ul>
+<li>a=map[]: Attach to stdin, stdout or stderr.</li>
+<li>c=0: CPU shares (relative weight)</li>
+<li>d=false: Detached mode: leave the container running in the
+background</li>
+<li>e=[]: Set environment variables</li>
+<li>h=&ldquo;&rdquo;: Container host name</li>
+<li>i=false: Keep stdin open even if not attached</li>
+<li>m=0: Memory limit (in bytes)</li>
+<li>p=[]: Map a network port to the container</li>
+<li>t=false: Allocate a pseudo-tty</li>
+<li>u=&ldquo;&rdquo;: Username or UID</li>
+<li>d=[]: Set custom dns servers for the container</li>
+<li>v=[]: Creates a new volume and mounts it at the specified path.</li>
+<li>volumes-from=&ldquo;&rdquo;: Mount all volumes from the given container.</li>
+<li>b=[]: Create a bind mount with:
+[host-dir]:[container-dir]:[rw|ro]</li>
+<li>entrypoint=&ldquo;&rdquo;: Overwrite the default entrypoint set by the image.</li>
+</ul>
+</blockquote>
+
+<h3 id="usage-20:7906d5806871be907588a3a390328f7d">Usage</h3>
+
+<pre><code>$ docker run [OPTIONS] IMAGE [COMMAND] [ARG...]
+</code></pre>
+
+<h3 id="examples-19:7906d5806871be907588a3a390328f7d">Examples</h3>
+
+<h4 id="run-container-in-foreground:7906d5806871be907588a3a390328f7d">Run container in foreground</h4>
+
+<p>TODO:</p>
+
+<h4 id="run-container-in-background:7906d5806871be907588a3a390328f7d">Run container in background</h4>
+
+<p>TODO:</p>
+
+<h4 id="start-container-with-memory-limit:7906d5806871be907588a3a390328f7d">Start container with memory limit</h4>
+
+<p>TODO:</p>
+
+<h4 id="limit-containers-cpu-shares:7906d5806871be907588a3a390328f7d">Limit containers CPU shares</h4>
+
+<p>TODO:</p>
+
+<h4 id="set-container-environment-variables:7906d5806871be907588a3a390328f7d">Set container environment variables</h4>
+
+<p>TODO:</p>
+
+<h4 id="attach-a-volume-to-a-container:7906d5806871be907588a3a390328f7d">Attach a Volume to a container</h4>
+
+<p>TODO:</p>
+
+<h4 id="set-custom-dbs-server-for-the-container:7906d5806871be907588a3a390328f7d">Set custom DBS server for the container</h4>
+
+<p>TODO:</p>
+
+<h4 id="create-bind-mount-for-container:7906d5806871be907588a3a390328f7d">Create bind mount for container</h4>
+
+<p>TODO:</p>
+
+<h4 id="override-the-default-entrypoint-set-by-image:7906d5806871be907588a3a390328f7d">Override the default entrypoint set by image</h4>
+
+<p>TODO:</p>
+
+<h2 id="search-1:7906d5806871be907588a3a390328f7d">search</h2>
+
+<p>Search for an image in the docker index</p>
+
+<h3 id="parameters-21:7906d5806871be907588a3a390328f7d">Parameters</h3>
+
+<ul>
+<li>TERM: Search term</li>
+
+<li><p>OPTIONS:</p>
+
+<dl>
+<dd>-   notrunc</dd>
+</dl></li>
+</ul>
+
+<h3 id="usage-21:7906d5806871be907588a3a390328f7d">Usage</h3>
+
+<pre><code>$ docker search [OPTIONS] TERM
+</code></pre>
+
+<h3 id="examples-20:7906d5806871be907588a3a390328f7d">Examples</h3>
+
+<h4 id="normal-search:7906d5806871be907588a3a390328f7d">Normal search</h4>
+
+<pre><code>$ docker search base
+</code></pre>
+
+<h4 id="show-full-results:7906d5806871be907588a3a390328f7d">Show full results</h4>
+
+<p>This will not truncate the description field for the search results :</p>
+
+<pre><code>$ docker search -notrunc base
+</code></pre>
+
+<h2 id="start:7906d5806871be907588a3a390328f7d">start</h2>
+
+<p>Start one or more stopped containers</p>
+
+<h3 id="parameters-22:7906d5806871be907588a3a390328f7d">Parameters</h3>
+
+<ul>
+<li>CONTAINER: The container ID for the container you want to start</li>
+</ul>
+
+<h3 id="usage-22:7906d5806871be907588a3a390328f7d">Usage</h3>
+
+<pre><code>$ docker start CONTAINER [CONTAINER...]
+</code></pre>
+
+<h3 id="examples-21:7906d5806871be907588a3a390328f7d">Examples</h3>
+
+<h4 id="start-one-container:7906d5806871be907588a3a390328f7d">Start one container</h4>
+
+<pre><code>$ docker start 335c587d6ad1
+335c587d6ad1
+</code></pre>
+
+<h4 id="start-two-containers:7906d5806871be907588a3a390328f7d">Start two containers</h4>
+
+<pre><code>$ docker start 335c587d6ad1 1347dbb9d32f
+335c587d6ad1
+1347dbb9d32f
+</code></pre>
+
+<h2 id="stop:7906d5806871be907588a3a390328f7d">stop</h2>
+
+<p>Stop a running container</p>
+
+<h3 id="parameters-23:7906d5806871be907588a3a390328f7d">Parameters</h3>
+
+<ul>
+<li>CONTAINER: The container ID for the container you want to stop</li>
+
+<li><p>OPTIONS:</p>
+
+<dl>
+<dd>-   t=10: Number of seconds to try to stop for before killing
+    the container.</dd>
+</dl></li>
+</ul>
+
+<h3 id="usage-23:7906d5806871be907588a3a390328f7d">Usage</h3>
+
+<pre><code>$ docker stop [OPTIONS] CONTAINER [CONTAINER...]
+</code></pre>
+
+<h3 id="examples-22:7906d5806871be907588a3a390328f7d">Examples</h3>
+
+<h4 id="stop-one-container:7906d5806871be907588a3a390328f7d">Stop one container</h4>
+
+<pre><code>$ docker stop 335c587d6ad1
+335c587d6ad1
+</code></pre>
+
+<h4 id="stop-two-containers:7906d5806871be907588a3a390328f7d">Stop two containers</h4>
+
+<pre><code>$ docker stop 335c587d6ad1 1347dbb9d32f
+335c587d6ad1
+1347dbb9d32f
+</code></pre>
+
+<h4 id="stop-container-with-15-second-timeout:7906d5806871be907588a3a390328f7d">Stop container with 15 second timeout</h4>
+
+<pre><code>$ docker stop -t 15 335c587d6ad1
+335c587d6ad1
+</code></pre>
+
+<h2 id="tag:7906d5806871be907588a3a390328f7d">tag</h2>
+
+<p>Tag an image into a repository</p>
+
+<h3 id="parameters-24:7906d5806871be907588a3a390328f7d">Parameters</h3>
+
+<ul>
+<li>IMAGE: The image to tag</li>
+<li>REPOSITORY: The repository name in the registry</li>
+<li>TAG: The tag name</li>
+
+<li><p>OPTIONS:</p>
+
+<dl>
+<dd>-   f=false: Force</dd>
+</dl></li>
+</ul>
+
+<h3 id="usage-24:7906d5806871be907588a3a390328f7d">Usage</h3>
+
+<pre><code>$ docker tag [OPTIONS] IMAGE REPOSITORY [TAG]
+</code></pre>
+
+<h3 id="examples-23:7906d5806871be907588a3a390328f7d">Examples</h3>
+
+<h4 id="tag-an-image:7906d5806871be907588a3a390328f7d">Tag an image</h4>
+
+<p>TODO:</p>
+
+<h4 id="tag-an-image-without-specifying-a-tag:7906d5806871be907588a3a390328f7d">Tag an image, without specifying a Tag</h4>
+
+<p>TODO:</p>
+
+<h4 id="force-setting-a-tag:7906d5806871be907588a3a390328f7d">Force setting a Tag</h4>
+
+<p>TODO:</p>
+
+<h2 id="version:7906d5806871be907588a3a390328f7d">version</h2>
+
+<p>Show the docker version information</p>
+
+<h3 id="parameters-25:7906d5806871be907588a3a390328f7d">Parameters</h3>
+
+<p>None</p>
+
+<h3 id="usage-25:7906d5806871be907588a3a390328f7d">Usage</h3>
+
+<pre><code>$ docker version
+</code></pre>
+
+<h3 id="examples-24:7906d5806871be907588a3a390328f7d">Examples</h3>
+
+<pre><code>$ docker version
+Client version: 0.5.0
+Server version: 0.5.0
+Go version: go1.1
+</code></pre>
+
+<h2 id="wait:7906d5806871be907588a3a390328f7d">wait</h2>
+
+<p>Block until a container stops, then print its exit code</p>
+
+<h3 id="parameters-26:7906d5806871be907588a3a390328f7d">Parameters</h3>
+
+<ul>
+<li>CONTAINER: The container ID for the container you want to wait for</li>
+</ul>
+
+<h3 id="usage-26:7906d5806871be907588a3a390328f7d">Usage</h3>
+
+<pre><code>$ docker wait CONTAINER
+</code></pre>
+
+<h3 id="examples-25:7906d5806871be907588a3a390328f7d">Examples</h3>
+
+<pre><code>$ docker wait 335c587d6ad1
+0
+</code></pre>
+
+            </div>
+            <footer class="article-footer">
+    <a data-url="http://www.kencochrane.net/blog/2013/08/the-docker-guidebook/" data-id="7906d5806871be907588a3a390328f7d" class="article-share-link">
+        Share
+    </a>
+    
+    <a href="http://www.kencochrane.net/blog/2013/08/the-docker-guidebook//#disqus_thread" class="article-comment-link">
+        Comments
+    </a>
+    
+</footer>
+
+        </div>
+
+        
+<nav id="article-nav">
+    
+    <a href="http://www.kencochrane.net/blog/2013/06/running-docker-on-digital-ocean/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">
+          Older
+      </strong>
+      <div class="article-nav-title">Running Docker on Digital Ocean with Ubuntu</div>
+    </a>
+    
+
+    
+    <a href="http://www.kencochrane.net/blog/2015/02/upload-video-to-facebook-from-s3-using-python/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">
+          Newer
+      </strong>
+      <div class="article-nav-title">Uploading a Video to Facebook from AWS S3 using python</div>
+    </a>
+    
+</nav>
+
+
+    </article>
+    <section id="comments">
+        <div id="disqus_thread">
+            <div id="disqus_thread"></div>
+<script type="text/javascript">
+    var disqus_shortname = 'kencochrane';
+    var disqus_identifier = 'http:\/\/www.kencochrane.net\/blog\/2013\/08\/the-docker-guidebook\/';
+    var disqus_title = 'The Docker Guidebook';
+    var disqus_url = 'http:\/\/www.kencochrane.net\/blog\/2013\/08\/the-docker-guidebook\/';
+
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+        </div>
+    </section>
+
+</section>
+
+	    <aside id="sidebar">
+    
+<div class="widget-wrap">
+    <h3 class="widget-title">
+        Recents
+    </h3>
+    <div class="widget">
+        <ul id="recent-post">
+            
+            <li>
+                <div class="item-thumbnail">
+                    <a href="http://www.kencochrane.net/blog/2015/02/introducing-django-defender/" class="thumbnail">
+                    
+                        <span class="thumbnail-image thumbnail-none"></span>
+                    
+                    </a>
+                </div>
+                <div class="item-inner">
+                    
+                    <p class="item-category">
+                        <a class="article-category-link" href="http://www.kencochrane.net/categories/blog">
+                        blog
+                        </a>
+                    </p>
+                    
+                    <p class="item-title"><a href="http://www.kencochrane.net/blog/2015/02/introducing-django-defender/" class="title">Introducing Django Defender</a></p>
+                    <p class="item-date">
+                        <time datetime="2015-02-15 00:00:00 &#43;0000 UTC" itemprop="datePublished">2015-02-15</time>
+                    </p>
+                </div>
+            </li>
+            
+            <li>
+                <div class="item-thumbnail">
+                    <a href="http://www.kencochrane.net/blog/2015/02/upload-video-to-facebook-from-s3-using-python/" class="thumbnail">
+                    
+                        <span class="thumbnail-image thumbnail-none"></span>
+                    
+                    </a>
+                </div>
+                <div class="item-inner">
+                    
+                    <p class="item-category">
+                        <a class="article-category-link" href="http://www.kencochrane.net/categories/blog">
+                        blog
+                        </a>
+                    </p>
+                    
+                    <p class="item-title"><a href="http://www.kencochrane.net/blog/2015/02/upload-video-to-facebook-from-s3-using-python/" class="title">Uploading a Video to Facebook from AWS S3 using python</a></p>
+                    <p class="item-date">
+                        <time datetime="2015-02-14 00:00:00 &#43;0000 UTC" itemprop="datePublished">2015-02-14</time>
+                    </p>
+                </div>
+            </li>
+            
+            <li>
+                <div class="item-thumbnail">
+                    <a href="http://www.kencochrane.net/blog/2013/08/the-docker-guidebook/" class="thumbnail">
+                    
+                        <span class="thumbnail-image thumbnail-none"></span>
+                    
+                    </a>
+                </div>
+                <div class="item-inner">
+                    
+                    <p class="item-category">
+                        <a class="article-category-link" href="http://www.kencochrane.net/categories/blog">
+                        blog
+                        </a>
+                    </p>
+                    
+                    <p class="item-title"><a href="http://www.kencochrane.net/blog/2013/08/the-docker-guidebook/" class="title">The Docker Guidebook</a></p>
+                    <p class="item-date">
+                        <time datetime="2013-08-23 00:00:00 &#43;0000 UTC" itemprop="datePublished">2013-08-23</time>
+                    </p>
+                </div>
+            </li>
+            
+            <li>
+                <div class="item-thumbnail">
+                    <a href="http://www.kencochrane.net/blog/2013/06/running-docker-on-digital-ocean/" class="thumbnail">
+                    
+                        <span class="thumbnail-image thumbnail-none"></span>
+                    
+                    </a>
+                </div>
+                <div class="item-inner">
+                    
+                    <p class="item-category">
+                        <a class="article-category-link" href="http://www.kencochrane.net/categories/blog">
+                        blog
+                        </a>
+                    </p>
+                    
+                    <p class="item-title"><a href="http://www.kencochrane.net/blog/2013/06/running-docker-on-digital-ocean/" class="title">Running Docker on Digital Ocean with Ubuntu</a></p>
+                    <p class="item-date">
+                        <time datetime="2013-06-07 00:00:00 &#43;0000 UTC" itemprop="datePublished">2013-06-07</time>
+                    </p>
+                </div>
+            </li>
+            
+            <li>
+                <div class="item-thumbnail">
+                    <a href="http://www.kencochrane.net/blog/2013/05/running-docker-on-a-raspberrypi/" class="thumbnail">
+                    
+                        <span class="thumbnail-image thumbnail-none"></span>
+                    
+                    </a>
+                </div>
+                <div class="item-inner">
+                    
+                    <p class="item-category">
+                        <a class="article-category-link" href="http://www.kencochrane.net/categories/blog">
+                        blog
+                        </a>
+                    </p>
+                    
+                    <p class="item-title"><a href="http://www.kencochrane.net/blog/2013/05/running-docker-on-a-raspberrypi/" class="title">Getting Docker up and running on a RaspberryPi</a></p>
+                    <p class="item-date">
+                        <time datetime="2013-05-17 00:00:00 &#43;0000 UTC" itemprop="datePublished">2013-05-17</time>
+                    </p>
+                </div>
+            </li>
+            
+        </ul>
+    </div>
+</div>
+
+
+    
+
+
+<div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+        <ul class="category-list">
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/categories/blog">
+                    blog
+                </a>
+                <span class="category-list-count">39</span>
+            </li>
+            
+        </ul>
+    </div>
+</div>
+
+
+
+    
+
+
+<div class="widget-wrap">
+    <h3 class="widget-title">
+        Tags
+    </h3>
+    <div class="widget">
+        <ul class="category-list">
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/apache">
+                    apache
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/api">
+                    api
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/apphosted">
+                    apphosted
+                </a>
+                <span class="category-list-count">2</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/aufs">
+                    aufs
+                </a>
+                <span class="category-list-count">3</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/aws">
+                    aws
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/blog">
+                    blog
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/cashstar">
+                    cashstar
+                </a>
+                <span class="category-list-count">2</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/centos5">
+                    centos5
+                </a>
+                <span class="category-list-count">3</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/clickstream">
+                    clickstream
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/defender">
+                    defender
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/deployment">
+                    deployment
+                </a>
+                <span class="category-list-count">8</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/developers">
+                    developers
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/digital-ocean">
+                    digital-ocean
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/django">
+                    django
+                </a>
+                <span class="category-list-count">23</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/django-maine">
+                    django-maine
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/djangocms">
+                    djangocms
+                </a>
+                <span class="category-list-count">4</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/djangomaine">
+                    djangomaine
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/djangozoom">
+                    djangozoom
+                </a>
+                <span class="category-list-count">2</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/docker">
+                    docker
+                </a>
+                <span class="category-list-count">4</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/dotcloud">
+                    dotcloud
+                </a>
+                <span class="category-list-count">6</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/epio">
+                    epio
+                </a>
+                <span class="category-list-count">2</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/fabric">
+                    fabric
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/facebook">
+                    facebook
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/go">
+                    go
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/gondor">
+                    gondor
+                </a>
+                <span class="category-list-count">2</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/guidebook">
+                    guidebook
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/gunicorn">
+                    gunicorn
+                </a>
+                <span class="category-list-count">2</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/heroku">
+                    heroku
+                </a>
+                <span class="category-list-count">3</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/hosting">
+                    hosting
+                </a>
+                <span class="category-list-count">14</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/install">
+                    install
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/job">
+                    job
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/jobs">
+                    jobs
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/kernel">
+                    kernel
+                </a>
+                <span class="category-list-count">4</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/linux">
+                    linux
+                </a>
+                <span class="category-list-count">6</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/lxc">
+                    lxc
+                </a>
+                <span class="category-list-count">3</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/macosx">
+                    macosx
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/memcached">
+                    memcached
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/mercurial">
+                    mercurial
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/mysql">
+                    mysql
+                </a>
+                <span class="category-list-count">2</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/newrelic">
+                    newrelic
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/nginx">
+                    nginx
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/openshift">
+                    openshift
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/paas">
+                    paas
+                </a>
+                <span class="category-list-count">13</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/pci">
+                    pci
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/pelican">
+                    pelican
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/percona">
+                    percona
+                </a>
+                <span class="category-list-count">2</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/python">
+                    python
+                </a>
+                <span class="category-list-count">26</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/rackspace">
+                    rackspace
+                </a>
+                <span class="category-list-count">2</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/raspberrypi">
+                    raspberrypi
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/raspbian">
+                    raspbian
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/redis">
+                    redis
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/requests">
+                    requests
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/rhel5">
+                    rhel5
+                </a>
+                <span class="category-list-count">4</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/s3">
+                    s3
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/script">
+                    script
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/sentry">
+                    sentry
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/stackato">
+                    stackato
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/supervisor">
+                    supervisor
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/supervisord">
+                    supervisord
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/tutorial">
+                    tutorial
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/ubuntu">
+                    ubuntu
+                </a>
+                <span class="category-list-count">3</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/upgrade">
+                    upgrade
+                </a>
+                <span class="category-list-count">2</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/video">
+                    video
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+            <li class="category-list-item">
+                <a class="category-list-link" href="http://www.kencochrane.net/tags/work">
+                    work
+                </a>
+                <span class="category-list-count">1</span>
+            </li>
+            
+        </ul>
+    </div>
+</div>
+
+
+
+    
+
+
+<div class="widget-wrap">
+    <h3 class="widget-title">
+        Tag cloud
+    </h3>
+    <div class="widget tagcloud">
+        
+        <a href="http://www.kencochrane.net/tags/apache" style="font-size: 12px;">apache</a>
+        
+        <a href="http://www.kencochrane.net/tags/api" style="font-size: 12px;">api</a>
+        
+        <a href="http://www.kencochrane.net/tags/apphosted" style="font-size: 12px;">apphosted</a>
+        
+        <a href="http://www.kencochrane.net/tags/aufs" style="font-size: 12px;">aufs</a>
+        
+        <a href="http://www.kencochrane.net/tags/aws" style="font-size: 12px;">aws</a>
+        
+        <a href="http://www.kencochrane.net/tags/blog" style="font-size: 12px;">blog</a>
+        
+        <a href="http://www.kencochrane.net/tags/cashstar" style="font-size: 12px;">cashstar</a>
+        
+        <a href="http://www.kencochrane.net/tags/centos5" style="font-size: 12px;">centos5</a>
+        
+        <a href="http://www.kencochrane.net/tags/clickstream" style="font-size: 12px;">clickstream</a>
+        
+        <a href="http://www.kencochrane.net/tags/defender" style="font-size: 12px;">defender</a>
+        
+        <a href="http://www.kencochrane.net/tags/deployment" style="font-size: 12px;">deployment</a>
+        
+        <a href="http://www.kencochrane.net/tags/developers" style="font-size: 12px;">developers</a>
+        
+        <a href="http://www.kencochrane.net/tags/digital-ocean" style="font-size: 12px;">digital-ocean</a>
+        
+        <a href="http://www.kencochrane.net/tags/django" style="font-size: 12px;">django</a>
+        
+        <a href="http://www.kencochrane.net/tags/django-maine" style="font-size: 12px;">django-maine</a>
+        
+        <a href="http://www.kencochrane.net/tags/djangocms" style="font-size: 12px;">djangocms</a>
+        
+        <a href="http://www.kencochrane.net/tags/djangomaine" style="font-size: 12px;">djangomaine</a>
+        
+        <a href="http://www.kencochrane.net/tags/djangozoom" style="font-size: 12px;">djangozoom</a>
+        
+        <a href="http://www.kencochrane.net/tags/docker" style="font-size: 12px;">docker</a>
+        
+        <a href="http://www.kencochrane.net/tags/dotcloud" style="font-size: 12px;">dotcloud</a>
+        
+        <a href="http://www.kencochrane.net/tags/epio" style="font-size: 12px;">epio</a>
+        
+        <a href="http://www.kencochrane.net/tags/fabric" style="font-size: 12px;">fabric</a>
+        
+        <a href="http://www.kencochrane.net/tags/facebook" style="font-size: 12px;">facebook</a>
+        
+        <a href="http://www.kencochrane.net/tags/go" style="font-size: 12px;">go</a>
+        
+        <a href="http://www.kencochrane.net/tags/gondor" style="font-size: 12px;">gondor</a>
+        
+        <a href="http://www.kencochrane.net/tags/guidebook" style="font-size: 12px;">guidebook</a>
+        
+        <a href="http://www.kencochrane.net/tags/gunicorn" style="font-size: 12px;">gunicorn</a>
+        
+        <a href="http://www.kencochrane.net/tags/heroku" style="font-size: 12px;">heroku</a>
+        
+        <a href="http://www.kencochrane.net/tags/hosting" style="font-size: 12px;">hosting</a>
+        
+        <a href="http://www.kencochrane.net/tags/install" style="font-size: 12px;">install</a>
+        
+        <a href="http://www.kencochrane.net/tags/job" style="font-size: 12px;">job</a>
+        
+        <a href="http://www.kencochrane.net/tags/jobs" style="font-size: 12px;">jobs</a>
+        
+        <a href="http://www.kencochrane.net/tags/kernel" style="font-size: 12px;">kernel</a>
+        
+        <a href="http://www.kencochrane.net/tags/linux" style="font-size: 12px;">linux</a>
+        
+        <a href="http://www.kencochrane.net/tags/lxc" style="font-size: 12px;">lxc</a>
+        
+        <a href="http://www.kencochrane.net/tags/macosx" style="font-size: 12px;">macosx</a>
+        
+        <a href="http://www.kencochrane.net/tags/memcached" style="font-size: 12px;">memcached</a>
+        
+        <a href="http://www.kencochrane.net/tags/mercurial" style="font-size: 12px;">mercurial</a>
+        
+        <a href="http://www.kencochrane.net/tags/mysql" style="font-size: 12px;">mysql</a>
+        
+        <a href="http://www.kencochrane.net/tags/newrelic" style="font-size: 12px;">newrelic</a>
+        
+        <a href="http://www.kencochrane.net/tags/nginx" style="font-size: 12px;">nginx</a>
+        
+        <a href="http://www.kencochrane.net/tags/openshift" style="font-size: 12px;">openshift</a>
+        
+        <a href="http://www.kencochrane.net/tags/paas" style="font-size: 12px;">paas</a>
+        
+        <a href="http://www.kencochrane.net/tags/pci" style="font-size: 12px;">pci</a>
+        
+        <a href="http://www.kencochrane.net/tags/pelican" style="font-size: 12px;">pelican</a>
+        
+        <a href="http://www.kencochrane.net/tags/percona" style="font-size: 12px;">percona</a>
+        
+        <a href="http://www.kencochrane.net/tags/python" style="font-size: 12px;">python</a>
+        
+        <a href="http://www.kencochrane.net/tags/rackspace" style="font-size: 12px;">rackspace</a>
+        
+        <a href="http://www.kencochrane.net/tags/raspberrypi" style="font-size: 12px;">raspberrypi</a>
+        
+        <a href="http://www.kencochrane.net/tags/raspbian" style="font-size: 12px;">raspbian</a>
+        
+        <a href="http://www.kencochrane.net/tags/redis" style="font-size: 12px;">redis</a>
+        
+        <a href="http://www.kencochrane.net/tags/requests" style="font-size: 12px;">requests</a>
+        
+        <a href="http://www.kencochrane.net/tags/rhel5" style="font-size: 12px;">rhel5</a>
+        
+        <a href="http://www.kencochrane.net/tags/s3" style="font-size: 12px;">s3</a>
+        
+        <a href="http://www.kencochrane.net/tags/script" style="font-size: 12px;">script</a>
+        
+        <a href="http://www.kencochrane.net/tags/sentry" style="font-size: 12px;">sentry</a>
+        
+        <a href="http://www.kencochrane.net/tags/stackato" style="font-size: 12px;">stackato</a>
+        
+        <a href="http://www.kencochrane.net/tags/supervisor" style="font-size: 12px;">supervisor</a>
+        
+        <a href="http://www.kencochrane.net/tags/supervisord" style="font-size: 12px;">supervisord</a>
+        
+        <a href="http://www.kencochrane.net/tags/tutorial" style="font-size: 12px;">tutorial</a>
+        
+        <a href="http://www.kencochrane.net/tags/ubuntu" style="font-size: 12px;">ubuntu</a>
+        
+        <a href="http://www.kencochrane.net/tags/upgrade" style="font-size: 12px;">upgrade</a>
+        
+        <a href="http://www.kencochrane.net/tags/video" style="font-size: 12px;">video</a>
+        
+        <a href="http://www.kencochrane.net/tags/work" style="font-size: 12px;">work</a>
+        
+    </div>
+</div>
+
+
+
+
+    <div id="toTop" class="fa fa-chevron-up"></div>
+</aside>
+
+	</div>
+</div>
+
+<footer id="footer">
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2016
+      Powered by <a href="//gohugo.io">Hugo</a>. Theme by <a href="http://github.com/ppoffice">PPOffice</a>.
+    </div>
+  </div>
+</footer>
+
+
+<script>
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-67696-11', 'auto');
+ga('send', 'pageview');
+</script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+<script src="http://www.kencochrane.net/fancybox/jquery.fancybox.pack.js"></script>
+<script src="http://www.kencochrane.net/js/script.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.8.0/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+<!-- MathJax -->
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  tex2jax: {
+    inlineMath: [['$','$'], ['\\(','\\)']]}
+  });
+</script>
+<script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+</body>
+</html>

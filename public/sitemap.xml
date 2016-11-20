@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  
+  <url>
+    <loc>http://www.kencochrane.net/</loc>
+    <lastmod>2015-02-15T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://www.kencochrane.net/blog/2015/02/introducing-django-defender/</loc>
+    <lastmod>2015-02-15T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://www.kencochrane.net/blog/2015/02/upload-video-to-facebook-from-s3-using-python/</loc>
+    <lastmod>2015-02-14T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://www.kencochrane.net/blog/2013/08/the-docker-guidebook/</loc>
+    <lastmod>2013-08-23T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://www.kencochrane.net/blog/2013/06/running-docker-on-digital-ocean/</loc>
+    <lastmod>2013-06-07T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://www.kencochrane.net/blog/2013/05/running-docker-on-a-raspberrypi/</loc>
+    <lastmod>2013-05-17T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://www.kencochrane.net/blog/2013/05/upgrading-linux-kernel-ubuntu-rackspace-cloud/</loc>
+    <lastmod>2013-05-12T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://www.kencochrane.net/blog/2013/05/running-docker-on-rackspace-cloud/</loc>
+    <lastmod>2013-05-11T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://www.kencochrane.net/blog/2013/02/intro-to-python-and-django-presentation/</loc>
+    <lastmod>2013-02-19T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://www.kencochrane.net/blog/2012/12/new-pelican-based-blog/</loc>
+    <lastmod>2012-12-09T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://www.kencochrane.net/blog/2012/03/deploying-a-django-application-on-dotcloud/</loc>
+    <lastmod>2012-03-23T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://www.kencochrane.net/blog/2012/03/im-now-working-for-dotcloud/</loc>
+    <lastmod>2012-03-23T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://www.kencochrane.net/blog/2012/01/running-sentry-on-dotcloud/</loc>
+    <lastmod>2012-01-28T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://www.kencochrane.net/blog/2012/01/developers-guide-to-pci-compliant-web-applications/</loc>
+    <lastmod>2012-01-25T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://www.kencochrane.net/blog/2012/01/getting-djangocms-up-and-running-on-stackato/</loc>
+    <lastmod>2012-01-15T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://www.kencochrane.net/blog/2012/01/installing-django-application-on-openshift/</loc>
+    <lastmod>2012-01-14T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://www.kencochrane.net/blog/2011/12/installing-djangocms-on-heroku-in-13-easy-steps/</loc>
+    <lastmod>2011-12-31T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://www.kencochrane.net/blog/2011/12/installing-djangocms-dotcloud-12-easy-steps/</loc>
+    <lastmod>2011-12-31T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://www.kencochrane.net/blog/2011/12/standardizing-python-wsgi-deployment/</loc>
+    <lastmod>2011-12-30T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://www.kencochrane.net/blog/2011/12/using-new-relic-with-supervisord-and-gunicorn/</loc>
+    <lastmod>2011-12-30T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://www.kencochrane.net/blog/2011/12/what-are-the-best-python-companies-to-work-for/</loc>
+    <lastmod>2011-12-30T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://www.kencochrane.net/blog/2011/11/developers-guide-for-running-django-apps-on-heroku/</loc>
+    <lastmod>2011-11-30T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://www.kencochrane.net/blog/2011/09/djangomainecom-django-user-group-portland-maine/</loc>
+    <lastmod>2011-09-26T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://www.kencochrane.net/blog/2011/08/django-clickstream/</loc>
+    <lastmod>2011-08-12T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://www.kencochrane.net/blog/2011/06/django-gunicorn-nginx-supervisord-fabric-centos55/</loc>
+    <lastmod>2011-06-27T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://www.kencochrane.net/blog/2011/06/django-hosting-roundup-who-wins/</loc>
+    <lastmod>2011-06-06T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://www.kencochrane.net/blog/2011/06/djangozoom-com-review/</loc>
+    <lastmod>2011-06-05T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://www.kencochrane.net/blog/2011/05/apphosted-com-django-hosting-review/</loc>
+    <lastmod>2011-05-18T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://www.kencochrane.net/blog/2011/05/django-job-opening-cashstar-portland-me/</loc>
+    <lastmod>2011-05-15T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://www.kencochrane.net/blog/2011/04/deploying-my-django-application-to-dotcloud/</loc>
+    <lastmod>2011-04-26T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://www.kencochrane.net/blog/2011/04/my-day-gondorio/</loc>
+    <lastmod>2011-04-22T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://www.kencochrane.net/blog/2011/04/my-experiences-with-epio/</loc>
+    <lastmod>2011-04-18T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://www.kencochrane.net/blog/2011/04/restart-apache-mac-os-x/</loc>
+    <lastmod>2011-04-16T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://www.kencochrane.net/blog/2011/04/upgrading-mysql-50x-percona-mysql-51x-rhel5-or-cen/</loc>
+    <lastmod>2011-04-14T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://www.kencochrane.net/blog/2011/03/django-13-has-been-released/</loc>
+    <lastmod>2011-03-23T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://www.kencochrane.net/blog/2011/02/upgrading-percona-mysql-50x-percona-mysql-51x-rhel/</loc>
+    <lastmod>2011-02-15T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://www.kencochrane.net/blog/2010/05/django-12-has-been-released/</loc>
+    <lastmod>2010-05-17T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://www.kencochrane.net/blog/2010/05/django-project-release-history/</loc>
+    <lastmod>2010-05-17T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://www.kencochrane.net/blog/2010/05/automated-install-script-for-memcached-on-rhel5/</loc>
+    <lastmod>2010-05-14T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://www.kencochrane.net/blog/2010/05/mercurial-1_5_1-on-rhel5-using-python2_5/</loc>
+    <lastmod>2010-05-13T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://www.kencochrane.net/1/01/01/</loc>
+  </url>
+  
+</urlset>
