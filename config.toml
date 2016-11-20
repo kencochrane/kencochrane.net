@@ -2,8 +2,8 @@
 baseurl = "/"
 languageCode = "en-us"
 title = "KenCochrane.net"
-# Enable comments by entering your Disqus shortname
-disqusShortname = "kencochrane"
+# Enable comments by entering your Disqus shortname #kencochrane
+disqusShortname = ""
 # Enable Google Analytics by entering your tracking code
 googleAnalytics = "UA-67696-11"
 # Define the number of posts per site
