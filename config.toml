@@ -1,4 +1,5 @@
-baseurl = "http://www.kencochrane.net/"
+# http://www.kencochrane.net/
+baseurl = "/"
 languageCode = "en-us"
 title = "KenCochrane.net"
 # Enable comments by entering your Disqus shortname
