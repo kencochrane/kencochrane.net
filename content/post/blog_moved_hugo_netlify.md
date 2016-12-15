@@ -41,7 +41,7 @@ I then looked at a bunch of other platforms, and I decided on using [netlify.com
 
 2. They offered a FREE plan, with a nice set of paid plans that were reasonably priced.
 
-3. Their CTO is [David Calavera] (https://github.com/calavera) who I worked with, when he worked at Docker, and is a super nice guy, who is also super smart, so if is the CTO, I have full confidence in their platform.
+3. Their CTO is [David Calavera] (https://github.com/calavera) who I worked with, when he worked at Docker, and is a super nice guy, who is also super smart, so if he is the CTO, I have full confidence in their platform.
 
 4. They are using Docker to power their platform, and since I love Docker, I do anything I can to support companies in the Docker ecosystem.
 
