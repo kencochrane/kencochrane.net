@@ -784,7 +784,8 @@ a:visited {
   overflow: hidden;
 }
 .article-banner {
-  width: 100%;
+  display: block;
+  margin: auto;
   height: auto;
 }
 .article-meta:before,
