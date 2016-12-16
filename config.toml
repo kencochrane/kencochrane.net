@@ -1,6 +1,6 @@
 # prod: http://www.kencochrane.net/
 # local /
-baseurl = "http://www.kencochrane.net/"
+baseurl = "https://www.kencochrane.net/"
 languageCode = "en-us"
 title = "KenCochrane.net"
 # Enable comments by entering your Disqus shortname #kencochrane
