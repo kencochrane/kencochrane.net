@@ -74,7 +74,8 @@ Due to the way Docker Swarm works, we try to spread out the Managers so they are
 
 The problem is that half of the AWS regions have 2 AZ's the other half have 3 or more. Originally we setup our CloudFormation for the least common denominator, which was 2. This wasn't ideal, because that means on a 3 manager swarm, we have two managers on one AZ and one on another AZ. If we lose the AZ with two managers, we lose quorum and Docker Swarm will have issues.
 
-So we had a few different options.
+So we had a few different options:
+
 1. Ask AWS to make sure all regions have at least 3 Availability Zones.
 2. Only support the regions that have 3 Availability Zones or more.
 3. Have more than one template, one for 2 AZ regions, and one for 3 or more AZ regions.
