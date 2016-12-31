@@ -33,7 +33,7 @@ The first thing I decided to do, was look at the blogging tool I was using. I di
 
 Now that I had my blogging tool, I needed a place to host my blog. I wanted something that was cheap, FREE if possible, that allowed, me to also host over HTTPS. I originally looked at hosting on AWS S3, with Cloudfront, but there didn't look like a good way to expire the cache when I made a new post.
 
-I then looked at a bunch of other platforms, and I decided on using [netlify.com](https://www.netlify,com) to host my blog. Here are some of the reasons why I picked netlify.com:
+I then looked at a bunch of other platforms, and I decided on using [netlify.com](https://www.netlify.com) to host my blog. Here are some of the reasons why I picked netlify.com:
 
 1. They offered exactly what I was looking for, feature wise.
     - CDN
@@ -55,7 +55,7 @@ Once the formats were converted, I still needed to move over the metadata since 
 
 Now with everything converted, I needed to pick a theme. I decided on [hugo-icarus](https://github.com/digitalcraftsman/hugo-icarus-theme). I had to make a few changes, and got everything up and running, and it looked nice locally. Next step, moving it online.
 
-I signed up at [netlify](https://www.netlify,com) and created a new site that linked to my new [git repo on github](https://github.com/kencochrane/kencochrane.net) that had my converted blog files in it. This automatically started a build, which was cool, but it failed. It failed because of the way I had linked my hugo themes, they were setup as submodules, and I guess I did it wrong. I followed their [using Hugo on netlify](https://www-redirects.netlify.com/blog/2015/10/06/a-step-by-step-guide-hugo-on-netlify) blog post, and this helped me fix the issue. Once that was fixed, I was able to get it to build and deploy quickly, and BAM, my new blog post was live on their temp URL. I was able to play around with it, and make sure everything worked before I made any DNS changes.
+I signed up at [netlify](https://www.netlify.com) and created a new site that linked to my new [git repo on github](https://github.com/kencochrane/kencochrane.net) that had my converted blog files in it. This automatically started a build, which was cool, but it failed. It failed because of the way I had linked my hugo themes, they were setup as submodules, and I guess I did it wrong. I followed their [using Hugo on netlify](https://www-redirects.netlify.com/blog/2015/10/06/a-step-by-step-guide-hugo-on-netlify) blog post, and this helped me fix the issue. Once that was fixed, I was able to get it to build and deploy quickly, and BAM, my new blog post was live on their temp URL. I was able to play around with it, and make sure everything worked before I made any DNS changes.
 
 Next step was to change my DNS settings to point to their servers, and enable HTTPS support.
 
