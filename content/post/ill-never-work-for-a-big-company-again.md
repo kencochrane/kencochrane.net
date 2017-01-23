@@ -1,26 +1,12 @@
-date
-
-:   2011-08-31 22:28:30
-
-tags
-
-:   work,startup
-
-category
-
-:   blog
-
-slug
-
-:   ill-never-work-for-a-big-company-again
-
-author
-
-:   Ken Cochrane
-
-title
-
-:   I'll never work for a big company again
++++
+date = "2011-08-31"
+tags =   ["work", "startup"]
+categories = ["blog"]
+topics = ["blog"]
+slug =   "ill-never-work-for-a-big-company-again"
+url = "blog/2011/08/ill-never-work-for-a-big-company-again/"
+title = "I'll never work for a big company again"
++++
 
 I recently had my 3 year anniversary at [CashStar](http://CashStar.com),
 and it got me thinking about how fast the last 3 years have gone. When I
