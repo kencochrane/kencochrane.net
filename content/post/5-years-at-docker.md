@@ -39,7 +39,7 @@ The office was pretty sweet, it was setup like a jungle. It was even featured on
 
 {{< figure src="/5yrs/gordon_small.jpg" title="Gordon the office mascot" >}}
 
-When you are hired everyone is given a Nerf gun, so that you can defend yourself when working in the jungle.
+When I was first hired, everyone was given a Nerf gun, so that you can defend yourself when working in the jungle. This was fun for a little while, but we soon had Nerf darts everywhere, and people got tired of picking them up. We quickly replaced the Nerf guns with headphones for all new employees.
 
 {{< figure src="/5yrs/nerf_guns.jpg" title="Nerf guns for everyone" >}}
 
