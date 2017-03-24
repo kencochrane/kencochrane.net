@@ -291,7 +291,7 @@ It took a lot longer then we had planned, but we finally launched a hub 2.0 beta
 #### Docker Hub Scale
 One of the issues that we had to constantly deal with was docker was growing way faster then anyone expected, and with that the demand on the docker hub. The amount of docker pulls was growing and along with it the bandwidth. Here is a little chart showing how it has grown over the years.
 
-{{< figure src="/5yrs/hub-growth.jpg" title="Docker Hub growth curve" >}}
+{{< figure src="/5yrs/hub-growth.jpg" title="Docker Hub growth curve (June 2015)" >}}
 
 #### Docker Cloud
 In October 2015 [Docker acquired Tutum](https://blog.docker.com/2015/10/docker-acquires-tutum/) and I was part of the group of people who did the due diligence on the company, and in doing so, I became very familiar with their products. I was also the most familiar with the Docker Hub, so it just made sense if I was the one that helped integrate the two products into what we now call [Docker Cloud](https://cloud.docker.com).
@@ -407,3 +407,5 @@ This has been a lot of fun, I have learned a lot about AWS, more then I ever tho
 
 ## What's Next?
 Now that I have been with Docker for 5 years, I sometimes wonder what will I work on next. I'm not really sure, but I'm sure it will be awesome. Sorry for the long post, but I guess it shows all that we have done in the last 5 years, and I'm sure I missed a lot as well.
+
+If you liked this post, you would probably like [Jérôme Petazzoni](https://twitter.com/jpetazzo)'s Post [from dotcloud to docker](https://jpetazzo.github.io/2017/02/24/from-dotcloud-to-docker/).
