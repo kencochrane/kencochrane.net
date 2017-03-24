@@ -41,8 +41,13 @@ The office was pretty sweet, it was setup like a jungle. It was even featured on
 
 When I was first hired, everyone was given a Nerf gun, so that you can defend yourself when working in the jungle. This was fun for a little while, but we soon had Nerf darts everywhere, and people got tired of picking them up. We quickly replaced the Nerf guns with headphones for all new employees.
 
-{{< figure src="/5yrs/nerf_guns.jpg" title="Nerf guns for everyone" >}}
-
+{{< gallery
+    "/5yrs/jungle-2.png"
+    "/5yrs/jungle-4.png"
+    "/5yrs/jungle-1.png"
+    "/5yrs/jungle-3.png"
+    "/5yrs/nerf_guns.jpg"
+>}}
 
 ### Site Reliability Engineer (SRE) at dotCloud
 My first job at dotCloud was as a Site Reliability Engineer for the PaaS, and Jerome Petazzoni was my manager. There was one other remote person also on the team, his name was [Charles Hooper](https://twitter.com/charleshooper). If you are not sure what an SRE is, or does, there a [SRE book](https://landing.google.com/sre/book.html) that some SRE's from Google just put out, it is a good read, check it out.
