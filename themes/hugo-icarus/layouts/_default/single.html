@@ -1,15 +1,3 @@
-{{ partial "head" . }}
-
-<div id="container">
-	{{ partial "header" . }}
-   	
-   	<div class="outer">
-	    {{ partial "profile" . }}
-	    {{ partial "single_article" . }}
-	    {{ partial "sidebar" . }}
-	</div>
-</div>
-
-{{ partial "footer" . }}
-</body>
-</html>
+{{ define "main" }}
+    {{ partial "single_article" . }}
+{{ end }}

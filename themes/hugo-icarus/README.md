@@ -1,6 +1,6 @@
 # Icarus
 
-Icarus is a responsive and customizable theme for bloggers. It's a port of the same-named theme for [Hexo](//hexo.io) made by [Ruipeng Zhang](https://github.com/ppoffice). Noteworthy features of this Hugo theme are the integration of a comment-system powered by Disqus, localization (l10n) support, syntax highlighting for source code, optional widgets for the sidebar and a handful [shortcodes](http://gohugo.io/extras/shortcodes/) to make your life easier.
+Icarus is a responsive and customizable theme for bloggers. It's a port of the same-named theme for [Hexo](//hexo.io) made by [Ruipeng Zhang](https://github.com/ppoffice). Noteworthy features of this Hugo theme are the integration of a comment-system powered by Disqus, localization (l10n) support, syntax highlighting for source code and optional widgets for the sidebar.
 
 ![](https://raw.githubusercontent.com/digitalcraftsman/hugo-icarus-theme/master/images/screenshot.png)
 
@@ -8,7 +8,6 @@ Icarus is a responsive and customizable theme for bloggers. It's a port of the s
 
 I assume you've Git installed. Inside the folder of your Hugo site run
 
-    $ mkdir themes
     $ cd themes
     $ git clone https://github.com/digitalcraftsman/hugo-icarus-theme.git
 
@@ -17,25 +16,11 @@ You should see a folder called `hugo-icarus-theme` inside the `themes` directory
 
 ## Setup
 
-In the next step navigate to the `exampleSite` folder at `themes/hugo-icarus-theme/exampleSite/`. Its structure should look similar to this:
+Next, navigate to the `exampleSite` folder at `themes/hugo-type-theme/exampleSite/`.  In order to get your site running, you need to copy `config.toml` and all the content of all relevant subfolders such as `data/l10n.toml` into the root folders.
 
-    exampleSite
-    ├── config.toml
-    ├── content
-    │   └── post
-    │       ├── creating-a-new-theme.md
-    │       ├── go-is-for-lovers.md
-    │       ├── hugo-is-for-lovers.md
-    │       ├── introducing-icarus-and-its-features.md
-    │       ├── linked-post.md
-    │       └── migrate-from-jekyll.md
-    ├── data
-    │   └── l10n.toml
-    └── static
-        └── banners
-            └── placeholder.png
+To turn the `exampleSite` folder in a standalone demo site the `themesDir` property has been set to `../..`. This way you can preview this theme by running `hugo server` inside `exampleSite` folder.
 
-In order to get your site running, you need to copy `config.toml` and `data/l10n.toml` into the root folders.
+**Due to the customized `themesDir` path Hugo will fail to find themes if you copied the `config.toml` into the root directory of a regular Hugo website.** Make sure you comment out the `themesDir` property if you use the theme in production.
 
 
 ## The config file
@@ -45,9 +30,17 @@ Now, let us take a look into the `config.toml`. Feel free to play around with th
 
 ### Comments
 
-The opional comment system is powered by Disqus. Enter your shortname to enable the comment section under your posts.
+The optional comment system is powered by Disqus. Enter your shortname to enable the comment section under your posts.
 
     disqusShortname = ""
+
+Tip: you can disable the comment section for a single page in its frontmatter:
+
+```toml
++++
+disable_comments = true
++++
+```
 
 
 ### Menu
@@ -66,6 +59,18 @@ Furthermore, we can add entries that don't link to posts. Back in the `config.to
         link   = "/"
 
 Define a label and enter the URL to resource you want to link. With `before` you can decide whether the link should appear before **or** after all linked posts in the menu. Therefore, `Home` appears before the linked post.
+
+
+### Sidebars
+
+In order to use the full width of the website you can disable the profile on the left and / or the widgets on the right for a single page in the frontmatter:
+
+```toml
++++
+disable_profile = true
+disable_widgets = true
++++
+```
 
 
 ### Tell me who you are
@@ -90,6 +95,13 @@ You can deactivate them under `params.widgets`:
         tags = true
         tag_cloud = true
 
+### Date line
+
+The date line includes: post date, # of words, approximate reading, time tags and categories. However, if you want certain pages to omit the date line, simply put `nodateline = true` in the front matter for that page.
+
+### Disable Previous / next article links
+
+To disable the inclusion of a previous/next article link at the bottom of the page, add `noprevnext = true` to the front matter. This feature, along with `nodateline` can be used to create standalone pages that are less "blog-like"
 
 ## Localization (l10n)
 
@@ -107,17 +119,16 @@ This way you can store them either next to the content file or in the `static` f
 
 ## Mathematical equations
 
-In case you need to display equations you can insert your LaTeX or MathML code and it works out of the box thanks to [MathJax](https://www.mathjax.org).
+Mathematical equations in form of LaTeX or MathML code can be rendered with the support of [MathJax](https://www.mathjax.org). MathML works out of the box. If you're using LaTeX you need to wrap your equation with `$$`.
+
+You can also print formulas inline. In this case wrap the formula only once with `$`.
+
+If you don't need equations, you can disable MathJax but putting `disable_mathjax = true` in your config.toml. This will prevent clients from unnecessarily downloading the MathJax library.
 
 
-## Shortcodes
+### Gallery shortcode
 
-Last but not least I included some useful [shortcodes](http://gohugo.io/extras/shortcodes/) to make your life easier.
-
-
-### Gallery
-
-This way you can include a gallery into your post. Copy the code below into your content file and enter the relative paths to your images.
+This shortcode you to easily include a gallery into your pages. Copy the code below into your content file and enter the relative paths to your images.
 
     {{< gallery
         "/banners/placeholder.png"
@@ -125,15 +136,6 @@ This way you can include a gallery into your post. Copy the code below into your
         "/banners/placeholder.png"
     >}}
 
-### JSFiddle
-
-It works the same with JSFiddle examples you want to showcase. The parameter `id` consists of the username and id of the example.
-
-    {{< jsfiddle id="zalun/NmudS" >}}
-
-As descibed in the [docs of JSFiddle](http://doc.jsfiddle.net/use/embedding.html), you can define which tabs will be shown. Enter the tabs you want to see separated by a comma in the `tabs` parameter.
-
-    {{< jsfiddle id="zalun/NmudS" tabs="html,result" >}}
 
 ## Nearly finished
 
@@ -154,6 +156,9 @@ Have you found a bug or got an idea for a new feature? Feel free to use the [iss
 This theme is released under the MIT license. For more information read the [license](https://github.com/digitalcraftsman/hugo-icarus-theme/blob/master/LICENSE.md).
 
 
-## Acknowledgement
+## Acknowledgements
 
-Thanks to [Steve Francia](//github.com/spf13) for creating Hugo and the awesome community around the project.
+Thanks to 
+
+- [Ruipeng Zhang](https://github.com/ppoffice) for creating this theme
+- [Steve Francia](//github.com/spf13) for creating Hugo and the awesome community around the project

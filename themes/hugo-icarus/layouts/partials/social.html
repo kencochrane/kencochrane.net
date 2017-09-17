@@ -2,12 +2,16 @@
 <td><a href="//github.com/{{.}}" target="_blank" title="GitHub"><i class="fa fa-github"></i></a></td>
 {{ end }}
 
+{{ with .Site.Social.gitlab }}
+<td><a href="//gitlab.com/u/{{.}}" target="_blank" title="GitLab"><i class="fa fa-gitlab"></i></a></td>
+{{ end }}
+
 {{ with .Site.Social.bitbucket }}
 <td><a href="//bitbucket.com/{{.}}" target="_blank" title="Bitbucket"><i class="fa fa-bitbucket"></i></a></td>
 {{ end }}
 
 {{ with .Site.Social.jsfiddle }}
-<td><a href="//jsfiddle.com/{{.}}" target="_blank" title="JSFiddle"><i class="fa fa-jsfiddle"></i></a></td>
+<td><a href="//jsfiddle.net/user/{{.}}" target="_blank" title="JSFiddle"><i class="fa fa-jsfiddle"></i></a></td>
 {{ end }}
 
 {{ with .Site.Social.codepen }}
@@ -75,7 +79,7 @@
 {{ end }}
 
 {{ with .Site.Social.stackoverflow }}
-<td><a href="//stackoverflow.com/users/{{.}}" target="_blank" title="Stack Overflow"><i class="fa fa-stackoverflow"></i></a></td>
+<td><a href="//stackoverflow.com/users/{{.}}" target="_blank" title="Stack Overflow"><i class="fa fa-stack-overflow"></i></a></td>
 {{ end }}
 
 {{ with .Site.Social.reddit }}
@@ -87,7 +91,7 @@
 {{ end }}
 
 {{ with .Site.Social.googleplus }}
-<td><a href="//plus.google.com/+{{.}}" target="_blank" title="Google+"><i class="fa fa-googleplus"></i></a></td>
+<td><a href="//plus.google.com/+{{.}}" target="_blank" title="Google+"><i class="fa fa-google-plus"></i></a></td>
 {{ end }}
 
 {{ with .Site.Social.facebook }}

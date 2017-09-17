@@ -1,14 +1,16 @@
-baseurl = "http://www.yourdomain.com/"
+baseurl = "https://example.org/"
 languageCode = "en-us"
 title = "Icarus"
 # Enable comments by entering your Disqus shortname
 disqusShortname = "spf13"
 # Enable Google Analytics by entering your tracking code
 googleAnalytics = ""
-# Define the number of posts per site
+# Define the number of posts per page
 paginate = 10
 footnotereturnlinkcontents = "↩"
 theme = "hugo-icarus-theme"
+# Comment the themesDir option if you use this theme in production
+themesDir = "../.."
 
 
 [permalinks]
@@ -23,9 +25,21 @@ theme = "hugo-icarus-theme"
     site_description = ""
     copyright  = "Powered by [Hugo](//gohugo.io). Theme by [PPOffice](http://github.com/ppoffice)."
     avatar = "css/images/avatar.png"
+    # Enter your email address to display your Gravatar icon in the profile. If not set the theme
+    # will fallback to the avatar.
+    gravatar = "you@example.com"
+    logo = "css/images/logo.png"
+    disable_mathjax = false # set to true to disable MathJax
+
+    # define which types of pages should be shown. By default the type with the most regular pages
+    mainSections = ["post"]
 
     # Format dates with Go's time formatting
     date_format = "2006-01-02"
+
+    # Add custom assets with their paths relative to the static folder
+	custom_css = []
+	custom_js  = []
 
 # Create custom menu entries by defining a label and a link for
 # them. Since you can also link posts, you've the option the
@@ -56,8 +70,9 @@ theme = "hugo-icarus-theme"
 [social]
 # Add your social network accounts to the profile section on the left
 # by entering your username. The links to your account will be
-# create automatically.
+# created automatically.
     github          = "digitalcraftsman"
+    gitlab          = ""
     bitbucket       = ""
     jsfiddle        = ""
     codepen         = ""
