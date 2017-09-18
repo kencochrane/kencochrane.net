@@ -22,7 +22,7 @@ I had previously worked with Phelps at Wright Express, and a few weeks after he 
 
 One of my requirements for accepting the job at CashStar was that I wanted an Apple MacBook Pro. They agreed to this, and on my first day when Phelps and David saw that I had a MacBook, they were a little jealous. It was only a matter of time, before they also switched over to using a MacBook. When we started hiring people, the fact that we allowed them to pick which laptop they wanted, was seen as a big plus for us. I'm not sure if it single handedly convinced people to accept a job, but I'm sure it was one of the factors.
 
-In August 2008 we also hired [Phil Moran](https://www.linkedin.com/in/phil-moran-0653248/) our first sales person and [Laura Cannon](https://www.linkedin.com/in/lauracannonmaine/) our first client services / marketing person. Now that we had enough people, we could get started building CashStar.
+In August 2008 we also hired [Phil Moran](https://www.linkedin.com/in/phil-moran-0653248/) our first sales person and [Laura Cannon](https://www.linkedin.com/in/lauracannonmaine/) our first client services / marketing person. [Miklos Van Halen](https://www.linkedin.com/in/miklos-van-halen-07931/) was also hired to help Phelps with the backend Java service. Now that we had enough people, we could get started building CashStar.
 
 ### The Castle
 
@@ -43,7 +43,7 @@ We eventually outgrew this space, and moved to a much larger office on middle st
 
 When I started working at CashStar, I was told I had six weeks to get my web application up and running in order for us to sign a customer and get them live in time for the all important Christmas shopping season. If we missed this deadline, we would lose our chance at making money that year.
 
-The first thing I did, on my first day, was take an inventory for what what they currently had. There was Phelps's backend code for handling gift card authorizations written in Java. A badly broken .Net demo application, written by a consulting company. The website was a single static page hosted on a shared hosting service. We had no servers, or infrastructure of any kind. This was truly greenfield development, and it's what I liked most about the project. There was no legacy code or production customers to hold us back, we could do what ever we needed in order to make our deadline.
+The first thing I did, on my first day, was take an inventory for what what they currently had. There was Phelps and Miklos's backend code for handling gift card authorizations written in Java. A badly broken .Net demo application, written by a consulting company. The website was a single static page hosted on a shared hosting service. We had no servers, or infrastructure of any kind. This was truly greenfield development, and it's what I liked most about the project. There was no legacy code or production customers to hold us back, we could do what ever we needed in order to make our deadline.
 
 The way I saw it, I had two options:
 
@@ -155,11 +155,11 @@ Unfortunately he died when he was on bike trip vacationing in Europe. This hit u
 
 ### Early Employee Hire TimeLine:
 - December 2007 David Stone starts CashStar with Steven Boal
-- Feb 2008 David Wood is hired.
+- Feb 2008 David Wood is hired
+- May 2008 [Jeff Dixon](https://www.linkedin.com/in/jtdixon/) hired as a consultant
 - June 2008 Phelps is hired
-- May 2008: [Jeff Dixon](https://www.linkedin.com/in/jtdixon/) consultant brought in
-- August 2008 Ken Cochrane, Phil Moran, and Laura Cannon are hired. [Brian McLaughlin](https://www.linkedin.com/in/brianmclaughlindesign/) hired part time as contractor.
-- September 2008 [Sheri Hall](https://www.linkedin.com/in/sheri-hall-miller-10b83/) and [Miklos Van Halen](https://www.linkedin.com/in/miklos-van-halen-07931/) hired as contractors.
+- August 2008 Ken Cochrane, Phil Moran, Laura Cannon, and Miklos Van Halen are hired. [Brian McLaughlin](https://www.linkedin.com/in/brianmclaughlindesign/) hired part time as contractor.
+- September 2008 [Sheri Hall](https://www.linkedin.com/in/sheri-hall-miller-10b83/) hired as a contractor.
 - Fall 2008: Pete Kledaras hired
 - January 2009: [Brian McLaughlin](https://www.linkedin.com/in/brianmclaughlindesign/) hired full time.
 - Feb 2009 [David Krauth](https://www.linkedin.com/in/dakrauth/) hired
