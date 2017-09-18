@@ -205,3 +205,7 @@ Here are some more photos that I found.
 {{< figure src="/cashstar/bocce.jpg" title="Sheri breaking her bocce ball" >}}
 {{< figure src="/cashstar/my-desk.jpg" title="My desk" >}}
 {{< figure src="/cashstar/whiteboard.jpg" title="Whiteboard during a brainstorm session." >}}
+{{< figure src="/cashstar/middlest_2.jpg" title="Middle St Offices" >}}
+{{< figure src="/cashstar/middlest_3.jpg" title="Middle St temp kitchen" >}}
+{{< figure src="/cashstar/middlest_4.jpg" title="Middle St temp Offices" >}}
+{{< figure src="/cashstar/middlest_5.jpg" title="Middle St Office buildout" >}}
