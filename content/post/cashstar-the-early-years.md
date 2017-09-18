@@ -128,7 +128,9 @@ This separation between the front end and the backend was great, and it let us d
 
 ### First Customers
 
-When we signed Uno's and Travelocity they didn't want an open loop gift card, they wanted us to integrate with their existing gift card platform. They were the primary cause of the pivot (described above), and to be honest if it wasn't for them, we wouldn't have signed other larger clients. Once we signed them, it wasn't long before we signed [O'Charley's](https://en.wikipedia.org/wiki/O%27Charley%27s) which lead us to [CVS](https://www.cvs.com), which then lead us to [Home Depot](https://www.homedepot.com). Landing Home Depot was huge, and it took a lot of work from a lot of people, to close that deal. But once it did close, we knew we were on to something.
+When we signed Uno's and Travelocity they didn't want an open loop gift card, they wanted us to integrate with their existing gift card platform. They were the primary cause of the pivot (described above), and to be honest if it wasn't for them, we wouldn't have signed other larger clients. Once we signed them, it wasn't long before we signed [O'Charley's](https://en.wikipedia.org/wiki/O%27Charley%27s) which lead us to [CVS](https://www.cvs.com), which then lead us to [Home Depot](https://www.homedepot.com).
+
+Landing Home Depot was huge, and it took a lot of work from a lot of people. Phil Moran brought it in, and [Brian Rigney](https://www.linkedin.com/in/brianrigney/) lead the negotiation and closing of the deal. He worked closely with [Madeline Wong](https://www.linkedin.com/in/mwong/) from Home Depot to get the contact written and signed. There were times when I didn't think the deal would close, but Brian and Madeline worked really hard, and got it done. Once we landed Home Depot as our anchor tenant, we knew we were on to something.
 
 ### Fraud
 As mentioned above, one of the things we needed to worry about was Fraud. Potential fraud scared a lot of businesses from selling gift cards online. To overcome this issue, we decided to cover all fraud. That means if someone used a stolen credit card to buy a gift card, we would eat the cost of that gift card, and the business wouldn't have any liability. This resinated well with customers, and was a differentiator between us and our competitors.
@@ -151,7 +153,7 @@ Thinking that the person who bought the card would stick with the same MO [Modus
 ### Tragedy
 CashStar's first CFO was [Mitchell Schecter](https://www.linkedin.com/in/mitchell-schecter-10768/). Since we were pretty small, and didn't have a lot of work for a CFO, he was a part time person, who worked out of his house in Massachusetts, where he was a CFO for a few other companies. Mitchell handled a lot of things for CashStar, everything from hiring, HR, payroll, and paying all of the bills. If it wasn't for him, we wouldn't get paid, and the lights would shut off.
 
-Unfortunately he died when he was on bike trip vacationing in Europe. This hit us hard, we were still a small company so to lose someone you worked with closely, really sucked. Because he was the holder of all of the keys for the company, we were both emotionally and financially stuck at the same time. It took us a while to get over his loss, and also get our financial affairs in order. If it wasn't for Mitchell I don't know if CashStar would have done as well as it did, and it is important to remember everything that he did for the company.
+Unfortunately he died when he had a bicycle accident when vacationing in France. This hit us hard, we were still a small company so to lose someone you worked with closely, really sucked. Because he was the holder of all of the keys for the company, we were both emotionally and financially stuck at the same time. It took us a while to get over his loss, and also get our financial affairs in order. If it wasn't for Mitchell I don't know if CashStar would have done as well as it did, and it is important to remember everything that he did for the company.
 
 ### Early Employee Hire TimeLine:
 - December 2007 David Stone starts CashStar with Steven Boal
@@ -164,8 +166,9 @@ Unfortunately he died when he was on bike trip vacationing in Europe. This hit u
 - January 2009: [Brian McLaughlin](https://www.linkedin.com/in/brianmclaughlindesign/) hired full time.
 - Feb 2009 [David Krauth](https://www.linkedin.com/in/dakrauth/) hired
 - April 2009 [Brandon Tarbet](https://www.linkedin.com/in/brandon-tarbet-a33a9314/) hired
+- May 2009 [Brian Rigney](https://www.linkedin.com/in/brianrigney/) hired as consultant
 - Jun 2009 [Richard Franks](https://www.linkedin.com/in/richardfranksjr/) hired
-- Sep 2009 [John Costa](https://www.linkedin.com/in/johnmcosta/) and [Brian Rigney](https://www.linkedin.com/in/brianrigney/) hired
+- Sep 2009 [John Costa](https://www.linkedin.com/in/johnmcosta/) and Brian Rigney hired full time.
 
 ### Caveat
 A majority of the things that I wrote about here, happened over 8 years ago, so I wouldn't be surprised if I'm misremembering something, or missed someone important. If I did that, I'm sorry, please let me know and I'll do my best to correct it.
