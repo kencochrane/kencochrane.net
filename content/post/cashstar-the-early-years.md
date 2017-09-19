@@ -167,7 +167,7 @@ Unfortunately he died when he had a bicycle accident when vacationing in France.
 - Feb 2009 [David Krauth](https://www.linkedin.com/in/dakrauth/) hired
 - April 2009 [Brandon Tarbet](https://www.linkedin.com/in/brandon-tarbet-a33a9314/) hired
 - May 2009 [Brian Rigney](https://www.linkedin.com/in/brianrigney/) hired as consultant
-- Jun 2009 [Richard Franks](https://www.linkedin.com/in/richardfranksjr/) hired
+- Jun 2009 [Richard Franks](https://www.linkedin.com/in/richardfranksjr/) and [Mike Ellis](https://www.linkedin.com/in/mellis11/) hired
 - Sep 2009 [John Costa](https://www.linkedin.com/in/johnmcosta/) and Brian Rigney hired full time.
 
 ### Caveat
