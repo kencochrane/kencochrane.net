@@ -189,6 +189,7 @@ Here are some more photos that I found.
 {{< figure src="/cashstar/mothersdaycontest.jpg" title="Mother's day contest" >}}
 {{< figure src="/cashstar/outing.jpg" title="Team outing mini golf" >}}
 {{< figure src="/cashstar/phelps_ball_office.jpg" title="Phelps on Ball" >}}
+{{< figure src="/cashstar/dinner_1.jpg" title="Early team dinner" >}}
 {{< figure src="/cashstar/phelps_ballons_1.jpg" title="Filling Phelps office with Balloons" >}}
 {{< figure src="/cashstar/phelps_ballons_2.jpg" title="Filling Phelps office with Balloons 2" >}}
 {{< figure src="/cashstar/phelps_ballons_3.jpg" title="Filling Phelps office with Balloons 3" >}}
