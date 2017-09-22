@@ -168,7 +168,9 @@ Unfortunately he died when he had a bicycle accident when vacationing in France.
 - April 2009 [Brandon Tarbet](https://www.linkedin.com/in/brandon-tarbet-a33a9314/) hired
 - May 2009 [Brian Rigney](https://www.linkedin.com/in/brianrigney/) hired as consultant
 - Jun 2009 [Richard Franks](https://www.linkedin.com/in/richardfranksjr/) and [Mike Ellis](https://www.linkedin.com/in/mellis11/) hired
+- August 2009 [Patrick Devine](https://www.linkedin.com/in/patrickdevine/) and [Garry Turner](https://www.linkedin.com/in/turnergarry/) hired
 - Sep 2009 [John Costa](https://www.linkedin.com/in/johnmcosta/) and Brian Rigney hired full time
+- Oct 2009 [Janet Acker](https://www.linkedin.com/in/janet-acker-9039913/) hired
 - Fall 2009 [Kathleen Goodwin](https://www.linkedin.com/in/kathleengoodwin/) hired
 
 ### Caveat
