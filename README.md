@@ -1,4 +1,4 @@
-This is the source code for my website kencochrane.net, it uses Hugo to build the site, and is deployed via github webhook to netlify.
+This is the source code for my website kencochrane.net and kencochrane.com, it uses Hugo to build the site, and is deployed via github webhook to netlify.
 
 ## Running site locally
 $ hugo server

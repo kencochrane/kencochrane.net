@@ -1,8 +1,8 @@
 # prod: http://www.kencochrane.net/
 # local /
-baseurl = "https://www.kencochrane.net/"
+baseurl = "https://www.kencochrane.com/"
 languageCode = "en-us"
-title = "KenCochrane.net"
+title = "KenCochrane.com"
 # Enable comments by entering your Disqus shortname #kencochrane
 disqusShortname = ""
 # Enable Google Analytics by entering your tracking code
