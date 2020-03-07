@@ -4,7 +4,7 @@ tags = ["maine","companies", "redzone-wireless", "garbage-to-garden", "clynk", "
 categories = ["blog"]
 topics = ["blog"]
 title = "Maine Companies to watch in 2017"
-banner = "banners/maine.png"
+banner = "images/maine.png"
 +++
 
 I live in Maine, it's a great state for a lot of things, but [running a business] (http://www.pressherald.com/2016/11/16/forbes-maine-second-worst-state-for-business/) [isn't one of them](http://www.forbes.com/pictures/mli45fglme/worst-states-49-maine/#606c456bc450). There are a number of reasons, but the major ones are usually [high taxes](http://taxfoundation.org/state-tax-climate/maine), and a [lack of skilled workers](http://www.mainebiz.biz/article/20160519/NEWS0101/160519941/aging-workforce-lack-of-skilled-workers-leads-to-worker-shortage-in-construction). Because of this, there aren't that many new companies that come along, so I'm always on the lookout for companies that are doing cool things. I like to keep an eye on their progress and try and help them out however I can, so that they can succeed and hopefully inspire other people to start more businesses in Maine.

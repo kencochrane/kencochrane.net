@@ -6,7 +6,7 @@ categories = ["blog"]
 topics = ["blog"]
 slug = "using-lambda-to-get-azs-in-cloudformation"
 url = "2017/03/29/using-lambda-to-get-azs-in-cloudformation"
-banner = "banners/aws.png"
+banner = "images/aws.png"
 +++
 
 This is a follow up to my [Understanding AWS Regions and Availability Zones in Cloud Formation]({{< relref "post/cloudformation-region-availability-zone-tips.md" >}}) post that I made a little while ago.

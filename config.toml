@@ -23,7 +23,7 @@ theme = "hugo-icarus"
     bio = "Software developer living in Southern Maine"
     location = "Maine"
     site_description = ""
-    copyright  = "Powered by [Hugo](//gohugo.io). Theme by [PPOffice](http://github.com/ppoffice)."
+    copyright  = "Powered by [Hugo](//gohugo.io). Theme by [PPOffice](https://github.com/ppoffice)."
     avatar = "img/kencochrane.jpeg"
 
     # Format dates with Go's time formatting

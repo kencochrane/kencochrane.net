@@ -4,7 +4,7 @@ tags = ["aws", "docker", "CloudFormation", "availabilityZones"]
 categories = ["blog"]
 topics = ["blog"]
 title = "Understanding AWS Regions and Availability Zones in CloudFormation"
-banner = "banners/aws.png"
+banner = "images/aws.png"
 +++
 
 I recently talked about [my work on Docker for AWS]({{< relref "post/docker-for-aws.md" >}}) while working on this project I had to do a lot of research around AWS Regions and Availability Zones, and how they work with CloudFormation. Here are the notes that I gathered.

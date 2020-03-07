@@ -6,7 +6,7 @@ categories = ["blog"]
 topics = ["blog"]
 slug = "cashstar-the-early-years"
 url = "2017/09/17/cashstar-the-early-years"
-banner = "banners/cashstar.png"
+banner = "images/cashstar.png"
 +++
 
 On August 30th, 2017 [BlackHawk Network](https://blackhawknetwork.com/) [acquired](https://www.cashstar.com/press-release/blackhawk-network-acquires-cashstar/) [CashStar](https://www.cashstar.com) for $175 Million dollars in cash. This is good news for everyone involved, the CashStar employees, share holders, and for black hawk. This is a great ending, but how did they get where they are today, and how did it all start? I was lucky enough to be one of the first employees at CashStar, so I have some first hand knowledge of the early years. I have been meaning to write about this for a while, and with the recent sale, it looks like this is a good time to sit down and write it down, before I forget.

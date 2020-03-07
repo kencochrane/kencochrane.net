@@ -4,7 +4,7 @@ tags = ["hugo","netlify", "hosting", "blog"]
 categories = ["blog"]
 topics = ["blog"]
 title = "I rebuilt my blog with hugo, and moved to netlify"
-banner = "banners/hugo.png"
+banner = "images/hugo.png"
 +++
 
 About a year ago, I was frustrated with my lack of new posts on my blog and decided I needed to fix that. After a little bit of soul searching, I decided to reboot the blog, and start fresh with a new platform. Here are a few of the reasons why I decided to change my blog.

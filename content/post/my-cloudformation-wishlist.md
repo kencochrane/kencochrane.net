@@ -6,7 +6,7 @@ categories = ["blog"]
 topics = ["blog"]
 slug = "my-cloudformation-wishlist"
 url = "2017/03/25/my-cloudformation-wishlist"
-banner = "banners/aws.png"
+banner = "images/aws.png"
 +++
 
 I have been using [CloudFormation](https://aws.amazon.com/cloudformation/) a lot over the past year with my work on [Docker for AWS](https://www.docker.com/aws). It is a pretty good product, but there are still some rough edges that make using it a lot harder then it needs to be. I have compiled a list of changes and feature requests that I would like to see added to CloudFormation to make my life easier. I hope this blog post gets read by the CloudFormation team and helps guide their roadmap. If they have any questions, feel free to reach out to me on Twitter, Linkedin, etc any time.

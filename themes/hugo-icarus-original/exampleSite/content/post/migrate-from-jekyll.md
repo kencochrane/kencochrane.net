@@ -4,7 +4,7 @@ date = "2015-10-10T13:07:31+02:00"
 tags = ["ipsum"]
 categories = ["lorem"]
 menu = ""
-banner = "banners/placeholder.png"
+banner = "images/placeholder.png"
 +++
 
 ## Move static content to `static`

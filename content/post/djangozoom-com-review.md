@@ -10,17 +10,17 @@ title = "DjangoZoom.com Review"
 
 This is part five in my series on django hosting services. Previously, I
 looked at
-[ep.io](http://kencochrane.net/blog/2011/04/my-experiences-with-epio/),
-[apphosted.com](http://kencochrane.net/blog/2011/05/apphosted-com-django-hosting-review/),
-[gondor.io](http://kencochrane.net/blog/2011/04/my-day-gondorio/),
-[dotcloud.com](http://kencochrane.net/blog/2011/04/deploying-my-django-application-to-dotcloud/)
-and now I'm looking at [DjangoZoom.com](http://DjangoZoom.com).
+[ep.io](https://kencochrane.net/blog/2011/04/my-experiences-with-epio/),
+[apphosted.com](https://kencochrane.net/blog/2011/05/apphosted-com-django-hosting-review/),
+[gondor.io](https://kencochrane.net/blog/2011/04/my-day-gondorio/),
+[dotcloud.com](https://kencochrane.net/blog/2011/04/deploying-my-django-application-to-dotcloud/)
+and now I'm looking at [DjangoZoom.com](https://DjangoZoom.com).
 
 DjangoZoom.com is the brain child of Nate Aune and Shimon Rura and is
 based in Boston, Massachusetts. It was founded in 2010 at
-[StartupWeekend Boston](http://startupweekend.org/) and was a finalist
-in the [MassChallenge](http://www.masschallenge.org/). Their office is
-in the [Dogpatch Labs](http://dogpatchlabs.com/) space for startups in
+[StartupWeekend Boston](https://startupweekend.org/) and was a finalist
+in the [MassChallenge](https://www.masschallenge.org/). Their office is
+in the [Dogpatch Labs](https://dogpatchlabs.com/) space for startups in
 Cambridge, Massachusetts. They are currently still in a closed beta, but
 they were nice enough to send me an invite to check it out.
 
@@ -145,7 +145,7 @@ which would be pretty impressive.
 Now that I have my app deployed I can change some of the settings.
 
 > I created an alias to for my app to
-> <http://kencochrane.djangozoom.net>
+> <https://kencochrane.djangozoom.net>
 >
 > You can also add a hostname like kencochrane.net.
 >
@@ -167,7 +167,7 @@ Currently DjangoZoom makes it really easy to deploy your application to
 their servers. What would be cool is if they would make it easy to
 deploy common django applications to their service. For example on their
 blog they have a video to show how easy it is to [deploy django-cms to
-DjangoZoom](http://djangozoom.com/blog/2011/03/15/deploying-django-cms-45-seconds-djangozoom/).
+DjangoZoom](https://djangozoom.com/blog/2011/03/15/deploying-django-cms-45-seconds-djangozoom/).
 
 In the video it shows them going out to github, forking and copying the
 link to the project, and then making some minor changes on the
@@ -240,7 +240,7 @@ Cronjobs
 --------
 
 Not supported, they recommend [Advanced Python
-Scheduler](http://packages.python.org/APScheduler/) or
+Scheduler](https://packages.python.org/APScheduler/) or
 [django-cron](https://github.com/reavis/django-cron) which should run on
 their system.
 
@@ -270,8 +270,8 @@ Videos
 
 Here are some videos of the DjangoZoom.com deployment process.
 
-<p><iframe title="YouTube video player" width="480" height="390" src="http://www.youtube.com/embed/NCQxqw94Cgs" frameborder="0"></iframe></p>
-<p><iframe title="YouTube video player" src="http://www.youtube.com/embed/DSe6R1ByS5k" width="480" frameborder="0" height="390"></iframe></p>
+<p><iframe title="YouTube video player" width="480" height="390" src="https://www.youtube.com/embed/NCQxqw94Cgs" frameborder="0"></iframe></p>
+<p><iframe title="YouTube video player" src="https://www.youtube.com/embed/DSe6R1ByS5k" width="480" frameborder="0" height="390"></iframe></p>
 Conclusion
 ----------
 
@@ -285,7 +285,7 @@ Update:
 
 Read how this service stacks up against other services like it in my
 [Django hosting
-roundup](http://kencochrane.net/blog/2011/06/django-hosting-roundup-who-wins/)
+roundup](https://kencochrane.net/blog/2011/06/django-hosting-roundup-who-wins/)
 
 2/16/2012: Full disclosure. On Feb 16th 2012, I accepted a job with
 dotCloud a competitor to DjangoZoom. I plan on keeping this blog post up

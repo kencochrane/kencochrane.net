@@ -112,7 +112,7 @@ You don't blog in English and you want to translate the theme into your native l
 
 After creating a new post you can define a banner by entering the relative path to the image.
 
-    banner = "banners/placeholder.png"
+    banner = "images/placeholder.png"
 
 This way you can store them either next to the content file or in the `static` folder.
 
@@ -131,9 +131,9 @@ If you don't need equations, you can disable MathJax but putting `disable_mathja
 This shortcode you to easily include a gallery into your pages. Copy the code below into your content file and enter the relative paths to your images.
 
     {{< gallery
-        "/banners/placeholder.png"
-        "/banners/placeholder.png"
-        "/banners/placeholder.png"
+        "/images/placeholder.png"
+        "/images/placeholder.png"
+        "/images/placeholder.png"
     >}}
 
 

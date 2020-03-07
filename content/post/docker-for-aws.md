@@ -4,7 +4,7 @@ tags = ["aws", "docker"]
 categories = ["blog"]
 topics = ["blog"]
 title = "My work on Docker for AWS"
-banner = "banners/docker.png"
+banner = "images/docker.png"
 +++
 
 For the past 9 months I have been working on Docker for AWS, which is an easy way to go from nothing, to a Docker Swarm on AWS, in about 10 minutes. The goals of this project were to make it easy for someone with an AWS account to start using Docker Swarm without needing to know anything about Docker and very limited knowledge of AWS.

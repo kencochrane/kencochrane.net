@@ -6,7 +6,7 @@ categories = ["blog"]
 topics = ["blog"]
 slug = "i-wrote-a-book-docker-cookbook-second-edition"
 url = "2019/09/24/i-wrote-a-book-docker-cookbook-second-edition"
-banner = "banners/docker_cookbook.jpg"
+banner = "images/docker_cookbook.jpg"
 +++
 One of the things that I have always wanted to do was write a book. When I was at [Docker](https://www.docker.com) I had a few offers from publishers to write a book, and I even started writing one called the [Docker guidebook](https://github.com/kencochrane/docker-guidebook) and you can find it on Github. Since Docker was growing so fast and I was spending so much time working that I didn't have a lot of free time to write a book. I decided instead to take my free time and spend it with my family. That was a pretty easy decision, and I would make it again if I had to with no regrets.
 

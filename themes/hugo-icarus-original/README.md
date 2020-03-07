@@ -32,7 +32,7 @@ In the next step navigate to the `exampleSite` folder at `themes/hugo-icarus-the
     ├── data
     │   └── l10n.toml
     └── static
-        └── banners
+        └── images
             └── placeholder.png
 
 In order to get your site running, you need to copy `config.toml` and `data/l10n.toml` into the root folders.
@@ -100,7 +100,7 @@ You don't blog in English and you want to translate the theme into your native l
 
 After creating a new post you can define a banner by entering the relative path to the image.
 
-    banner = "banners/placeholder.png"
+    banner = "images/placeholder.png"
 
 This way you can store them either next to the content file or in the `static` folder.
 
@@ -120,9 +120,9 @@ Last but not least I included some useful [shortcodes](http://gohugo.io/extras/s
 This way you can include a gallery into your post. Copy the code below into your content file and enter the relative paths to your images.
 
     {{< gallery
-        "/banners/placeholder.png"
-        "/banners/placeholder.png"
-        "/banners/placeholder.png"
+        "/images/placeholder.png"
+        "/images/placeholder.png"
+        "/images/placeholder.png"
     >}}
 
 ### JSFiddle

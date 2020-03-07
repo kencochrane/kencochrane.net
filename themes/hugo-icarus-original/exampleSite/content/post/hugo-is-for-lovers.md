@@ -4,7 +4,7 @@ date = "2015-08-03T13:39:46+02:00"
 tags = ["hugo"]
 categories = ["pseudo"]
 menu = ""
-banner = "banners/placeholder.png"
+banner = "images/placeholder.png"
 +++
 
 ## Step 1. Install Hugo
