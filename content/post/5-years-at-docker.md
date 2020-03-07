@@ -6,7 +6,7 @@ categories = ["blog"]
 topics = ["blog"]
 slug = "5-years-at-Docker"
 url = "2017/03/24/5-years-at-docker"
-banner = "banners/docker.png"
+banner = "images/docker.png"
 +++
 
 February 15th, 2017 was my 5th year anniversary of joining [dotCloud/Docker](https://www.docker.com). I have been thinking a lot about those 5 years at Docker, and thought it would make for a good blog post. This is going to be fairly long, but I think it will be worth it to see how Docker progressed over time.
