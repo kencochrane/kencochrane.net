@@ -7,7 +7,7 @@ title = "Understanding AWS Regions and Availability Zones in CloudFormation"
 banner = "images/aws.png"
 +++
 
-I recently talked about [my work on Docker for AWS]({{< relref "post/docker-for-aws.md" >}}) while working on this project I had to do a lot of research around AWS Regions and Availability Zones, and how they work with CloudFormation. Here are the notes that I gathered.
+I recently talked about [my work on Docker for AWS]({{< relref "/post/docker-for-aws.md" >}}) while working on this project I had to do a lot of research around AWS Regions and Availability Zones, and how they work with CloudFormation. Here are the notes that I gathered.
 
 ### What is the difference between an AWS Region and an Availability Zone?
 The easiest way to answer this questions is to start backwards.
@@ -279,4 +279,4 @@ The downsides to this approach is that we have hard coded the list of regions an
 That is all that I have for now, I hope it was helpful. I'll try and keep this page updated. If you have something you think I should add, send me a message on twitter [@KenCochrane](https://twitter.com/kencochrane).
 
 **Update:**
-I have added a new blog post on [how to use a custom lambda function to get your Availability Zone list]({{< relref "post/using-lambda-to-get-azs-in-cloudformation.md" >}}).
+I have added a new blog post on [how to use a custom lambda function to get your Availability Zone list]({{< relref "/post/using-lambda-to-get-azs-in-cloudformation.md" >}}).

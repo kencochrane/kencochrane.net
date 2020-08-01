@@ -9,7 +9,9 @@
             <li>
                 <div class="item-thumbnail">
                     <a href="{{ .Permalink }}" class="thumbnail">
-                    {{ if and (isset .Params "banner") (not (eq .Params.banner "")) }}
+                    {{ if and (isset .Params "banner_thumb") (not (eq .Params.banner_thumb "")) }}
+                      <span style="background-image:url({{ .Params.banner_thumb | absURL }})" alt="{{ $.Title }}" class="thumbnail-image"></span>
+                    {{ else if and (isset .Params "banner") (not (eq .Params.banner "")) }}
                         <span style="background-image:url({{ .Params.banner | absURL }})" alt="{{ $.Title }}" class="thumbnail-image"></span>
                     {{else}}
                         <span class="thumbnail-image thumbnail-none"></span>

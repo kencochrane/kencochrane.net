@@ -9,7 +9,7 @@ url = "2017/03/29/using-lambda-to-get-azs-in-cloudformation"
 banner = "images/aws.png"
 +++
 
-This is a follow up to my [Understanding AWS Regions and Availability Zones in Cloud Formation]({{< relref "post/cloudformation-region-availability-zone-tips.md" >}}) post that I made a little while ago.
+This is a follow up to my [Understanding AWS Regions and Availability Zones in Cloud Formation]({{< relref "/post/cloudformation-region-availability-zone-tips.md" >}}) post that I made a little while ago.
 
 Previously I talked about how you can dynamically select the number of AvailabilityZones (AZs) that you
 want to deploy your instances too, based on the region. Since some regions only offer two AZs and others
