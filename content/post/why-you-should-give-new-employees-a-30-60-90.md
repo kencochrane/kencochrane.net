@@ -32,9 +32,10 @@ To make it easier to track their progress you can use a tool like Jira and setup
 Even though it says 30-60-90 there is also a 0, -7, and a -14 which is dedicated to the hiring manager, those are the tasks that the hiring manager needs to do before the employee gets hired and on their first day. That includes any new employee HR intake forms, support tickets for system access, finding a mentor, connecting with the employee to make sure they have everything they need, giving them their login information, etc.
 
 I usually break it up into three parts learning, building, and owning? Each part is tied to the 30-60-90
-- Learning: getting everything they need to get up and running, as well as meeting people, reading docs, and training.
-- Building:  working with others in the team mentor, buddy, etc, have them work with someone to show them the ropes
-- Owning: when they are comfortable to have them start to do tasks on their own, and hopefully, by the end of the 90 days, they are a self-sufficient member of the team.
+
+- **Learning**: getting everything they need to get up and running, as well as meeting people, reading docs, and training.
+- **Building**:  working with others in the team mentor, buddy, etc, have them work with someone to show them the ropes
+- **Owning**: when they are comfortable to have them start to do tasks on their own, and hopefully, by the end of the 90 days, they are a self-sufficient member of the team.
 
 Some people finish their 30-60-90 much quicker than others, that is fine to end early. It might be fine if they are a little late, but if they are very late that is a red flag that you need to take care of sooner than later.
 
