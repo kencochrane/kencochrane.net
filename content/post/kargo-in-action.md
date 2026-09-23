@@ -1,6 +1,6 @@
 +++
 title = "I'm writing another book: Kargo in Action"
-date = "2026-09-23"
+date = "2026-09-01"
 tags = ["kargo", "argo-cd", "gitops", "kubernetes", "book"]
 categories = ["blog"]
 topics = ["blog"]
@@ -17,8 +17,6 @@ I call that the promotion gap, and it's the reason I'm writing my second book, *
 
 I'm the Head of Engineering at [Akuity](https://akuity.io), where we build a GitOps platform on [Argo CD](https://github.com/argoproj/argo-cd) and [Kargo](https://github.com/akuity/kargo). Argo CD is great at making a cluster match what's in Git. But it doesn't decide *what* should be in Git for each environment, or when a change should move from dev to staging to production. Teams fill that gap with CI scripts, Slack approvals, and a lot of tribal knowledge. Kargo was built to replace that duct tape with a real promotion engine.
 
-TODO(ken): A sentence or two on the moment you decided this needed to be a book. For example, a customer conversation, or seeing the same homegrown pipeline over and over.
-
 ## Writing with the creators of Kargo
 
 I'm not writing this one alone. My co-authors are **Jesse Suen** and **Kent Rancourt**, the creators of Kargo. Jesse also co-created Argo CD. Writing with the people who designed the tool means the book can explain not only *how* Kargo works, but *why* it works that way.
@@ -27,7 +25,7 @@ I'm not writing this one alone. My co-authors are **Jesse Suen** and **Kent Ranc
 
 The last time I wrote a book, it was a sprint. I took over the [Docker Cookbook, Second Edition]({{< ref "i-wrote-a-book-docker-cookbook-second-edition.md" >}}) partway through and had about two weeks to rewrite most of it before a family vacation. It was fun, but it was a whirlwind.
 
-Kargo in Action is the opposite: a book planned from scratch, with co-authors, written chapter by chapter over months. TODO(ken): A line or two on what that's been like so far (the Manning process, the pace, what surprised you).
+Kargo in Action is the opposite: a book planned from scratch, with co-authors, written chapter by chapter over months. We will keep adding new chapters each month until the book is complete. The great thing about MEAP is you can give us feedback as we are writing the book so we can go back and improve the chapters we released already to make them even better.
 
 ## What's in the book
 
