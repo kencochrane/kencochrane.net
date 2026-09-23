@@ -18,7 +18,7 @@ Skip forward a couple of years and we had a nice product with big customers, and
 
 Then one day I came across this tweet:
 
-{{< tweet 149286680518606849 >}}
+{{< x user="dot_cloud" id="149286680518606849" >}}
 
 I wasn't looking for a job, but I'm always on the lookout for what is available, because you never know when the next great opportunity is going to present itself. I sent in an email to see if they were interested in a remote employee, and they said they were, and so I interviewed for the job. Over the course of the next week or so, I meet with a few people, and everyone was really awesome, and I was able to get a better understanding on how they built their PaaS. In an interview with [Jérôme Petazzoni](https://twitter.com/jpetazzo) was the first time I had ever heard of Linux Containers. Not knowing anything about Linux Containers, I quickly did research so that I could be prepared for the next interview in case they asked me anything about them. I learned a few things quickly:
 
@@ -196,7 +196,7 @@ This also allowed us to capture metrics to see how many outages we had, and whic
 ### Djangocon 2012 talk about PCI compliant apps
 One of my first conference talks was at DjangoCon 2012 in Washington D.C. It was about building PCI compliant web applications. I was also able to talk with people who were using dotCloud, and help answer any of their questions. I also gave out a bunch of t-shirts.
 
-{{< tweet 243810813075410944 >}}
+{{< x user="gabrielmgrant" id="243810813075410944" >}}
 
 Here is the video if you are interested in checking it out.
 
@@ -228,7 +228,7 @@ On any given day I was jumping between python, ruby, go, and Bash. It was a blur
 
 #### Docker launch
 
-{{< tweet 312723462928101377 >}}
+{{< x user="dot_cloud" id="312723462928101377" >}}
 
 {{<youtube wW9CAH9nSLs>}}
 
@@ -241,7 +241,7 @@ The goal was to keep the PaaS up and running, but we would not be adding any mor
 
 I was assigned to the new Docker team, but I was still responsible for maintaining the PaaS, so I was working double duty. Luckily the on-call wasn't that bad, and most of the time was dedicated to building out Docker.
 
-{{< tweet 469964167755988992 >}}
+{{< x user="julienbarbier42" id="469964167755988992" >}}
 
 #### Docker, The Future
 Once the decision was made to pivot the company, there was a lot to do, in a short amount of time. I was given a few tasks that needed to get done ASAP. One of those was a place where people could upload and share their docker images. We created the [docker registry](https://github.com/docker/docker-registry), which was an open source project that anyone could use, but we wanted to have a central location that anyone could use out of the box. We decided to call it the docker index. Since I had a lot of web application experience, I was assigned the task to build it. Since we were a python shop, and I was most familiar with [Django](https://www.djangoproject.com/) the python web framework, I decided to write it in that. We used bootstrap for the UI and I got started.
@@ -336,7 +336,7 @@ Montreal, so it was nice to see the city, and help folks with docker. I ran into
 
 I came to the conference with about 50 t-shirts, that was all I was able to carry in my luggage. When I got there, I put the box down, and turned around to talk with the large crowd that gathered, and before I knew it, I turned around and all of the shirts were gone. It was crazy how fast they went.
 
-{{< tweet 455362139776356352 >}}
+{{< x user="bkc" id="455362139776356352" >}}
 
 
 ### DockerCon 2014
@@ -344,9 +344,9 @@ DockerCon 2014 was our first DockerCon, and it was based in SanFrancisco, and it
 
 I didn't have to give a talk at this conference, but I helped to create the live demos, and also launch the docker hub.
 
-{{< tweet 476892830061694977 >}}
+{{< x user="KenCochrane" id="476892830061694977" >}}
 
-{{< tweet 476455649107116032 >}}
+{{< x user="KenCochrane" id="476455649107116032" >}}
 
 
 ### DockerCon Europe 2014
@@ -381,7 +381,7 @@ The problem was that the Yubikeys that we were going to give to everyone were st
 
 Once that was done, we needed to tap them to the chairs in the auditorium where the guests wouldn't be able to see them until we said, reach below your seat. This was our Oprah moment.
 
-{{< tweet 666192994056425472 >}}
+{{< x user="KenCochrane" id="666192994056425472" >}}
 
 ### DockerCon Seattle
 I wasn't able to attend DockerCon US 2016 in Seattle, but the project I was working on, was launched there. Check out the keynote video, to see Docker for AWS.

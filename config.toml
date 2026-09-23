@@ -1,16 +1,23 @@
 # prod: http://www.kencochrane.net/
 # local /
 baseurl = "https://www.kencochrane.com/"
-languageCode = "en-us"
+locale = "en-us"
 title = "KenCochrane.com"
-# Enable comments by entering your Disqus shortname #kencochrane
-disqusShortname = ""
-# Enable Google Analytics by entering your tracking code
-googleAnalytics = "UA-67696-11"
-# Define the number of posts per site
-paginate = 10
-footnotereturnlinkcontents = "↩"
 theme = "hugo-icarus"
+# Define the number of posts per site
+[pagination]
+    pagerSize = 10
+
+[markup.goldmark.renderer]
+    # older posts contain raw HTML
+    unsafe = true
+
+[services.googleAnalytics]
+    ID = "G-91QCV86YC3"
+
+# Enable comments by entering your Disqus shortname
+[services.disqus]
+    shortname = ""
 
 
 [permalinks]
@@ -20,7 +27,7 @@ theme = "hugo-icarus"
 [params]
     # Tell me who you are
     author = "Ken Cochrane"
-    bio = "Software developer living in Southern Maine"
+    bio = "Head of Engineering at Akuity. Author of Kargo in Action (Manning) and Docker Cookbook."
     location = "Maine"
     site_description = ""
     copyright  = "Powered by [Hugo](//gohugo.io). Theme by [PPOffice](https://github.com/ppoffice)."
@@ -55,12 +62,12 @@ theme = "hugo-icarus"
     follow_button = "https://github.com/kencochrane"
 
 
-[social]
+[params.social]
 # Add your social network accounts to the profile section on the left
 # by entering your username. The links to your account will be
 # create automatically.
     github          = "kencochrane"
-    bitbucket       = "kencochrane"
+    bitbucket       = ""
     jsfiddle        = ""
     codepen         = ""
     foursquare      = ""

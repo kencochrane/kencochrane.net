@@ -1,7 +1,9 @@
 This is the source code for my website kencochrane.net and kencochrane.com, it uses Hugo to build the site, and is deployed via github webhook to netlify.
 
 ## Running site locally
-$ hugo server
+Install Hugo (`brew install hugo`). Netlify pins the version in `netlify.toml`; keep them in sync.
+
+    $ hugo server
 Go to http://localhost:1313/ in browser
 
 ## deploying new version.
