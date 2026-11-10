@@ -1,0 +1,59 @@
+baseURL = "https://www.kencochrane.com/"
+locale = "en-us"
+defaultContentLanguage = "en"
+title = "Ken Cochrane"
+theme = "blowfish"
+
+enableRobotsTXT = true
+summaryLength = 0
+
+[pagination]
+  pagerSize = 10
+
+[services.googleAnalytics]
+  ID = "G-91QCV86YC3"
+
+# Keep the existing URL scheme. Most older posts also pin `url` in front matter.
+[permalinks]
+  post = "/:year/:month/:day/:slug"
+
+[taxonomies]
+  tag = "tags"
+  category = "categories"
+
+# Older posts use `updated` for their last-modified date.
+[frontmatter]
+  lastmod = ["updated", "lastmod", ":default"]
+
+[outputs]
+  home = ["HTML", "RSS", "JSON"]
+
+[sitemap]
+  changefreq = "weekly"
+  filename = "sitemap.xml"
+  priority = 0.5
+
+# Mount the existing static image folders as assets too, so Blowfish can
+# resize post banners and the avatar without moving any files.
+[module]
+  [[module.mounts]]
+    source = "content"
+    target = "content"
+  [[module.mounts]]
+    source = "static"
+    target = "static"
+  [[module.mounts]]
+    source = "layouts"
+    target = "layouts"
+  [[module.mounts]]
+    source = "data"
+    target = "data"
+  [[module.mounts]]
+    source = "assets"
+    target = "assets"
+  [[module.mounts]]
+    source = "static/images"
+    target = "assets/images"
+  [[module.mounts]]
+    source = "static/img"
+    target = "assets/img"

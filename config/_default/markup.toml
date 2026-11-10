@@ -1,0 +1,15 @@
+[goldmark]
+  [goldmark.renderer]
+    # older posts contain raw HTML
+    unsafe = true
+  [goldmark.parser]
+    wrapStandAloneImageWithinParagraph = false
+    [goldmark.parser.attribute]
+      block = true
+
+[highlight]
+  noClasses = false
+
+[tableOfContents]
+  startLevel = 2
+  endLevel = 3

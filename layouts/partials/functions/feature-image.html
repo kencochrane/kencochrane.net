@@ -1,0 +1,9 @@
+{{/* Site override: fall back to the older `banner` front matter field so
+   existing posts keep their header images without being edited. */}}
+{{ $featureImage := .Params.featureimage | default .Params.banner }}
+{{ if not $featureImage }}
+  {{ range .Translations }}
+    {{ with .Params.featureimage }}{{ $featureImage = . }}{{ end }}
+  {{ end }}
+{{ end }}
+{{ return $featureImage }}
