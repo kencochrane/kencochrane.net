@@ -1,0 +1,26 @@
+{{/* Site hero style: large images (>= 1000px wide) get Blowfish's full-width
+   "big" hero. Smaller images (most older banners are logos or book covers)
+   are shown at their natural size instead of being stretched and cropped. */}}
+{{ $featured := "" }}
+{{ with partial "functions/feature-image.html" . }}
+  {{ if not (or (strings.HasPrefix . "http:") (strings.HasPrefix . "https:")) }}
+    {{ $featured = page.Resources.Get . | default (resources.Get .) }}
+  {{ end }}
+{{ end }}
+
+{{ if and $featured (ge $featured.Width 1000) }}
+  {{ partial "hero/big.html" . }}
+{{ else }}{{ with $featured }}
+  <div class="mb-8">
+    <img
+      src="{{ .RelPermalink }}"
+      width="{{ .Width }}"
+      height="{{ .Height }}"
+      alt=""
+      role="presentation"
+      loading="eager"
+      decoding="async"
+      class="nozoom rounded-md max-h-56 w-auto"
+      style="max-width: min(100%, {{ .Width }}px);" />
+  </div>
+{{ end }}{{ end }}

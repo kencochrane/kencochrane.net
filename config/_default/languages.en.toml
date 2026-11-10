@@ -1,0 +1,25 @@
+disabled = false
+locale = "en-us"
+label = "English"
+weight = 1
+title = "Ken Cochrane"
+
+[params]
+  displayName = "EN"
+  isoCode = "en"
+  rtl = false
+  dateFormat = "January 2, 2006"
+  description = "Ken Cochrane writes about engineering leadership, GitOps, Kubernetes, and building simple software."
+
+[params.author]
+  name = "Ken Cochrane"
+  image = "img/KenCochrane-2025.jpg"
+  headline = "VP of Engineering at Akuity"
+  bio = "VP of Engineering at Akuity. Author of Kargo in Action (Manning) and Docker Cookbook."
+  links = [
+    { github = "https://github.com/kencochrane" },
+    { linkedin = "https://www.linkedin.com/in/kencochrane" },
+    { x-twitter = "https://x.com/kencochrane" },
+    { stack-overflow = "https://stackoverflow.com/users/356788" },
+    { rss = "/index.xml" },
+  ]
